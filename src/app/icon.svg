@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Document -->
+  <rect x="2" y="3" width="22" height="27" rx="2" fill="#ECFDF5" stroke="#047857" stroke-width="1.5"/>
+  <!-- Fold corner -->
+  <path d="M18 3v5h6" fill="#D1FAE5" stroke="#047857" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Text lines -->
+  <line x1="6" y1="13" x2="18" y2="13" stroke="#047857" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="6" y1="17" x2="16" y2="17" stroke="#047857" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="6" y1="21" x2="14" y2="21" stroke="#047857" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="6" y1="25" x2="12" y2="25" stroke="#047857" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Interlocked wedding rings -->
+  <circle cx="22" cy="8" r="5" fill="none" stroke="#047857" stroke-width="1.8"/>
+  <circle cx="28" cy="8" r="5" fill="none" stroke="#059669" stroke-width="1.8"/>
+  <!-- Ring shine dots -->
+  <circle cx="20" cy="6" r="0.7" fill="#34D399"/>
+  <circle cx="26" cy="6" r="0.7" fill="#34D399"/>
+</svg>

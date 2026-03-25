@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -5,8 +6,9 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="bg-emerald-800 text-white py-4 px-6">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-xl font-bold">Biodata Builder</h2>
+        <div className="max-w-5xl mx-auto flex items-center gap-2">
+          <Image src="/icon.svg" alt="BiyerBiodata logo" width={28} height={28} />
+          <h2 className="text-xl font-bold">BiyerBiodata</h2>
         </div>
       </header>
 
@@ -62,8 +64,26 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-50 border-t py-6 px-6 text-center text-sm text-gray-500">
-        Biodata Builder — Create beautiful marriage biodata effortlessly.
+      <footer className="bg-gray-50 border-t py-6 px-6 text-sm text-gray-500">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p>BiyerBiodata — Create beautiful marriage biodata effortlessly.</p>
+          <div className="flex items-center gap-4">
+            <a
+              href="mailto:mehedihasansumit@gmail.com"
+              className="hover:text-emerald-700 transition-colors"
+            >
+              mehedihasansumit@gmail.com
+            </a>
+            <a
+              href="https://www.linkedin.com/in/mehedi-hasan-103621210"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-emerald-700 transition-colors"
+            >
+              LinkedIn
+            </a>
+          </div>
+        </div>
       </footer>
     </div>
   );
