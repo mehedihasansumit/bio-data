@@ -54,24 +54,29 @@ export default function ModernTemplate({ data }: Props) {
 
   return (
     <div className="bg-white p-5 max-w-[210mm] mx-auto print:p-3">
-      <div className="border border-gray-200 rounded-xl overflow-hidden min-h-[277mm] print:min-h-[calc(100vh-20mm)] flex flex-col">
-        {/* Hero header */}
-        <div className="bg-gradient-to-r from-violet-600 to-purple-500 text-white px-5 py-4 flex items-center gap-4">
+      <div className="border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] print:min-h-[calc(100vh-20mm)] flex flex-col">
+        {/* Header */}
+        <div className="text-center pt-5 pb-3 px-5">
+          <div className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
+          <h1 className="text-[18px] font-bold text-violet-700 tracking-[.15em] uppercase">Marriage Biodata</h1>
+          <div className="w-36 mx-auto mt-1 border-t border-violet-300" />
+          <div className="w-24 mx-auto mt-[2px] border-t border-violet-200" />
+        </div>
+
+        {/* Name + Photo row */}
+        <div className="flex items-start gap-4 px-5 mb-2">
           {personal.photo && (
-            <div className="w-[70px] h-[70px] rounded-full overflow-hidden shrink-0 ring-[3px] ring-white/30 shadow-lg">
+            <div className="w-[75px] h-[90px] rounded-lg overflow-hidden shrink-0 ring-2 ring-violet-200 shadow-md">
               <img src={personal.photo} alt="" className="w-full h-full object-cover" />
             </div>
           )}
-          <div className="flex-1 min-w-0">
-            {personal.fullName && <h1 className="text-[17px] font-bold truncate">{personal.fullName}</h1>}
-            <p className="text-[10px] text-violet-200 mt-0.5">
-              {[education.designation, education.company].filter(Boolean).join(" at ")}
-            </p>
+          <div className="flex-1 pt-1">
+            {personal.fullName && <h2 className="text-[15px] font-bold text-gray-900">{personal.fullName}</h2>}
             <div className="flex flex-wrap gap-2 mt-1.5">
-              {personal.age && <span className="bg-white/15 text-[9px] px-2 py-[1px] rounded-full">{personal.age} yrs</span>}
-              {personal.height && <span className="bg-white/15 text-[9px] px-2 py-[1px] rounded-full">{personal.height.split(" (")[0]}</span>}
-              {personal.religion && <span className="bg-white/15 text-[9px] px-2 py-[1px] rounded-full">{personal.religion}</span>}
-              {personal.hometown && <span className="bg-white/15 text-[9px] px-2 py-[1px] rounded-full">{personal.hometown}</span>}
+              {personal.age && <span className="bg-violet-50 text-violet-700 text-[9px] px-2 py-[1px] rounded-full">{personal.age} Years</span>}
+              {personal.height && <span className="bg-violet-50 text-violet-700 text-[9px] px-2 py-[1px] rounded-full">{personal.height.split(" (")[0]}</span>}
+              {personal.religion && <span className="bg-violet-50 text-violet-700 text-[9px] px-2 py-[1px] rounded-full">{personal.religion}</span>}
+              {personal.hometown && <span className="bg-violet-50 text-violet-700 text-[9px] px-2 py-[1px] rounded-full">{personal.hometown}</span>}
             </div>
           </div>
         </div>
@@ -137,6 +142,11 @@ export default function ModernTemplate({ data }: Props) {
               <Row label="Address" value={address.presentAddress} />
             </Section>
           )}
+
+          {/* Footer ornament */}
+          <div className="text-center mt-auto pt-4">
+            <div className="text-violet-300 text-[10px]">&#10043; &#10043; &#10043;</div>
+          </div>
         </div>
       </div>
     </div>

@@ -57,21 +57,22 @@ export default function ClassicTemplate({ data }: Props) {
       <div className="border-[3px] border-double border-emerald-800 p-4 min-h-[277mm] print:min-h-[calc(100vh-20mm)] flex flex-col">
         {/* Ornamental header */}
         <div className="text-center mb-3">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <span className="text-emerald-700 text-lg">&#9753;</span>
-            <h1 className="text-[18px] font-bold text-emerald-900 tracking-[.15em] uppercase">Biodata</h1>
-            <span className="text-emerald-700 text-lg">&#9753;</span>
-          </div>
-          <div className="w-32 mx-auto border-t border-emerald-400" />
+          <div className="text-emerald-600 text-[12px] leading-none mb-1">&#10053; &#10053; &#10053;</div>
+          <h1 className="text-[18px] font-bold text-emerald-900 tracking-[.15em] uppercase">Marriage Biodata</h1>
+          <div className="w-36 mx-auto mt-1 border-t border-emerald-400" />
+          <div className="w-24 mx-auto mt-[2px] border-t border-emerald-400/40" />
         </div>
 
         {/* Name + Photo row */}
         <div className="flex justify-between items-start mb-2">
-          <div>
+          <div className="flex-1 pt-1">
             {personal.fullName && <h2 className="text-[15px] font-bold text-gray-900">{personal.fullName}</h2>}
-            <p className="text-[10px] text-gray-500 mt-0.5">
-              {[education.designation, education.company, personal.hometown].filter(Boolean).join(" | ")}
-            </p>
+            <div className="flex flex-wrap gap-x-4 gap-y-0 mt-1 text-[10px] text-emerald-800">
+              {personal.age && <span>{personal.age} Years</span>}
+              {personal.height && <span>{personal.height.split(" (")[0]}</span>}
+              {personal.religion && <span>{personal.religion}</span>}
+              {personal.hometown && <span>{personal.hometown}</span>}
+            </div>
           </div>
           {personal.photo && (
             <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ml-3 shadow-md ring-1 ring-emerald-800/20">
@@ -139,6 +140,11 @@ export default function ClassicTemplate({ data }: Props) {
             <Row label="Address" value={address.presentAddress} />
           </Section>
         )}
+
+        {/* Footer ornament */}
+        <div className="text-center mt-auto pt-4">
+          <div className="text-emerald-600/40 text-[10px]">&#10053; &#10053; &#10053;</div>
+        </div>
       </div>
     </div>
   );

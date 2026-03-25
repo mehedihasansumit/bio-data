@@ -63,20 +63,30 @@ export default function ElegantTemplate({ data }: Props) {
         <div className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#d4a853]" />
         <div className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#d4a853]" />
 
-        {/* Header band */}
-        <div className="bg-[#1e3a5f] text-white px-5 py-3 flex items-center justify-between">
-          <div className="flex-1">
-            <p className="text-[9px] uppercase tracking-[.2em] text-[#d4a853] mb-0.5">Marriage Biodata</p>
-            {personal.fullName && <h1 className="text-[17px] font-bold tracking-wide">{personal.fullName}</h1>}
-            <p className="text-[10px] text-blue-200 mt-0.5">
-              {[education.designation, education.company, personal.hometown].filter(Boolean).join(" • ")}
-            </p>
-          </div>
+        {/* Header */}
+        <div className="text-center pt-5 pb-3 px-5">
+          <div className="text-[#d4a853] text-[12px] leading-none mb-1">&#10047; &#10047; &#10047;</div>
+          <h1 className="text-[18px] font-bold text-[#1e3a5f] tracking-[.18em] uppercase">Marriage Biodata</h1>
+          <div className="w-36 mx-auto mt-1 border-t border-[#d4a853]" />
+          <div className="w-24 mx-auto mt-[2px] border-t border-[#d4a853]/40" />
+        </div>
+
+        {/* Name + Photo row */}
+        <div className="flex items-start gap-4 px-5 mb-2">
           {personal.photo && (
-            <div className="w-[75px] h-[95px] rounded-md overflow-hidden shrink-0 ml-4 ring-2 ring-[#d4a853]/50 shadow-lg">
+            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ring-2 ring-[#d4a853]/50 shadow-lg">
               <img src={personal.photo} alt="" className="w-full h-full object-cover" />
             </div>
           )}
+          <div className="flex-1 pt-1">
+            {personal.fullName && <h2 className="text-[15px] font-bold text-[#1e3a5f]">{personal.fullName}</h2>}
+            <div className="flex flex-wrap gap-x-4 gap-y-0 mt-1 text-[10px] text-[#1e3a5f]">
+              {personal.age && <span>{personal.age} Years</span>}
+              {personal.height && <span>{personal.height.split(" (")[0]}</span>}
+              {personal.religion && <span>{personal.religion}</span>}
+              {personal.maritalStatus && <span>{personal.maritalStatus}</span>}
+            </div>
+          </div>
         </div>
 
         {/* Content */}
@@ -140,6 +150,11 @@ export default function ElegantTemplate({ data }: Props) {
               <Row label="Address" value={address.presentAddress} />
             </Section>
           )}
+
+          {/* Footer ornament */}
+          <div className="text-center mt-auto pt-4">
+            <div className="text-[#d4a853]/50 text-[10px]">&#10047; &#10047; &#10047;</div>
+          </div>
         </div>
       </div>
     </div>
