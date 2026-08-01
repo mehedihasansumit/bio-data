@@ -65,7 +65,11 @@ export default async function GuidePage({
         }}
       />
 
-      <article className="max-w-3xl mx-auto px-6 py-10">
+      {/* The measure and gutters come off in print. The sample sheet inside is
+          exactly 190mm — the full width of the page box — so the article's
+          24px padding pushed it past the right edge and sliced the photo off.
+          The builder's main element already does this; the guides never did. */}
+      <article className="max-w-3xl mx-auto px-6 py-10 print:max-w-none print:px-0">
         <nav aria-label="ব্রেডক্রাম্ব" className="text-sm text-gray-500 mb-4">
           <Link href="/" className="hover:text-emerald-700 transition-colors">
             হোম

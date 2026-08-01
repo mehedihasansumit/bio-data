@@ -50,7 +50,7 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
 
         <div className="flex items-start gap-4 px-5 mb-2 break-inside-avoid">
           {personal.photo && (
-            <div className="w-[75px] h-[90px] rounded-lg overflow-hidden shrink-0 ring-2 ring-violet-200">
+            <div className="photo-frame w-[75px] h-[90px] rounded-lg overflow-hidden shrink-0 ring-2 ring-violet-200">
               <img
                 src={personal.photo}
                 alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}

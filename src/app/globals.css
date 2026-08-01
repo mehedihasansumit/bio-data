@@ -170,10 +170,24 @@ html:has(dialog[open]) {
     page-break-inside: avoid;
   }
 
-  /* Nothing may clip a document that now flows past one page. */
+  /* Nothing may clip a document that now flows past one page — except the
+     photo, which is the one thing in here that must stay clipped.
+
+     A candidate's photo is `object-fit: cover` inside a fixed portrait box.
+     The box lays out correctly at its declared size, but when Chrome paints
+     to PDF it draws the whole image at its natural aspect scaled to the box's
+     height, and relies on the frame's `overflow: hidden` to crop it. Reset
+     that and a 400×225 photo paints 142px wide inside an 80px frame, spilling
+     across the candidate's own name. On screen the clip held, so the preview
+     looked right and only the print was wrong — the exact split the A4
+     Constant Rule exists to prevent. */
   #biodata-preview,
-  #biodata-preview * {
+  #biodata-preview *:not(.photo-frame) {
     overflow: visible !important;
+  }
+
+  .photo-frame {
+    overflow: hidden !important;
   }
 
   /* Remove sticky positioning for print */

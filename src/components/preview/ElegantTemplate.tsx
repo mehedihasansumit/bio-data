@@ -59,7 +59,7 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
 
         <div className="flex items-start gap-4 px-5 mb-2 break-inside-avoid">
           {personal.photo && (
-            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ring-2" style={{ boxShadow: `0 0 0 2px ${GOLD}80` }}>
+            <div className="photo-frame w-[80px] h-[100px] rounded-md overflow-hidden shrink-0" style={{ boxShadow: `0 0 0 2px ${GOLD}80` }}>
               <img
                 src={personal.photo}
                 alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}

@@ -67,7 +67,7 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
 
           <div className="flex items-start gap-4 mb-2 break-inside-avoid">
             {personal.photo && (
-              <div className="w-20 h-20 rounded-md overflow-hidden shrink-0" style={{ boxShadow: `0 0 0 1px ${OXBLOOD}4d` }}>
+              <div className="photo-frame w-20 h-20 rounded-md overflow-hidden shrink-0" style={{ boxShadow: `0 0 0 1px ${OXBLOOD}4d` }}>
                 <img
                   src={personal.photo}
                   alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
