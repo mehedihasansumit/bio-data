@@ -1,12 +1,9 @@
 "use client";
 
-import { BiodataFormData } from "@/types/biodata";
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 import { documentTitle } from "@/lib/documentStrings";
-
-interface Props {
-  data: BiodataFormData;
-}
+import { docHeadings } from "./headings";
+import type { TemplateProps } from "./BiodataPreview";
 
 const NAVY = "#1e3a5f";
 const GOLD = "#d4a853";
@@ -37,12 +34,13 @@ function Rows({ rows }: { rows: DocRow[] }) {
   );
 }
 
-export default function ElegantTemplate({ data }: Props) {
+export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
   const { personal } = data;
   const sections = documentContent(data);
+  const { Title, Name, Section } = docHeadings(headingLevel);
 
   return (
-    <div className="bg-white p-5 max-w-[190mm] mx-auto print:p-0">
+    <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
       <div className="border p-0 relative min-h-[277mm] flex flex-col" style={{ borderColor: NAVY }}>
         {/* Gold corner accents */}
         <div className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px]" style={{ borderColor: GOLD }} />
@@ -52,7 +50,7 @@ export default function ElegantTemplate({ data }: Props) {
 
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
           <div className="text-[12px] leading-none mb-1" style={{ color: GOLD }}>&#10047; &#10047; &#10047;</div>
-          <h1 className="text-[18px] font-bold tracking-[.18em] uppercase" style={{ color: NAVY }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</h1>
+          <Title className="text-[18px] font-bold tracking-[.18em] uppercase" style={{ color: NAVY }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: GOLD }} />
           <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${GOLD}66` }} />
         </div>
@@ -68,7 +66,7 @@ export default function ElegantTemplate({ data }: Props) {
             </div>
           )}
           <div className="flex-1 pt-1">
-            {personal.fullName && <h2 className="text-[15px] font-bold" style={{ color: NAVY }}>{personal.fullName}</h2>}
+            {personal.fullName && <Name className="text-[15px] font-bold" style={{ color: NAVY }}>{personal.fullName}</Name>}
             <div className="flex flex-wrap gap-x-4 gap-y-0 mt-1 text-[10px]" style={{ color: NAVY }}>
               {headlineFacts(data).map((f) => (
                 <span key={f}>{f}</span>
@@ -82,9 +80,9 @@ export default function ElegantTemplate({ data }: Props) {
             <div key={section.id} className="mt-3 first:mt-0 break-inside-avoid">
               <div className="flex items-center gap-2 mb-1">
                 <div className="h-[2px] w-3" style={{ backgroundColor: GOLD }} />
-                <h3 className="text-[10px] font-bold uppercase tracking-[.12em]" style={{ color: NAVY }}>
+                <Section className="text-[10px] font-bold uppercase tracking-[.12em]" style={{ color: NAVY }}>
                   {section.title}
-                </h3>
+                </Section>
                 <div className="h-[2px] flex-1" style={{ backgroundColor: `${GOLD}66` }} />
               </div>
               <div className="pl-1">

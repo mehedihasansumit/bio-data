@@ -325,11 +325,21 @@ The builder's core is a **50/50 split**: form on the left, live document preview
 
 **Form density:** fields sit on a `grid-cols-1 sm:grid-cols-2` grid with a 16px gap. Wide fields (address, hometown, photo) opt into full width with `sm:col-span-2`. Section headings span the grid and carry a 2px `rule-emerald` underline with 8px of space beneath.
 
-**The document** is governed by print geometry, not screen breakpoints: `max-w-[190mm]` wide, `min-h-[277mm]` tall — exactly A4 (210 × 297mm) minus the 10mm `@page` margin on all four sides. Both figures are load-bearing: 190 = 210 − 2 × 10, and 277 = 297 − 2 × 10. The outer wrapper drops its screen padding in print (`print:p-0`) so the frame occupies the page box precisely, and no `100vh` calc is used in a paged context. It never reflows responsively. On narrow screens it does not scale either — instead the preview panel scrolls horizontally (`overflow-x-auto`, reset to `overflow-visible` in print), so a `TwoCol` row's fixed columns stay reachable below 400px rather than being clipped. Panning a fixed sheet is the deliberate behavior; the document's proportions are never distorted to fit a phone. Internal padding is 20px on screen, 12px in print. Row label columns are fixed-width (115–120px for the first label, 100–110px for the second, 125–130px for the first value) so that every row aligns into columns down the page regardless of content length.
+**The document** is governed by print geometry, not screen breakpoints: `w-[190mm]` wide, `min-h-[277mm]` tall — exactly A4 (210 × 297mm) minus the 10mm `@page` margin on all four sides. Both figures are load-bearing: 190 = 210 − 2 × 10, and 277 = 297 − 2 × 10. The outer wrapper drops its screen padding in print (`print:p-0`) so the frame occupies the page box precisely, and no `100vh` calc is used in a paged context. It never reflows responsively.
+
+**The width is `w-`, not `max-w-`, and the difference was a real defect.** A max-width lets the sheet take the column instead of the page: the builder's preview column resolves to 604px and is capped there by `max-w-7xl`, so the document laid out ~16% narrower than A4 while keeping a full 277mm height — an aspect of 0.567 against A4's 0.686, and lines that wrapped on screen where they didn't on paper. A live preview may do many things; disagreeing with the print output is not one of them.
+
+**Fitting is done by zoom, in `.sheet-fit`.** The sheet always lays out at a true 190mm and is scaled down to whatever the column allows: `container-type: inline-size` on the wrapper, `zoom: min(1, 100cqi / 190mm)` on the document. `zoom` rather than `transform: scale()` because zoom reflows its parent — a scaled sheet keeps its unscaled layout box and leaves a dead gap beneath itself. No JavaScript, because the guide pages render their sample on the server and a measured-then-scaled sheet would arrive only after hydration. Where `zoom` or CSS length division is unsupported the declaration is dropped and the surrounding `overflow-x-auto` pans a full-size sheet instead — the old behavior, now the fallback.
+
+Both halves come off in print (`container-type: normal`, `zoom: 1`). The containment reset is not cosmetic: `container-type: inline-size` carries layout containment, which makes a box monolithic in paged media and would hold a multi-page biodata to one page, silently clipping the rest.
+
+Internal padding is 20px on screen, 12px in print. Row label columns are fixed-width (115–120px for the first label, 100–110px for the second, 125–130px for the first value) so that every row aligns into columns down the page regardless of content length.
 
 ### Named Rules
 
-**The A4 Constant Rule.** The document is 190mm × 277mm at every viewport. It is not responsive, it does not stack, and it does not gain or lose fields on small screens. What you see is what prints.
+**The A4 Constant Rule.** The document *lays out* at 190mm wide at every viewport — phone, laptop, and 4K alike — and is fitted to its column by scale alone. It is not responsive, it does not stack, it does not gain or lose fields on small screens, and it never takes the width it happens to be given. Its line breaks are therefore identical on a 390px phone and on paper. What you see is what prints, at a different size.
+
+*(This rule was documentation-only until the `max-w-` → `w-` + `.sheet-fit` change above; the sheet had never actually been 190mm on screen.)*
 
 **The Clean Break Rule.** A biodata runs to as many A4 pages as its content needs — the schema now carries itemised siblings, five education levels, and religion-specific fields, and forcing that onto one sheet would mean either 8px type or dropping real information. What is *not* negotiable is where it breaks: a section heading never separates from its rows, and a label/value line never splits across a page. Every section and every row carries `break-inside-avoid`. A page may end early; it may not end mid-thought.
 
@@ -492,7 +502,9 @@ Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each 
 
 ### Named Rules
 
-**The Four Voices Rule.** Each template is an independent design, not a recolor. It may reinvent its layout completely — sidebar, split columns, banner header, repositioned photo — and it owns its own row and section primitives. What it inherits and may not change: the 190mm × 277mm frame, the full field vocabulary and its order of meaning, the 11px/10px type floor, the one-page budget, and the flat-paper rule. Four voices, one set of obligations.
+**The Four Voices Rule.** Each template is an independent design, not a recolor. It may reinvent its layout completely — sidebar, split columns, banner header, repositioned photo — and it owns its own row and section primitives. What it inherits and may not change: the 190mm frame with its 277mm floor, the full field vocabulary and its order of meaning, the 11px/10px type floor, the heading levels it is handed, and the flat-paper rule. Four voices, one set of obligations.
+
+*(The "one-page budget" was listed here as an inherited obligation long after The Clean Break Rule retired it. It is gone; the 277mm floor is a minimum, not a ceiling.)*
 
 **The Content Parity Rule.** Every template renders every field the data model can hold. A template may arrange the record differently; it may never drop a field that another template shows. Someone choosing a look must never lose information by choosing it.
 
@@ -503,6 +515,10 @@ Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each 
 ### The Document Section
 
 A heading plus its rows, 12px above the previous section, flush at the top of the page. Each template renders the heading differently — Classic fills a solid band, Elegant brackets it in gold rules, Modern underlines it in violet, Royal marks it with a glyph and a fading rule — but all four use the same 10px uppercase wide-tracked label type and all four wrap the identical row set.
+
+**The Borrowed Outline Rule.** A biodata has real internal structure and its section headings are headings, but the document cannot know how deep it sits — so it is handed its levels rather than choosing them. `docHeadings(level)` in `preview/headings.ts` resolves title / name / section to `h2`–`h4` when the sheet is a top-level region (the builder) and `h3`–`h5` when it is nested inside a section that already owns an `h2` (a guide's worked example). Templates previously hard-coded an `h1` for the document title, which put a second `h1` on all four prerendered guide pages and folded the sample's internals into the page outline.
+
+This one helper is shared rather than redeclared per template, unlike `Row` and `Section`. The Four Voices Rule gives a template its own *visual* primitives; it does not give it its own document outline, any more than it gives it its own field list. Semantics sit with `documentContent.ts`, not with the ink — which is also why Classic's section band, formerly a bare `div`, is now a heading like the other three.
 
 ## Do's and Don'ts
 

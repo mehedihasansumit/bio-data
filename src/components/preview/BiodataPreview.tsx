@@ -2,6 +2,7 @@
 
 import { BiodataFormData } from "@/types/biodata";
 import { TemplateName } from "@/types/templates";
+import { DocHeadingLevel } from "./headings";
 import ClassicTemplate from "./ClassicTemplate";
 import ElegantTemplate from "./ElegantTemplate";
 import ModernTemplate from "./ModernTemplate";
@@ -10,19 +11,26 @@ import RoyalTemplate from "./RoyalTemplate";
 interface Props {
   data: BiodataFormData;
   template: TemplateName;
+  /**
+   * Where this document sits in the host page's outline. Defaults to a
+   * top-level region; a guide page nests its sample one level deeper.
+   */
+  headingLevel?: DocHeadingLevel;
 }
 
-const TEMPLATES: Record<
-  TemplateName,
-  (props: { data: BiodataFormData }) => React.ReactElement
-> = {
+export interface TemplateProps {
+  data: BiodataFormData;
+  headingLevel: DocHeadingLevel;
+}
+
+const TEMPLATES: Record<TemplateName, (props: TemplateProps) => React.ReactElement> = {
   classic: ClassicTemplate,
   elegant: ElegantTemplate,
   modern: ModernTemplate,
   royal: RoyalTemplate,
 };
 
-export default function BiodataPreview({ data, template }: Props) {
+export default function BiodataPreview({ data, template, headingLevel = 2 }: Props) {
   const Template = TEMPLATES[template] ?? ClassicTemplate;
 
   /* `lang` here is the *document's* language, not the interface's — the page
@@ -33,7 +41,7 @@ export default function BiodataPreview({ data, template }: Props) {
      reintroduce tracking on Bengali headings. */
   return (
     <div id="biodata-preview" lang={data.meta.documentLanguage}>
-      <Template data={data} />
+      <Template data={data} headingLevel={headingLevel} />
     </div>
   );
 }

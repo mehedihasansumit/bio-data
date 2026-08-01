@@ -1,12 +1,9 @@
 "use client";
 
-import { BiodataFormData } from "@/types/biodata";
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 import { documentTitle } from "@/lib/documentStrings";
-
-interface Props {
-  data: BiodataFormData;
-}
+import { docHeadings } from "./headings";
+import type { TemplateProps } from "./BiodataPreview";
 
 function Rows({ rows }: { rows: DocRow[] }) {
   return (
@@ -34,16 +31,17 @@ function Rows({ rows }: { rows: DocRow[] }) {
   );
 }
 
-export default function ModernTemplate({ data }: Props) {
+export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
   const { personal } = data;
   const sections = documentContent(data);
+  const { Title, Name, Section } = docHeadings(headingLevel);
 
   return (
-    <div className="bg-white p-5 max-w-[190mm] mx-auto print:p-0">
+    <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
       <div className="border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] flex flex-col">
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
           <div className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
-          <h1 className="text-[18px] font-bold text-violet-700 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</h1>
+          <Title className="text-[18px] font-bold text-violet-700 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t border-violet-300" />
           <div className="w-24 mx-auto mt-[2px] border-t border-violet-200" />
         </div>
@@ -59,7 +57,7 @@ export default function ModernTemplate({ data }: Props) {
             </div>
           )}
           <div className="flex-1 pt-1">
-            {personal.fullName && <h2 className="text-[15px] font-bold text-gray-900">{personal.fullName}</h2>}
+            {personal.fullName && <Name className="text-[15px] font-bold text-gray-900">{personal.fullName}</Name>}
             <div className="flex flex-wrap gap-2 mt-1.5">
               {headlineFacts(data).map((f) => (
                 <span key={f} className="bg-violet-50 text-violet-700 text-[9px] px-2 py-[1px] rounded-full">
@@ -73,9 +71,9 @@ export default function ModernTemplate({ data }: Props) {
         <div className="px-5 py-3 flex-1">
           {sections.map((section) => (
             <div key={section.id} className="mt-3 first:mt-0 break-inside-avoid">
-              <h3 className="text-[10px] font-bold uppercase tracking-[.15em] text-violet-600 mb-1 pb-1 border-b border-violet-100">
+              <Section className="text-[10px] font-bold uppercase tracking-[.15em] text-violet-600 mb-1 pb-1 border-b border-violet-100">
                 {section.title}
-              </h3>
+              </Section>
               <Rows rows={section.rows} />
             </div>
           ))}

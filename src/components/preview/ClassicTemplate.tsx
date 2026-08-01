@@ -1,12 +1,9 @@
 "use client";
 
-import { BiodataFormData } from "@/types/biodata";
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 import { documentTitle } from "@/lib/documentStrings";
-
-interface Props {
-  data: BiodataFormData;
-}
+import { docHeadings } from "./headings";
+import type { TemplateProps } from "./BiodataPreview";
 
 function Rows({ rows }: { rows: DocRow[] }) {
   return (
@@ -34,17 +31,18 @@ function Rows({ rows }: { rows: DocRow[] }) {
   );
 }
 
-export default function ClassicTemplate({ data }: Props) {
+export default function ClassicTemplate({ data, headingLevel }: TemplateProps) {
   const { personal } = data;
   const sections = documentContent(data);
+  const { Title, Name, Section } = docHeadings(headingLevel);
 
   return (
-    <div className="bg-white p-5 max-w-[190mm] mx-auto print:p-0">
+    <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
       <div className="border-[3px] border-double border-emerald-800 p-4 min-h-[277mm] flex flex-col">
         {/* Ornamental header */}
         <div className="text-center mb-3 break-inside-avoid">
           <div className="text-emerald-600 text-[12px] leading-none mb-1">&#10053; &#10053; &#10053;</div>
-          <h1 className="text-[18px] font-bold text-emerald-900 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</h1>
+          <Title className="text-[18px] font-bold text-emerald-900 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t border-emerald-400" />
           <div className="w-24 mx-auto mt-[2px] border-t border-emerald-400/40" />
         </div>
@@ -52,7 +50,7 @@ export default function ClassicTemplate({ data }: Props) {
         {/* Name + Photo */}
         <div className="flex justify-between items-start mb-2 break-inside-avoid">
           <div className="flex-1 pt-1">
-            {personal.fullName && <h2 className="text-[15px] font-bold text-gray-900">{personal.fullName}</h2>}
+            {personal.fullName && <Name className="text-[15px] font-bold text-gray-900">{personal.fullName}</Name>}
             <div className="flex flex-wrap gap-x-4 gap-y-0 mt-1 text-[10px] text-emerald-800">
               {headlineFacts(data).map((f) => (
                 <span key={f}>{f}</span>
@@ -72,9 +70,9 @@ export default function ClassicTemplate({ data }: Props) {
 
         {sections.map((section) => (
           <div key={section.id} className="mt-3 break-inside-avoid">
-            <div className="bg-emerald-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-[3px] rounded-sm">
+            <Section className="bg-emerald-800 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-[3px] rounded-sm">
               {section.title}
-            </div>
+            </Section>
             <div className="px-1 pt-1">
               <Rows rows={section.rows} />
             </div>

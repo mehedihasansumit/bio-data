@@ -67,7 +67,14 @@ export default function BuilderClient() {
     draft?.activeTab && tabs.includes(draft.activeTab) ? draft.activeTab : "Personal",
   );
   const [showPreview, setShowPreview] = useState(false);
-  const [savedAt, setSavedAt] = useState(false);
+  /**
+   * Whether the last autosave actually reached storage. `failed` has to be a
+   * state of its own rather than the absence of `saved`: the write throws on a
+   * full quota, which a photo reliably causes, and the draft already in storage
+   * stays behind as a stale copy. Reporting that as "Saved to this device" is
+   * the one lie this app could tell that costs someone their work.
+   */
+  const [saveState, setSaveState] = useState<"idle" | "saved" | "failed">("idle");
   const [confirmingClear, setConfirmingClear] = useState(false);
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -79,9 +86,12 @@ export default function BuilderClient() {
       try {
         const next: SavedDraft = { data, template, activeTab };
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-        setSavedAt(!isBiodataEmpty(data));
+        setSaveState(isBiodataEmpty(data) ? "idle" : "saved");
       } catch {
-        // Quota exceeded (a large photo will do it). Leave the form working.
+        // Quota exceeded — a large photo will do it. The form keeps working
+        // in memory, but the user has to be told that closing the tab now
+        // loses everything since the last successful write.
+        setSaveState("failed");
       }
     }, 600);
     return () => window.clearTimeout(timer);
@@ -104,7 +114,7 @@ export default function BuilderClient() {
     setData(initialBiodata);
     setActiveTab("Personal");
     setShowPreview(false);
-    setSavedAt(false);
+    setSaveState("idle");
     setConfirmingClear(false);
     try {
       window.localStorage.removeItem(STORAGE_KEY);
@@ -205,7 +215,18 @@ export default function BuilderClient() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 print:bg-white">
+    /* The builder's own chrome is English while the rest of the site is
+       Bengali, so it has to say so: the document `lang` is `bn`, and without
+       this every label here is handed to a screen reader as Bengali text and
+       pronounced with Bengali phonetics.
+
+       This is the honest description of what is here today, not the intended
+       end state — the tool of a Bengali-first product should be Bengali. That
+       is Interface Language, which docs/adr/0001 already separates from
+       Document Language; when it lands this attribute becomes dynamic rather
+       than disappearing. Note `#biodata-preview` sets its own `lang` from the
+       Document Language, so the sheet is unaffected either way. */
+    <div lang="en" className="min-h-screen bg-gray-50 print:bg-white">
       {/* Header */}
       <header className="bg-emerald-800 text-white px-6 py-3 print:hidden">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
@@ -336,7 +357,7 @@ export default function BuilderClient() {
                   Previous
                 </button>
                 <p aria-live="polite" className="text-xs text-gray-600">
-                  {savedAt ? "Saved to this device" : ""}
+                  {saveState === "saved" ? "Saved to this device" : ""}
                 </p>
                 <button
                   type="button"
@@ -350,6 +371,20 @@ export default function BuilderClient() {
                   Next
                 </button>
               </div>
+
+              {/* Its own line rather than the status slot above: this needs to
+                  name the problem and the way out, which does not fit between
+                  two buttons, and it must not be mistaken for the quiet
+                  "Saved" it replaces. Inline and never a dialog — the modal is
+                  reserved for destructive confirmation. */}
+              {saveState === "failed" && (
+                <p role="alert" className="mt-3 text-sm text-red-700">
+                  Your latest changes couldn&apos;t be saved on this device — its
+                  storage is full, usually because of a large photo. Use{" "}
+                  <strong className="font-semibold">Back up or restore</strong> below to
+                  keep a copy before you close this page.
+                </p>
+              )}
             </div>
 
             <DataTransfer data={data} onImport={handleImport} />
@@ -391,7 +426,7 @@ export default function BuilderClient() {
                 </div>
               ) : (
                 <>
-                  <div className="overflow-x-auto shadow-lg rounded-lg print:overflow-visible print:shadow-none print:rounded-none bg-white">
+                  <div className="sheet-fit overflow-x-auto shadow-lg rounded-lg print:overflow-visible print:shadow-none print:rounded-none bg-white">
                     <BiodataPreview data={data} template={template} />
                   </div>
                   <p className="mt-2 text-xs text-gray-600 print:hidden">

@@ -39,6 +39,34 @@ body {
   letter-spacing: normal;
 }
 
+/* The sheet is A4 or it is nothing.
+
+   The document lays out at a true 190mm and is zoomed down to whatever the
+   column can give it, so its proportions are A4 at every viewport — the A4
+   Constant Rule, which a `max-width` could never keep. A max-width lets the
+   sheet take the column's width instead: 604mm-equivalent of ~160mm beside a
+   full-height 277mm, an aspect of 0.577 against A4's 0.686, with the fixed
+   label columns holding their pixel width while the value column loses 16%.
+   Lines then wrap on screen where they don't on paper, which is the one thing
+   a live preview may not do.
+
+   `zoom` rather than `transform: scale()` because zoom reflows its parent —
+   a scaled sheet keeps its unscaled layout box and leaves a dead gap beneath
+   itself proportional to the document's length.
+
+   No JavaScript in it: the guide pages render their sample on the server so a
+   crawler sees a finished biodata, and a measured-then-scaled sheet would
+   arrive only after hydration. Where `zoom` or length division is missing the
+   declaration is dropped, the sheet stays 190mm, and the scroll container
+   below pans it — which is the behavior DESIGN.md documented anyway. */
+.sheet-fit {
+  container-type: inline-size;
+}
+
+.sheet-fit > * {
+  zoom: min(1, 100cqi / 190mm);
+}
+
 /* Confirmation dialogs.
 
    A native <dialog> lives in the top layer, so a plain transition would be cut
@@ -111,6 +139,19 @@ html:has(dialog[open]) {
   .print\:hidden,
   [class*="print:hidden"] {
     display: none !important;
+  }
+
+  /* On paper the sheet is already the size of the page box, so the screen fit
+     comes off entirely. Both halves matter: `container-type: inline-size`
+     carries layout containment, which makes a box monolithic in paged media —
+     left on, it would hold a multi-page biodata to a single page and silently
+     clip the rest, taking The Clean Break Rule with it. */
+  .sheet-fit {
+    container-type: normal;
+  }
+
+  .sheet-fit > * {
+    zoom: 1;
   }
 
   /* Force preview visible and full width */

@@ -113,8 +113,10 @@ export default async function GuidePage({
         <section className="mt-12">
           <h2 className="text-xl font-bold text-gray-900">নমুনা</h2>
           <p className="mt-3 text-gray-700 leading-relaxed">{page.sampleCaption}</p>
-          <div className="mt-4 overflow-x-auto rounded-lg bg-white shadow-lg">
-            <BiodataPreview data={page.sample} template="classic" />
+          {/* headingLevel 3: this sample sits inside the "নমুনা" section, whose
+              own h2 is right above it. */}
+          <div className="sheet-fit mt-4 overflow-x-auto rounded-lg bg-white shadow-lg">
+            <BiodataPreview data={page.sample} template="classic" headingLevel={3} />
           </div>
         </section>
 
@@ -135,7 +137,7 @@ export default async function GuidePage({
             এখনই আপনার বায়োডাটা তৈরি করুন
           </h2>
           <p className="mt-2 text-gray-700">
-            তথ্য পূরণ করুন, চারটি ডিজাইন থেকে বেছে নিন, এক পাতার PDF ডাউনলোড করুন।
+            তথ্য পূরণ করুন, চারটি ডিজাইন থেকে বেছে নিন, A4 PDF ডাউনলোড করুন।
             কোনো অ্যাকাউন্ট লাগে না।
           </p>
           <Link
