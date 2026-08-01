@@ -190,7 +190,7 @@ components:
     padding: "8px 12px"
   photo-dropzone:
     backgroundColor: "{colors.paper-emerald}"
-    textColor: "{colors.focus-emerald}"
+    textColor: "{colors.chrome-emerald}"
     rounded: "{rounded.lg}"
     width: "128px"
     height: "160px"
@@ -202,7 +202,7 @@ components:
     padding: "3px 12px"
   document-frame:
     backgroundColor: "{colors.surface-paper}"
-    width: "210mm"
+    width: "190mm"
     height: "277mm"
     padding: "16px"
 ---
@@ -223,7 +223,7 @@ The desk is intentionally plain so the record can be looked at. White panels flo
 
 - Two worlds: lifted app chrome, flat printed record. The shadow boundary is the paper boundary.
 - Emerald belongs to the chrome; document color belongs to the chosen template.
-- A4 geometry (210mm × 277mm live area) is the governing grid of the output, not a screen breakpoint.
+- A4 geometry (190mm × 277mm live area) is the governing grid of the output, not a screen breakpoint.
 - Label/value rows at 11px with fixed-width label columns — the core visual unit of the record.
 - Uppercase, wide-tracked 10px section headings; no icons, no illustration, no data visualization.
 - Ornament is limited to a single repeated Unicode dingbat, three of them, centered.
@@ -267,7 +267,7 @@ The declared `bg` value in each template triple is currently unused by the rende
 
 **The Neutral Value Rule.** In every document row, the label is colored and the value is neutral (`ink-body`). Color marks the field name, never the person's data. Nothing about a candidate is ever highlighted, tinted, or emphasized over anything else.
 
-**The Rare Red Rule.** `alert-red` appears on exactly one control — "Remove Photo" — and `alert-red-deep` only as its hover. Red is never used for required-field marks, validation, or emphasis; the required marker is a plain `*` in the label.
+**The Rare Red Rule.** Red appears in exactly two places: the "Remove Photo" control and the photo-upload error message, both in `alert-red-deep` (`alert-red` itself fails contrast on white at body size and is not used for text). Red is never used for required-field marks or emphasis; the required marker is a plain `*` in the label, unstyled.
 
 ## Typography
 
@@ -308,11 +308,11 @@ The builder's core is a **50/50 split**: form on the left, live document preview
 
 **Form density:** fields sit on a `grid-cols-1 sm:grid-cols-2` grid with a 16px gap. Wide fields (address, hometown, photo) opt into full width with `sm:col-span-2`. Section headings span the grid and carry a 2px `rule-emerald` underline with 8px of space beneath.
 
-**The document** is governed by print geometry, not screen breakpoints: `max-w-[210mm]` wide, `min-h-[277mm]` tall. The height is correct (297mm − 2 × 10mm `@page` margin = 277mm); **the width is not** — A4 minus the same margins is 190mm, so the document is currently permitted to be 20mm wider than the box it prints into. Treat 190mm as the target and the incumbent 210mm as a defect to correct. It never reflows responsively. **On narrow screens it does not currently scale either** — no transform is applied anywhere, and the preview panel's `overflow-hidden` clips the right edge, so a `TwoCol` row's fixed columns (340–360px of `shrink-0` width) are unreachable below about 400px. Scaling the sheet to fit is the intended behavior and is unimplemented. Internal padding is 20px on screen, 12px in print. Row label columns are fixed-width (115–120px for the first label, 100–110px for the second, 125–130px for the first value) so that every row aligns into columns down the page regardless of content length.
+**The document** is governed by print geometry, not screen breakpoints: `max-w-[190mm]` wide, `min-h-[277mm]` tall — exactly A4 (210 × 297mm) minus the 10mm `@page` margin on all four sides. Both figures are load-bearing: 190 = 210 − 2 × 10, and 277 = 297 − 2 × 10. The outer wrapper drops its screen padding in print (`print:p-0`) so the frame occupies the page box precisely, and no `100vh` calc is used in a paged context. It never reflows responsively. On narrow screens it does not scale either — instead the preview panel scrolls horizontally (`overflow-x-auto`, reset to `overflow-visible` in print), so a `TwoCol` row's fixed columns stay reachable below 400px rather than being clipped. Panning a fixed sheet is the deliberate behavior; the document's proportions are never distorted to fit a phone. Internal padding is 20px on screen, 12px in print. Row label columns are fixed-width (115–120px for the first label, 100–110px for the second, 125–130px for the first value) so that every row aligns into columns down the page regardless of content length.
 
 ### Named Rules
 
-**The A4 Constant Rule.** The document is 210mm × 277mm at every viewport. It is not responsive, it does not stack, and it does not gain or lose fields on small screens. What you see is what prints.
+**The A4 Constant Rule.** The document is 190mm × 277mm at every viewport. It is not responsive, it does not stack, and it does not gain or lose fields on small screens. What you see is what prints.
 
 **The One Sheet Rule.** A complete biodata — all seven sections, all fields filled — must fit on a single A4 page. Any new field, any increase in row padding, and any type-size change is measured against that budget first.
 
@@ -332,7 +332,7 @@ Print styles enforce this: `#biodata-preview` has `box-shadow: none !important`,
 - **Focus ring** (`0 0 0 2px` `focus-emerald`, with the border made transparent): every input, select, and textarea. Non-negotiable and never removed.
 - **Photo ring** (1–2px inset ring at 20–50% opacity, tinted per template): frames the candidate's photo inside the document.
 
-**Known deviation (mostly resolved).** Photo frames formerly carried `shadow-md`/`shadow-lg` inside the A4 frame. Classic, Elegant, and Modern are now ring-only and conform. **Royal is still outstanding** — it carries `shadow-md` and no ring, so it needs a ring added rather than a class removed.
+**Resolved.** Photo frames formerly carried `shadow-md`/`shadow-lg` inside the A4 frame. All four are now ring-only: Classic `ring-1` emerald at 20%, Elegant `ring-2` gold at 50%, Modern `ring-2` violet, Royal `ring-1` oxblood at 30%. No shadow of any kind now exists inside a document frame, so the rule below holds without exception.
 
 ### Named Rules
 
@@ -393,8 +393,9 @@ Two form languages, again split by world.
 - **Style:** white fill, 1px `stroke-default` border, 8px radius, 12px × 8px padding, 14px text. Full width of its grid cell. Selects and textareas share the identical class string — the system has exactly one field appearance.
 - **Label:** 14px/500 `ink-body`, sentence case, 4px above the field. Required fields are marked with a trailing `*` in the label, unstyled.
 - **Focus:** the border goes transparent and a 2px `focus-emerald` ring takes its place, so the field's outer dimensions never shift. Outline is suppressed in favor of the ring.
-- **Read-only:** `surface-workspace` fill, everything else unchanged (the auto-calculated Age field).
-- **Error:** none implemented. Validation is currently limited to a 5MB photo-size `alert()`.
+- **Read-only:** `surface-workspace` fill, everything else unchanged (the auto-calculated Age field, which also carries `aria-live` so its recalculation is announced).
+- **Error:** inline only, never a native dialog. The message sits directly beneath the control in `alert-red-deep` at 14px, carries `role="alert"`, and is wired to the input via `aria-describedby`. It names the actual problem and the recovery — the photo-size error reports the file's real size and suggests cropping — rather than restating the rule.
+- **Minimum height:** every control is at least 44px (`min-h-11`), including selects and textareas.
 
 ### Navigation
 
@@ -416,7 +417,7 @@ Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each 
 
 ### Named Rules
 
-**The Four Voices Rule.** Each template is an independent design, not a recolor. It may reinvent its layout completely — sidebar, split columns, banner header, repositioned photo — and it owns its own row and section primitives. What it inherits and may not change: the 210mm × 277mm frame, the full field vocabulary and its order of meaning, the 11px/10px type floor, the one-page budget, and the flat-paper rule. Four voices, one set of obligations.
+**The Four Voices Rule.** Each template is an independent design, not a recolor. It may reinvent its layout completely — sidebar, split columns, banner header, repositioned photo — and it owns its own row and section primitives. What it inherits and may not change: the 190mm × 277mm frame, the full field vocabulary and its order of meaning, the 11px/10px type floor, the one-page budget, and the flat-paper rule. Four voices, one set of obligations.
 
 **The Content Parity Rule.** Every template renders every field the data model can hold. A template may arrange the record differently; it may never drop a field that another template shows. Someone choosing a look must never lose information by choosing it.
 
@@ -433,7 +434,7 @@ A heading plus its rows, 12px above the previous section, flush at the top of th
 - **Do** use fixed pixel widths for document label columns so rows align down the page.
 - **Do** color the label and leave the value neutral in every document row.
 - **Do** self-suppress empty rows and empty sections rather than rendering blank fields or placeholder dashes.
-- **Do** hold new document work to 210mm × 277mm and to one page when fully filled. See The One Sheet Rule.
+- **Do** hold new document work to 190mm × 277mm and to one page when fully filled. See The One Sheet Rule.
 - **Do** design a new template as its own voice — new ink, new border language, new glyph, and a genuinely different composition if it earns one. See The Four Voices Rule.
 - **Do** render every field in every template, whatever the layout. See The Content Parity Rule.
 - **Do** keep the 2px `focus-emerald` focus ring on every field, and keep the border-to-transparent swap so focus never shifts layout.

@@ -3,12 +3,16 @@
 import { PersonalInfo } from "@/types/biodata";
 import FormSection from "@/components/ui/FormSection";
 import PhotoUpload from "@/components/ui/PhotoUpload";
+import Field, { fieldInputClass } from "@/components/ui/Field";
 import { calculateAge } from "@/lib/utils";
 
 interface Props {
   data: PersonalInfo;
   onChange: (data: PersonalInfo) => void;
 }
+
+const COMPLEXIONS = ["Very Fair", "Fair", "Medium", "Olive", "Brown", "Dark"];
+const BLOOD_GROUPS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 export default function PersonalInfoForm({ data, onChange }: Props) {
   const update = (field: keyof PersonalInfo, value: string) => {
@@ -19,9 +23,6 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
     onChange(updated);
   };
 
-  const inputClass =
-    "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm";
-
   return (
     <FormSection title="Personal Information">
       <PhotoUpload
@@ -29,93 +30,98 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
         onChange={(base64) => update("photo", base64)}
       />
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-        <input type="text" value={data.fullName} onChange={(e) => update("fullName", e.target.value)} className={inputClass} placeholder="Enter full name" />
-      </div>
+      <Field label="Full Name" required>
+        {(id) => (
+          <input id={id} type="text" value={data.fullName} onChange={(e) => update("fullName", e.target.value)} className={fieldInputClass} placeholder="Enter full name" autoComplete="name" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Birth Place</label>
-        <input type="text" value={data.birthPlace} onChange={(e) => update("birthPlace", e.target.value)} className={inputClass} placeholder="e.g., Nabinagar, B.Baria" />
-      </div>
+      <Field label="Birth Place">
+        {(id) => (
+          <input id={id} type="text" value={data.birthPlace} onChange={(e) => update("birthPlace", e.target.value)} className={fieldInputClass} placeholder="e.g., Nabinagar, B.Baria" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-        <input type="date" value={data.dateOfBirth} onChange={(e) => update("dateOfBirth", e.target.value)} className={inputClass} />
-      </div>
+      <Field label="Date of Birth">
+        {(id) => (
+          <input id={id} type="date" value={data.dateOfBirth} onChange={(e) => update("dateOfBirth", e.target.value)} className={fieldInputClass} autoComplete="bday" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
-        <input type="text" value={data.age} readOnly className={`${inputClass} bg-gray-50`} placeholder="Auto-calculated" />
-      </div>
+      <Field label="Age">
+        {(id) => (
+          <input id={id} type="text" value={data.age} readOnly aria-live="polite" className={`${fieldInputClass} bg-gray-50`} placeholder="Calculated from date of birth" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Height</label>
-        <input type="text" value={data.height} onChange={(e) => update("height", e.target.value)} className={inputClass} placeholder="e.g., 5 ft 8 in (173 cm)" />
-      </div>
+      <Field label="Height">
+        {(id) => (
+          <input id={id} type="text" value={data.height} onChange={(e) => update("height", e.target.value)} className={fieldInputClass} placeholder="e.g., 5 ft 8 in (173 cm)" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Weight</label>
-        <input type="text" value={data.weight} onChange={(e) => update("weight", e.target.value)} className={inputClass} placeholder="e.g., 66 kg" />
-      </div>
+      <Field label="Weight">
+        {(id) => (
+          <input id={id} type="text" value={data.weight} onChange={(e) => update("weight", e.target.value)} className={fieldInputClass} placeholder="e.g., 66 kg" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Complexion</label>
-        <select value={data.complexion} onChange={(e) => update("complexion", e.target.value)} className={inputClass}>
-          <option value="">Select</option>
-          <option value="Very Fair">Very Fair</option>
-          <option value="Fair">Fair</option>
-          <option value="Medium">Medium</option>
-          <option value="Olive">Olive</option>
-          <option value="Brown">Brown</option>
-          <option value="Dark">Dark</option>
-        </select>
-      </div>
+      <Field label="Complexion">
+        {(id) => (
+          <select id={id} value={data.complexion} onChange={(e) => update("complexion", e.target.value)} className={fieldInputClass}>
+            <option value="">Select</option>
+            {COMPLEXIONS.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
-        <select value={data.bloodGroup} onChange={(e) => update("bloodGroup", e.target.value)} className={inputClass}>
-          <option value="">Select</option>
-          <option value="A+">A+</option>
-          <option value="A-">A-</option>
-          <option value="B+">B+</option>
-          <option value="B-">B-</option>
-          <option value="AB+">AB+</option>
-          <option value="AB-">AB-</option>
-          <option value="O+">O+</option>
-          <option value="O-">O-</option>
-        </select>
-      </div>
+      <Field label="Blood Group">
+        {(id) => (
+          <select id={id} value={data.bloodGroup} onChange={(e) => update("bloodGroup", e.target.value)} className={fieldInputClass}>
+            <option value="">Select</option>
+            {BLOOD_GROUPS.map((b) => (
+              <option key={b} value={b}>{b}</option>
+            ))}
+          </select>
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Religion</label>
-        <input type="text" value={data.religion} onChange={(e) => update("religion", e.target.value)} className={inputClass} placeholder="e.g., Islam" />
-      </div>
+      <Field label="Religion">
+        {(id) => (
+          <input id={id} type="text" value={data.religion} onChange={(e) => update("religion", e.target.value)} className={fieldInputClass} placeholder="e.g., Islam" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Mother Tongue</label>
-        <input type="text" value={data.motherTongue} onChange={(e) => update("motherTongue", e.target.value)} className={inputClass} placeholder="e.g., Bengali" />
-      </div>
+      <Field label="Mother Tongue">
+        {(id) => (
+          <input id={id} type="text" value={data.motherTongue} onChange={(e) => update("motherTongue", e.target.value)} className={fieldInputClass} placeholder="e.g., Bengali" />
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Marital Status</label>
-        <select value={data.maritalStatus} onChange={(e) => update("maritalStatus", e.target.value)} className={inputClass}>
-          <option value="">Select</option>
-          <option value="Never Married">Never Married</option>
-          <option value="Divorced">Divorced</option>
-          <option value="Widowed">Widowed</option>
-        </select>
-      </div>
+      <Field label="Marital Status">
+        {(id) => (
+          <select id={id} value={data.maritalStatus} onChange={(e) => update("maritalStatus", e.target.value)} className={fieldInputClass}>
+            <option value="">Select</option>
+            <option value="Never Married">Never Married</option>
+            <option value="Divorced">Divorced</option>
+            <option value="Widowed">Widowed</option>
+          </select>
+        )}
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Nationality</label>
-        <input type="text" value={data.nationality} onChange={(e) => update("nationality", e.target.value)} className={inputClass} placeholder="e.g., Bangladeshi" />
-      </div>
+      <Field label="Nationality">
+        {(id) => (
+          <input id={id} type="text" value={data.nationality} onChange={(e) => update("nationality", e.target.value)} className={fieldInputClass} placeholder="e.g., Bangladeshi" autoComplete="country-name" />
+        )}
+      </Field>
 
-      <div className="sm:col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Hometown / Current City</label>
-        <input type="text" value={data.hometown} onChange={(e) => update("hometown", e.target.value)} className={inputClass} placeholder="e.g., Dhaka, Bangladesh" />
-      </div>
+      <Field label="Hometown / Current City" wide>
+        {(id) => (
+          <input id={id} type="text" value={data.hometown} onChange={(e) => update("hometown", e.target.value)} className={fieldInputClass} placeholder="e.g., Dhaka, Bangladesh" />
+        )}
+      </Field>
     </FormSection>
   );
 }

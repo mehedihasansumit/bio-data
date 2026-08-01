@@ -1,6 +1,7 @@
 "use client";
 
 import { BiodataFormData } from "@/types/biodata";
+import { documentSections } from "@/lib/documentGuards";
 
 interface Props {
   data: BiodataFormData;
@@ -47,16 +48,12 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default function ElegantTemplate({ data }: Props) {
   const { personal, education, family, address, contact, lifestyle, partner } = data;
-  const hasEdu = education.graduation || education.diploma;
-  const hasCareer = education.designation || education.company;
-  const hasFamily = family.fatherName || family.motherName;
-  const hasLifestyle = lifestyle.hobbies || lifestyle.languages;
-  const hasPartner = partner.ageRange || partner.religion;
-  const hasContact = contact.phone || contact.email;
+  const { hasEdu, hasCareer, hasFamily, hasAddress, hasLifestyle, hasPartner, hasContact } =
+    documentSections(data);
 
   return (
-    <div className="bg-white p-5 max-w-[210mm] mx-auto print:p-3">
-      <div className="border border-[#1e3a5f] p-0 relative min-h-[277mm] print:min-h-[calc(100vh-20mm)] flex flex-col">
+    <div className="bg-white p-5 max-w-[190mm] mx-auto print:p-0">
+      <div className="border border-[#1e3a5f] p-0 relative min-h-[277mm] flex flex-col">
         {/* Gold corner accents */}
         <div className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px] border-[#d4a853]" />
         <div className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px] border-[#d4a853]" />
@@ -75,7 +72,11 @@ export default function ElegantTemplate({ data }: Props) {
         <div className="flex items-start gap-4 px-5 mb-2">
           {personal.photo && (
             <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ring-2 ring-[#d4a853]/50">
-              <img src={personal.photo} alt="" className="w-full h-full object-cover" />
+              <img
+                src={personal.photo}
+                alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
           <div className="flex-1 pt-1">
@@ -85,6 +86,7 @@ export default function ElegantTemplate({ data }: Props) {
               {personal.height && <span>{personal.height.split(" (")[0]}</span>}
               {personal.religion && <span>{personal.religion}</span>}
               {personal.maritalStatus && <span>{personal.maritalStatus}</span>}
+              {personal.hometown && <span>{personal.hometown}</span>}
             </div>
           </div>
         </div>
@@ -143,11 +145,17 @@ export default function ElegantTemplate({ data }: Props) {
             </Section>
           )}
 
+          {hasAddress && (
+            <Section title="Address">
+              <Row label="Present Address" value={address.presentAddress} />
+              <Row label="Permanent Address" value={address.permanentAddress} />
+            </Section>
+          )}
+
           {hasContact && (
             <Section title="Contact Details">
               <Row label="Contact Person" value={contact.contactPerson} />
               <TwoCol l1="Phone" v1={contact.phone} l2="Email" v2={contact.email} />
-              <Row label="Address" value={address.presentAddress} />
             </Section>
           )}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { BiodataFormData } from "@/types/biodata";
+import { documentSections } from "@/lib/documentGuards";
 
 interface Props {
   data: BiodataFormData;
@@ -47,17 +48,13 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default function RoyalTemplate({ data }: Props) {
   const { personal, education, family, address, contact, lifestyle, partner } = data;
-  const hasEdu = education.graduation || education.diploma;
-  const hasCareer = education.designation || education.company;
-  const hasFamily = family.fatherName || family.motherName;
-  const hasLifestyle = lifestyle.hobbies || lifestyle.languages;
-  const hasPartner = partner.ageRange || partner.religion;
-  const hasContact = contact.phone || contact.email;
+  const { hasEdu, hasCareer, hasFamily, hasAddress, hasLifestyle, hasPartner, hasContact } =
+    documentSections(data);
 
   return (
-    <div className="bg-white p-5 max-w-[210mm] mx-auto print:p-3">
+    <div className="bg-white p-5 max-w-[190mm] mx-auto print:p-0">
       {/* Outer ornamental border */}
-      <div className="border-2 border-[#7f1d1d] p-1 min-h-[277mm] print:min-h-[calc(100vh-20mm)]">
+      <div className="border-2 border-[#7f1d1d] p-1 min-h-[277mm]">
         <div className="border border-[#b91c1c]/30 p-4 min-h-full flex flex-col">
           {/* Ornamental header */}
           <div className="text-center mb-3">
@@ -70,8 +67,12 @@ export default function RoyalTemplate({ data }: Props) {
           {/* Photo + Name */}
           <div className="flex items-start gap-4 mb-2">
             {personal.photo && (
-              <div className="w-20 h-20 rounded-md overflow-hidden shrink-0 shadow-md">
-                <img src={personal.photo} alt="" className="w-full h-full object-cover" />
+              <div className="w-20 h-20 rounded-md overflow-hidden shrink-0 ring-1 ring-[#7f1d1d]/30">
+                <img
+                src={personal.photo}
+                alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
+                className="w-full h-full object-cover"
+              />
               </div>
             )}
             <div className="flex-1 pt-1">
@@ -141,11 +142,17 @@ export default function RoyalTemplate({ data }: Props) {
             </Section>
           )}
 
+          {hasAddress && (
+            <Section title="Address">
+              <Row label="Present Address" value={address.presentAddress} />
+              <Row label="Permanent Address" value={address.permanentAddress} />
+            </Section>
+          )}
+
           {hasContact && (
             <Section title="Contact Details">
               <Row label="Contact Person" value={contact.contactPerson} />
               <TwoCol l1="Phone" v1={contact.phone} l2="Email" v2={contact.email} />
-              <Row label="Address" value={address.presentAddress} />
             </Section>
           )}
 

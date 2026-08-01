@@ -146,9 +146,14 @@ export const initialBiodata: BiodataFormData = {
   },
 };
 
+/**
+ * Illustrative example only — every value here is fictional.
+ * Never put a real person's contact details in this object: it is rendered
+ * verbatim into a printable document that users share with other families.
+ */
 export const sampleBiodata: BiodataFormData = {
   personal: {
-    fullName: "Mehedi Hasan",
+    fullName: "Rafiul Karim (example)",
     photo: "",
     birthPlace: "Nabinagar, B.Baria, Bangladesh",
     dateOfBirth: "1997-03-11",
@@ -165,37 +170,37 @@ export const sampleBiodata: BiodataFormData = {
   },
   education: {
     graduation: "B.Sc – Computer Science & Engineering",
-    graduationInstitution: "Green University of Bangladesh",
+    graduationInstitution: "Example University of Bangladesh",
     diploma: "Marine Engineering",
-    diplomaInstitution: "Shyamoli Ideal Technical Institute",
+    diplomaInstitution: "Example Technical Institute",
     school: "SSC",
-    schoolName: "Kadamtala Purbo Bashabo High School & College",
+    schoolName: "Example High School & College",
     designation: "Software Engineer",
-    company: "V2 Technologies LTD",
+    company: "Example Technologies Ltd.",
     workLocation: "Dhaka, Bangladesh",
     annualIncome: "৳12+ LPA",
     experience: "4+ years",
     domain: "Team Lead - Software Development",
   },
   family: {
-    fatherName: "Late Kamal Uddin",
-    fatherOccupation: "Government Service Holder, Bangladesh Police",
-    motherName: "Renuara Begum",
+    fatherName: "Abdul Karim",
+    fatherOccupation: "Retired Government Service Holder",
+    motherName: "Shirin Akhter",
     motherOccupation: "Homemaker",
     siblings: "2 Younger Sisters – Students (Undergraduate & Graduate)",
     familyType: "Nuclear, Upper Middle Class",
     familyValues: "Traditional & Religious",
     nativePlace: "Chowria, Nabinagar, B.Baria, Bangladesh",
-    property: "Family owns a house in Dhaka and ancestral house & property in B.Baria",
+    property: "Family owns a house in Dhaka and ancestral property in B.Baria",
   },
   address: {
-    presentAddress: "Trimohoni Bazar, Trimohoni, Khilgaon, Dhaka – 1219, Bangladesh",
+    presentAddress: "House 00, Road 00, Example Area, Dhaka – 1219, Bangladesh",
     permanentAddress: "Chowria, Nabinagar, B.Baria, Bangladesh",
   },
   contact: {
-    contactPerson: "Renuara Begum (Mother)",
-    phone: "+880 1814292958",
-    email: "mehedihasansumit@gmail.com",
+    contactPerson: "Shirin Akhter (Mother)",
+    phone: "+880 1XXXXXXXXX",
+    email: "name@example.com",
   },
   lifestyle: {
     hobbies: "Gaming, Traveling",

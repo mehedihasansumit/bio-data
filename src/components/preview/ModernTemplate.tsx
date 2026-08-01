@@ -1,6 +1,7 @@
 "use client";
 
 import { BiodataFormData } from "@/types/biodata";
+import { documentSections } from "@/lib/documentGuards";
 
 interface Props {
   data: BiodataFormData;
@@ -10,7 +11,7 @@ function Row({ label, value }: { label: string; value: string }) {
   if (!value) return null;
   return (
     <div className="flex py-[2px] text-[11px] leading-snug">
-      <span className="w-[115px] shrink-0 text-gray-400 font-medium">{label}</span>
+      <span className="w-[115px] shrink-0 text-gray-600 font-medium">{label}</span>
       <span className="text-gray-800">{value}</span>
     </div>
   );
@@ -20,11 +21,11 @@ function TwoCol({ l1, v1, l2, v2 }: { l1: string; v1: string; l2: string; v2: st
   if (!v1 && !v2) return null;
   return (
     <div className="flex py-[2px] text-[11px] leading-snug">
-      <span className="w-[115px] shrink-0 text-gray-400 font-medium">{l1}</span>
+      <span className="w-[115px] shrink-0 text-gray-600 font-medium">{l1}</span>
       <span className="w-[125px] shrink-0 text-gray-800">{v1}</span>
       {v2 && (
         <>
-          <span className="w-[100px] shrink-0 text-gray-400 font-medium">{l2}</span>
+          <span className="w-[100px] shrink-0 text-gray-600 font-medium">{l2}</span>
           <span className="text-gray-800">{v2}</span>
         </>
       )}
@@ -45,16 +46,12 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default function ModernTemplate({ data }: Props) {
   const { personal, education, family, address, contact, lifestyle, partner } = data;
-  const hasEdu = education.graduation || education.diploma;
-  const hasCareer = education.designation || education.company;
-  const hasFamily = family.fatherName || family.motherName;
-  const hasLifestyle = lifestyle.hobbies || lifestyle.languages;
-  const hasPartner = partner.ageRange || partner.religion;
-  const hasContact = contact.phone || contact.email;
+  const { hasEdu, hasCareer, hasFamily, hasAddress, hasLifestyle, hasPartner, hasContact } =
+    documentSections(data);
 
   return (
-    <div className="bg-white p-5 max-w-[210mm] mx-auto print:p-3">
-      <div className="border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] print:min-h-[calc(100vh-20mm)] flex flex-col">
+    <div className="bg-white p-5 max-w-[190mm] mx-auto print:p-0">
+      <div className="border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] flex flex-col">
         {/* Header */}
         <div className="text-center pt-5 pb-3 px-5">
           <div className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
@@ -67,7 +64,11 @@ export default function ModernTemplate({ data }: Props) {
         <div className="flex items-start gap-4 px-5 mb-2">
           {personal.photo && (
             <div className="w-[75px] h-[90px] rounded-lg overflow-hidden shrink-0 ring-2 ring-violet-200">
-              <img src={personal.photo} alt="" className="w-full h-full object-cover" />
+              <img
+                src={personal.photo}
+                alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
           <div className="flex-1 pt-1">
@@ -135,11 +136,17 @@ export default function ModernTemplate({ data }: Props) {
             </Section>
           )}
 
+          {hasAddress && (
+            <Section title="Address">
+              <Row label="Present Address" value={address.presentAddress} />
+              <Row label="Permanent Address" value={address.permanentAddress} />
+            </Section>
+          )}
+
           {hasContact && (
             <Section title="Contact Details">
               <Row label="Contact Person" value={contact.contactPerson} />
               <TwoCol l1="Phone" v1={contact.phone} l2="Email" v2={contact.email} />
-              <Row label="Address" value={address.presentAddress} />
             </Section>
           )}
 
