@@ -66,7 +66,7 @@ export default function ModernTemplate({ data }: Props) {
         {/* Name + Photo row */}
         <div className="flex items-start gap-4 px-5 mb-2">
           {personal.photo && (
-            <div className="w-[75px] h-[90px] rounded-lg overflow-hidden shrink-0 ring-2 ring-violet-200 shadow-md">
+            <div className="w-[75px] h-[90px] rounded-lg overflow-hidden shrink-0 ring-2 ring-violet-200">
               <img src={personal.photo} alt="" className="w-full h-full object-cover" />
             </div>
           )}

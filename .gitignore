@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# editors
+.idea/
+.vscode/
+*.swp
+
+# os
+Thumbs.db
+
+# local agent/tool state
+.claude/settings.local.json
+.claude/skills/
+.impeccable/

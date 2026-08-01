@@ -75,7 +75,7 @@ export default function ClassicTemplate({ data }: Props) {
             </div>
           </div>
           {personal.photo && (
-            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ml-3 shadow-md ring-1 ring-emerald-800/20">
+            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ml-3 ring-1 ring-emerald-800/20">
               <img src={personal.photo} alt="" className="w-full h-full object-cover" />
             </div>
           )}

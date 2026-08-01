@@ -1,0 +1,455 @@
+---
+name: BiyerBiodata
+description: A marriage biodata maker for Bangladeshi and Indian families — fill a form, watch an A4 document compose itself, print it.
+colors:
+  # Chrome — Deep Ceremonial Emerald (Tailwind `emerald-*` scale)
+  ink-emerald: "#064e3b"
+  chrome-emerald: "#065f46"
+  action-emerald: "#047857"
+  signal-emerald: "#059669"
+  focus-emerald: "#10b981"
+  edge-emerald: "#6ee7b7"
+  rule-emerald: "#a7f3d0"
+  wash-emerald: "#d1fae5"
+  paper-emerald: "#ecfdf5"
+  # Neutrals
+  ink-black: "#171717"
+  ink-strong: "#111827"
+  ink-body: "#374151"
+  ink-muted: "#6b7280"
+  ink-faint: "#9ca3af"
+  stroke-default: "#d1d5db"
+  stroke-subtle: "#e5e7eb"
+  surface-workspace: "#f9fafb"
+  surface-paper: "#ffffff"
+  # Destructive
+  alert-red: "#ef4444"
+  alert-red-deep: "#b91c1c"
+  # Document inks — Classic
+  classic-primary: "#065f46"
+  classic-accent: "#10b981"
+  classic-bg: "#ecfdf5"
+  # Document inks — Elegant
+  elegant-primary: "#1e3a5f"
+  elegant-accent: "#d4a853"
+  elegant-bg: "#f0f4f8"
+  # Document inks — Modern
+  modern-primary: "#6d28d9"
+  modern-heading: "#7c3aed"
+  modern-accent: "#a78bfa"
+  modern-bg: "#f5f3ff"
+  # Document inks — Royal
+  royal-primary: "#7f1d1d"
+  royal-accent: "#b91c1c"
+  royal-bg: "#fef2f2"
+typography:
+  display:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "clamp(2.25rem, 5vw, 3rem)"
+    fontWeight: 700
+    lineHeight: 1.25
+    letterSpacing: "normal"
+  headline:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "18px"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "0.15em"
+  headline-compact:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "16px"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "0.2em"
+  title:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "20px"
+    fontWeight: 700
+    lineHeight: 1.4
+    letterSpacing: "normal"
+  name:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "15px"
+    fontWeight: 700
+    lineHeight: 1.3
+    letterSpacing: "normal"
+  body:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "14px"
+    fontWeight: 400
+    lineHeight: 1.5
+    letterSpacing: "normal"
+  data:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "11px"
+    fontWeight: 400
+    lineHeight: 1.25
+    letterSpacing: "normal"
+  label:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "10px"
+    fontWeight: 700
+    lineHeight: 1.2
+    letterSpacing: "0.15em"
+  meta:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "10px"
+    fontWeight: 400
+    lineHeight: 1.3
+    letterSpacing: "normal"
+  micro:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "9px"
+    fontWeight: 400
+    lineHeight: 1.3
+    letterSpacing: "normal"
+  ornament:
+    fontFamily: "Geist, Geist Fallback, sans-serif"
+    fontSize: "12px"
+    fontWeight: 400
+    lineHeight: 1
+    letterSpacing: "normal"
+rounded:
+  sm: "4px"
+  md: "6px"
+  lg: "8px"
+  full: "9999px"
+spacing:
+  xs: "4px"
+  sm: "8px"
+  md: "12px"
+  lg: "16px"
+  xl: "24px"
+  "2xl": "32px"
+  "3xl": "64px"
+components:
+  button-cta:
+    backgroundColor: "{colors.action-emerald}"
+    textColor: "{colors.surface-paper}"
+    rounded: "{rounded.lg}"
+    padding: "14px 32px"
+  button-cta-hover:
+    backgroundColor: "{colors.chrome-emerald}"
+  button-primary:
+    backgroundColor: "{colors.action-emerald}"
+    textColor: "{colors.surface-paper}"
+    rounded: "{rounded.lg}"
+    padding: "8px 16px"
+  button-primary-hover:
+    backgroundColor: "{colors.chrome-emerald}"
+  button-secondary:
+    backgroundColor: "{colors.paper-emerald}"
+    textColor: "{colors.action-emerald}"
+    rounded: "{rounded.lg}"
+    padding: "8px 16px"
+  button-secondary-hover:
+    backgroundColor: "{colors.wash-emerald}"
+  button-inverse:
+    backgroundColor: "{colors.surface-paper}"
+    textColor: "{colors.chrome-emerald}"
+    rounded: "{rounded.lg}"
+    padding: "8px 20px"
+  button-inverse-hover:
+    backgroundColor: "{colors.paper-emerald}"
+  tab:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-muted}"
+    rounded: "{rounded.md}"
+    padding: "8px 12px"
+  tab-hover:
+    backgroundColor: "{colors.paper-emerald}"
+  tab-active:
+    backgroundColor: "{colors.action-emerald}"
+    textColor: "{colors.surface-paper}"
+    rounded: "{rounded.md}"
+    padding: "8px 12px"
+  input:
+    backgroundColor: "{colors.surface-paper}"
+    textColor: "{colors.ink-strong}"
+    typography: "{typography.body}"
+    rounded: "{rounded.lg}"
+    padding: "8px 12px"
+  input-readonly:
+    backgroundColor: "{colors.surface-workspace}"
+    textColor: "{colors.ink-body}"
+    rounded: "{rounded.lg}"
+    padding: "8px 12px"
+  card:
+    backgroundColor: "{colors.surface-paper}"
+    rounded: "{rounded.lg}"
+    padding: "24px"
+  template-chip:
+    backgroundColor: "{colors.surface-paper}"
+    textColor: "{colors.ink-strong}"
+    rounded: "{rounded.lg}"
+    padding: "8px 12px"
+  template-chip-selected:
+    backgroundColor: "{colors.surface-workspace}"
+    textColor: "{colors.ink-strong}"
+    rounded: "{rounded.lg}"
+    padding: "8px 12px"
+  photo-dropzone:
+    backgroundColor: "{colors.paper-emerald}"
+    textColor: "{colors.focus-emerald}"
+    rounded: "{rounded.lg}"
+    width: "128px"
+    height: "160px"
+  section-band:
+    backgroundColor: "{colors.chrome-emerald}"
+    textColor: "{colors.surface-paper}"
+    typography: "{typography.label}"
+    rounded: "{rounded.sm}"
+    padding: "3px 12px"
+  document-frame:
+    backgroundColor: "{colors.surface-paper}"
+    width: "210mm"
+    height: "277mm"
+    padding: "16px"
+---
+
+# Design System: BiyerBiodata
+
+## Overview
+
+**Creative North Star: "The Registrar's Desk"**
+
+This product has two visual worlds, and confusing them is the fastest way to break it. The first is the **desk**: an emerald-headed workspace where someone fills in a long form about themselves. The second is the **record**: an A4 sheet that composes itself in real time beside the form, and which will be printed, folded, and handed between two families. The desk is furniture. The record is the product. Every design decision follows from which of the two you are touching.
+
+The register-office reading is deliberate. A marriage biodata is a document of consequence — it gets read closely by people deciding something serious, and its credibility comes from looking like a record rather than a poster. So the system leans clerical: fixed label columns, uppercase section headings at 10px with wide tracking, hairline rules, values stated flatly in 11px with no emphasis, no visualization of anything. Deep Ceremonial Emerald carries the civic register — it is the green of Bangladeshi official life, formal and a little solemn, and it earns its authority by never being decorative.
+
+The desk is intentionally plain so the record can be looked at. White panels float on a gray workspace, buttons are unornamented rounded rectangles, and the entire interface is built from about six primitives repeated without variation. The one place the system permits character is inside the document frame, where four templates each speak in their own ink — emerald, navy and gold, violet, burgundy — with their own border language and their own ornamental glyph. Templates are treated as **distinct voices, not skins**: they happen to share layout primitives today, but a template is free to reinvent its composition entirely. What it may not reinvent is the record's obligations — the A4 frame, the field vocabulary, the one-page budget, and the clerical register.
+
+**Key Characteristics:**
+
+- Two worlds: lifted app chrome, flat printed record. The shadow boundary is the paper boundary.
+- Emerald belongs to the chrome; document color belongs to the chosen template.
+- A4 geometry (210mm × 277mm live area) is the governing grid of the output, not a screen breakpoint.
+- Label/value rows at 11px with fixed-width label columns — the core visual unit of the record.
+- Uppercase, wide-tracked 10px section headings; no icons, no illustration, no data visualization.
+- Ornament is limited to a single repeated Unicode dingbat, three of them, centered.
+- Light theme only, permanently.
+
+## Colors
+
+Two palettes that must not be mixed: an emerald chrome palette for the application, and four self-contained document inks selected by the user at print time.
+
+### Primary
+
+- **Deep Ceremonial Emerald** — the chrome identity, used across nine steps. `chrome-emerald` fills the app header bar and the Classic template's section bands; `action-emerald` carries every primary action (CTA, active tab, Next button, link hover); `ink-emerald` is reserved for document headings in the Classic template. The deep end reads as institutional ink, not brand color.
+- The light end is surface work only: `paper-emerald` tints hover states, the photo dropzone, and the landing hero's background wash; `wash-emerald` is its pressed/hover step; `rule-emerald` draws the underline beneath form section headings and carries secondary text on the emerald header bar.
+- `focus-emerald` exists for exactly one job: the 2px focus ring on inputs. `edge-emerald` draws the dashed dropzone border. `signal-emerald` appears only on the Classic template's ornament row.
+
+### Secondary
+
+The four **document inks** are not brand colors — they are user-selected paper stocks, declared as a `primary` / `accent` / `bg` triple per template in `src/types/templates.ts` and rendered as literal hex inside each template component.
+
+- **Classic — Register Green** (`classic-primary`): the only template that reuses the chrome emerald. Solid section bands, double border, snowflake ornaments.
+- **Elegant — Deep Naval Navy with Antique Gold** (`elegant-primary` / `elegant-accent`): navy carries every label and heading; gold is structural only — corner brackets, rule segments, ornaments, photo ring.
+- **Modern — Clean Violet** (`modern-primary`): the only template with rounded corners and pill-shaped meta chips. `modern-heading` is the actual section-heading value and sits one step lighter than the declared primary.
+- **Royal — Deep Oxblood with Signal Crimson** (`royal-primary` / `royal-accent`): oxblood for text and the outer frame, crimson for the inner hairline, section markers, and the fading gradient rule.
+
+The declared `bg` value in each template triple is currently unused by the rendered components — the document always sits on `surface-paper`. Treat it as reserved for the template chooser and future tinted stocks, not as a live background.
+
+### Neutral
+
+- `ink-black` — the root `--foreground` token; the default text color set on `body`.
+- `ink-strong` — headings and hard values (hero h1, person's name in every template, template chip names).
+- `ink-body` — every value in a document row. This is the workhorse: labels are colored by template, values are always neutral.
+- `ink-muted` — inactive tab labels, supporting copy, footer text, the "Choose Template" eyebrow.
+- `ink-faint` — Modern's row labels (the one template that uses a neutral label instead of its own ink) and template chip descriptions.
+- `stroke-default` — input borders. `stroke-subtle` — unselected template chip borders.
+- `surface-workspace` — the builder's page background and the landing footer; the gray the white panels float on.
+- `surface-paper` — every panel, every card, and every document. Paper is always white.
+
+### Named Rules
+
+**The Two Palettes Rule.** Emerald is the application's voice; the document's voice is whichever template is selected. An emerald never appears inside a non-Classic document, and a template ink never appears in the app chrome. The template chooser's swatch pairs are the only place the two worlds are allowed to touch.
+
+**The Neutral Value Rule.** In every document row, the label is colored and the value is neutral (`ink-body`). Color marks the field name, never the person's data. Nothing about a candidate is ever highlighted, tinted, or emphasized over anything else.
+
+**The Rare Red Rule.** `alert-red` appears on exactly one control — "Remove Photo" — and `alert-red-deep` only as its hover. Red is never used for required-field marks, validation, or emphasis; the required marker is a plain `*` in the label.
+
+## Typography
+
+**Display Font:** Geist (with Geist Fallback, sans-serif)
+**Body Font:** Geist (with Geist Fallback, sans-serif)
+**Label/Mono Font:** none — the system is single-family throughout.
+
+**Character:** Deliberately anonymous. A single grotesque at every size, distinguished only by weight, tracking, and case. Nothing in the type says "designed" — which is the point, because a record that looks styled looks less true. All expression comes from spacing and rule work, none from letterforms.
+
+Geist is self-hosted through `next/font/google` in `src/app/layout.tsx`, exposed as `--font-geist-sans`, mapped to `--font-sans` in the `@theme inline` block, and applied on `body`. Next emits a metric-matched `Geist Fallback` (derived from local Arial) so there is no layout shift while the face loads.
+
+> **Open gap — Bengali coverage.** Geist is loaded with `subsets: ["latin"]` and has no Bengali glyphs. The product is marketed in Bangla and users will paste Bengali into fields, so Bengali text silently falls through to whatever the OS supplies — unstyled, unmetered, and inconsistent between devices. Neither this stack nor the Arial stack it replaced ever covered Bengali; the type system is currently Latin-only by omission, not by decision. A Bengali-capable companion face (Noto Sans Bengali or Hind Siliguri) added to the same `--font-sans` stack is the real fix.
+
+### Hierarchy
+
+- **Display** (700, 36px → 48px at ≥640px, leading 1.25): the landing hero headline, and nothing else. One per site.
+- **Headline** (700, 18px, uppercase, tracking 0.15em): the words "MARRIAGE BIODATA" at the top of every template. Royal tightens to 16px and opens tracking to 0.2em; Elegant holds 18px at 0.18em.
+- **Title** (700, 20px): the app wordmark in both headers. At 18px/600 it also serves the form's section headings ("Personal Information") and at 15px/700 the candidate's name inside every document.
+- **Body** (400, 14px, leading 1.5): all interface copy, inputs, and buttons. Landing supporting copy steps up to 18px and is capped at `max-w-lg` (32rem) for line length.
+- **Label** (700, 10px, uppercase, tracking 0.12–0.15em): document section headings in all four templates, and the "Choose Template" eyebrow at 14px/600. Form field labels are the exception — 14px/500, sentence case, neutral.
+- **Data** (400, 11px, leading 1.25–1.375): every label/value row inside a document. Labels within the row step up to 600–700 weight and take the template's ink; values stay 400 and neutral.
+
+### Named Rules
+
+**The 11px Record Rule.** Document body text is 11px. Not 10, not 12. It is the size that fits a complete biodata on one A4 sheet without the row rhythm collapsing, and every template is tuned around it. Changing it re-paginates everything.
+
+**The Uppercase-Is-Structural Rule.** Uppercase plus wide tracking marks a section boundary and nothing else. Never uppercase a value, a name, a button, or a form label.
+
+**The Single Family Rule.** One font family across the whole product, chrome and documents alike. A template differentiates itself with ink, border, and ornament — never by introducing a serif, a script, or a display face.
+
+## Layout
+
+**The application** is a centered, capped column on a gray workspace. The landing page holds its header and footer to `max-w-5xl` (1024px) and its hero content to `max-w-2xl` (672px), centered, with the main region flex-grown so the footer sits at the bottom of short viewports. The builder widens to `max-w-7xl` (1280px) with 16px padding, stepping to 24px at ≥1024px.
+
+The builder's core is a **50/50 split**: form on the left, live document preview on the right, 24px gutter, each side `lg:w-1/2`. The preview column is `sticky top-4` so the document stays in view while the form scrolls. Below 1024px the split collapses to a single column and a full-width two-button segmented control ("Form" / "Preview") swaps between them — only one is mounted visible at a time.
+
+**Breakpoints in use:** `sm` 640px (form grid goes two-up, hero buttons go horizontal, hero type steps up), `lg` 1024px (split view appears, mobile toggle disappears, padding increases), plus a `print` variant that does most of the real work.
+
+**Form density:** fields sit on a `grid-cols-1 sm:grid-cols-2` grid with a 16px gap. Wide fields (address, hometown, photo) opt into full width with `sm:col-span-2`. Section headings span the grid and carry a 2px `rule-emerald` underline with 8px of space beneath.
+
+**The document** is governed by print geometry, not screen breakpoints: `max-w-[210mm]` wide, `min-h-[277mm]` tall. The height is correct (297mm − 2 × 10mm `@page` margin = 277mm); **the width is not** — A4 minus the same margins is 190mm, so the document is currently permitted to be 20mm wider than the box it prints into. Treat 190mm as the target and the incumbent 210mm as a defect to correct. It never reflows responsively. **On narrow screens it does not currently scale either** — no transform is applied anywhere, and the preview panel's `overflow-hidden` clips the right edge, so a `TwoCol` row's fixed columns (340–360px of `shrink-0` width) are unreachable below about 400px. Scaling the sheet to fit is the intended behavior and is unimplemented. Internal padding is 20px on screen, 12px in print. Row label columns are fixed-width (115–120px for the first label, 100–110px for the second, 125–130px for the first value) so that every row aligns into columns down the page regardless of content length.
+
+### Named Rules
+
+**The A4 Constant Rule.** The document is 210mm × 277mm at every viewport. It is not responsive, it does not stack, and it does not gain or lose fields on small screens. What you see is what prints.
+
+**The One Sheet Rule.** A complete biodata — all seven sections, all fields filled — must fit on a single A4 page. Any new field, any increase in row padding, and any type-size change is measured against that budget first.
+
+**The Fixed Column Rule.** Label columns are fixed pixel widths, never `auto` or fractional. Ragged label columns are what makes a form-filled document look homemade.
+
+## Elevation & Depth
+
+Hybrid, split cleanly along the world boundary. **The application uses shadows; the document does not.** White panels lift off `surface-workspace` with soft, neutral shadows to read as objects on a desk. Inside the A4 frame, depth comes exclusively from borders, hairline rules, and tonal bands — because paper has no shadow, and the moment the record picks one up it stops reading as a printable document and starts reading as a UI card.
+
+Print styles enforce this: `#biodata-preview` has `box-shadow: none !important`, and `.sticky` is reset to `position: static`.
+
+### Shadow Vocabulary
+
+- **Panel** (Tailwind `shadow-sm` — `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)`): the tab strip, the form card, and the selected template chip. The default lift for anything that is a surface.
+- **Stage** (Tailwind `shadow-lg` — `0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)`): the preview container only. This is the shadow that says "a sheet is lying on this desk." Stripped in print.
+- **Accent glow** (`shadow-lg` tinted with `rule-emerald`): the landing CTA alone. The only colored shadow in the system.
+- **Focus ring** (`0 0 0 2px` `focus-emerald`, with the border made transparent): every input, select, and textarea. Non-negotiable and never removed.
+- **Photo ring** (1–2px inset ring at 20–50% opacity, tinted per template): frames the candidate's photo inside the document.
+
+**Known deviation (mostly resolved).** Photo frames formerly carried `shadow-md`/`shadow-lg` inside the A4 frame. Classic, Elegant, and Modern are now ring-only and conform. **Royal is still outstanding** — it carries `shadow-md` and no ring, so it needs a ring added rather than a class removed.
+
+### Named Rules
+
+**The Flat Paper Rule.** Nothing inside the document frame casts a shadow. Depth inside the record is made from borders, rules, and filled bands only. If an element inside the A4 frame needs to separate from its surroundings, give it a hairline — not a shadow.
+
+**The Shadow Boundary Rule.** The outermost shadow in the preview column marks the edge of the paper. Everything inside it is print; everything outside it is screen.
+
+## Shapes
+
+Two form languages, again split by world.
+
+**The application** is uniformly soft-rectangular. `rounded-lg` (8px) is the default for buttons, inputs, cards, panels, the photo dropzone, and template chips; `rounded-md` (6px) for the smaller tab pills; `rounded-full` for nothing in the chrome. Borders are 1px `stroke-default` on inputs and 1px `stroke-subtle` on unselected chips. There are no gradients anywhere except one background wash on the landing hero (`paper-emerald` → white, top-left to bottom-right). Nothing is clipped, angled, or asymmetric.
+
+**The document** is square-cornered and frame-driven — each template's identity lives mostly in its border:
+
+- **Classic** — a single 3px `border-double` frame in `classic-primary`. Section headings are solid filled bands with `rounded-sm` (4px) corners, the only rounding inside any document.
+- **Elegant** — a 1px navy frame with four 3px gold L-brackets pinned to the corners (20px legs). Sections are marked by a short 2px gold dash, the heading, then a 2px gold rule fading to 40% opacity across the remaining width.
+- **Modern** — the outlier: a 2px `modern-accent`-tinted frame with `rounded-lg` (8px) corners and `overflow-hidden`. Sections are underlined with a 1px violet hairline. Meta facts appear as `rounded-full` pills — the only pills in the system.
+- **Royal** — a doubled frame: 2px oxblood outer with 4px of white gutter, then a 1px crimson inner at 30% opacity. Sections lead with a ✦ glyph and close with a 1px rule that gradients from 30% crimson to transparent.
+
+**Ornament** is a single repeated dingbat, three of them, centered, at the head and foot of the document — `❅` (U+2745) Classic, `❀` (U+273F) Elegant, `✻` (U+273B) Modern, and Royal alone splits its pair: `❁` (U+2740) in the header, `✦` (U+2726) as both section marker and footer. Footer glyphs run at 20–50% opacity. Beneath the header ornament sits a two-rule flourish: a 144px rule, then a 96px rule at reduced opacity, both centered.
+
+### Named Rules
+
+**The One Glyph Rule.** A template gets exactly one ornamental character, repeated three times, used twice (header and footer). No mixing, no clip art, no SVG flourishes, no borders made of repeated symbols.
+
+**The Square Paper Rule.** Document frames are square-cornered. Modern's 8px radius is a deliberate, single exception that defines its identity — a fifth template should not copy it.
+
+## Components
+
+### Buttons
+
+- **Shape:** softly rounded rectangles, 8px radius (`rounded-lg`), no border, no icon. Tab pills step down to 6px (`rounded-md`).
+- **CTA:** `action-emerald` fill, white text, 18px/600, 32px horizontal and 14px vertical padding, carrying the accent glow shadow. One per page.
+- **Primary:** `action-emerald` fill, white text, 14px/500, 16px × 8px padding. The "Next" control.
+- **Secondary:** `paper-emerald` fill, `action-emerald` text, same metrics as primary. The "Previous" control — a tinted-surface variant, not an outlined one. There are no outlined buttons in this system.
+- **Inverse:** white fill, `chrome-emerald` text, 20px × 8px padding. Lives only on the emerald header bar, where a filled emerald button would disappear.
+- **Ghost:** text-only, `rule-emerald` → white on hover. Header utilities ("Load Sample", "Clear All").
+- **Hover / Focus:** every button transitions `background-color` only, at Tailwind's default 150ms. No lift, no scale, no shadow change.
+- **Disabled:** 40% opacity plus `cursor: not-allowed`. The color does not change — the control stays recognizably itself.
+
+### Chips
+
+- **Template chip:** a horizontally scrolling row of bordered white tiles, each showing a two-swatch color pair (12px squares, 2px apart, 2px radius) beside the template name at 12px/600 and its description at 10px in `ink-faint`.
+- **State:** selected takes an `ink-strong`-adjacent dark border plus a 1px ring and `surface-workspace` fill; unselected sits on white with a `stroke-subtle` border that darkens on hover. This is the one control in the app that uses neutral rather than emerald for its selected state — correct, because it is choosing a document ink and must not bias toward Classic.
+- **Meta pill (Modern template only):** `modern-bg` fill, `modern-primary` text, 9px, fully rounded, 8px × 1px padding.
+
+### Cards / Containers
+
+- **Corner Style:** 8px (`rounded-lg`).
+- **Background:** always `surface-paper` on a `surface-workspace` page.
+- **Shadow Strategy:** Panel shadow (see Elevation). The preview container takes Stage.
+- **Border:** none. Cards separate by shadow and fill, not by stroke.
+- **Internal Padding:** 24px for the form card; 4px for the tab strip, which is a container of controls rather than of content.
+
+### Inputs / Fields
+
+- **Style:** white fill, 1px `stroke-default` border, 8px radius, 12px × 8px padding, 14px text. Full width of its grid cell. Selects and textareas share the identical class string — the system has exactly one field appearance.
+- **Label:** 14px/500 `ink-body`, sentence case, 4px above the field. Required fields are marked with a trailing `*` in the label, unstyled.
+- **Focus:** the border goes transparent and a 2px `focus-emerald` ring takes its place, so the field's outer dimensions never shift. Outline is suppressed in favor of the ring.
+- **Read-only:** `surface-workspace` fill, everything else unchanged (the auto-calculated Age field).
+- **Error:** none implemented. Validation is currently limited to a 5MB photo-size `alert()`.
+
+### Navigation
+
+- **Header:** a full-bleed `chrome-emerald` bar, 24px horizontal and 16px vertical padding, wordmark at 20px/700 white on the left, utilities right-aligned with a 12px gap. Secondary actions use `rule-emerald` text lifting to white on hover.
+- **Section tabs:** six pills in a white, shadowed strip. Active takes an `action-emerald` fill with white text; inactive is `ink-muted` text on transparent, tinting to `paper-emerald` on hover. They wrap rather than scroll.
+- **Mobile toggle:** a two-button full-width segmented control on white with a bottom border. The active side takes `action-emerald` text and a 2px `action-emerald` bottom border; the inactive side is `ink-muted` with no border.
+- **Sequential nav:** Previous (secondary) and Next (primary) pinned to opposite ends of a row separated from the form by a top border, 16px above and below.
+
+### The Document Row
+
+The signature component and the smallest meaningful unit of the record. Two variants, shared by all four templates:
+
+- **Row** — one label, one value. Label at 11px/600–700 in the template's ink, fixed 115–120px wide, non-shrinking; value at 11px/400 in `ink-body`, flowing. 2–3px vertical padding.
+- **TwoCol** — two label/value pairs on one line, for short paired facts (Height/Weight, Complexion/Blood Group). First label 115–120px, first value 125–130px, second label 100–110px, second value flowing. The second pair is omitted entirely when its value is empty, and the whole row disappears when both are.
+
+Every row self-suppresses on empty input — `if (!value) return null`. Sections do the same via explicit `has*` guards. An incomplete biodata produces a shorter document, never a document with blanks.
+
+Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each template file**, not imported from a shared module. That is deliberate under the four-voices doctrine below: a template that wants a sidebar, a two-column body, or a different row anatomy changes its own copies and touches nothing else.
+
+### Named Rules
+
+**The Four Voices Rule.** Each template is an independent design, not a recolor. It may reinvent its layout completely — sidebar, split columns, banner header, repositioned photo — and it owns its own row and section primitives. What it inherits and may not change: the 210mm × 277mm frame, the full field vocabulary and its order of meaning, the 11px/10px type floor, the one-page budget, and the flat-paper rule. Four voices, one set of obligations.
+
+**The Content Parity Rule.** Every template renders every field the data model can hold. A template may arrange the record differently; it may never drop a field that another template shows. Someone choosing a look must never lose information by choosing it.
+
+### The Document Section
+
+A heading plus its rows, 12px above the previous section, flush at the top of the page. Each template renders the heading differently — Classic fills a solid band, Elegant brackets it in gold rules, Modern underlines it in violet, Royal marks it with a glyph and a fading rule — but all four use the same 10px uppercase wide-tracked label type and all four wrap the identical row set.
+
+## Do's and Don'ts
+
+### Do:
+
+- **Do** keep the two palettes separate. Emerald for chrome, template ink for documents. See The Two Palettes Rule.
+- **Do** set document body copy at 11px and section headings at 10px uppercase with 0.12–0.15em tracking. See The 11px Record Rule.
+- **Do** use fixed pixel widths for document label columns so rows align down the page.
+- **Do** color the label and leave the value neutral in every document row.
+- **Do** self-suppress empty rows and empty sections rather than rendering blank fields or placeholder dashes.
+- **Do** hold new document work to 210mm × 277mm and to one page when fully filled. See The One Sheet Rule.
+- **Do** design a new template as its own voice — new ink, new border language, new glyph, and a genuinely different composition if it earns one. See The Four Voices Rule.
+- **Do** render every field in every template, whatever the layout. See The Content Parity Rule.
+- **Do** keep the 2px `focus-emerald` focus ring on every field, and keep the border-to-transparent swap so focus never shifts layout.
+- **Do** mark anything that must not print with `print:hidden`, and verify a real print preview before shipping any document change.
+- **Do** transition background color only on hover; 150ms, no movement.
+
+### Don't:
+
+- **Don't** put a shadow inside the A4 frame. See The Flat Paper Rule.
+- **Don't** add a dark theme. This is a paper-first product — the document is always white paper, and dark chrome around white paper reads as broken. Light only.
+- **Don't** let it become matrimonial-site kitsch: no pink/gold gradients, no floral corner clipart, no diya, mandala, or paisley fills, no script or display fonts. The three-dingbat ornament row is the ceiling for decoration.
+- **Don't** let it become a generic SaaS landing page: no purple-to-blue hero gradients, no floating 3D screenshots, no "Trusted by 10,000+" badge rows, no gradient text. The landing hero's `paper-emerald`-to-white wash is the only gradient permitted in the chrome.
+- **Don't** let it become a résumé template. No skill bars, no progress rings, no timeline rails, no rating dots, no scoring. Fields are stated as facts for a family to read, never visualized.
+- **Don't** introduce a second font family, in either world.
+- **Don't** uppercase anything that isn't a section heading.
+- **Don't** use red for validation, required marks, or emphasis. See The Rare Red Rule.
+- **Don't** add outlined buttons. Secondary means a tinted `paper-emerald` surface, not a border.
+- **Don't** make the document responsive. It reflows for nobody.
+- **Don't** copy Modern's 8px document radius into a new template — it is that template's identity, not a system default.

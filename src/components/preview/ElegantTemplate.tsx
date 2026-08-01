@@ -74,7 +74,7 @@ export default function ElegantTemplate({ data }: Props) {
         {/* Name + Photo row */}
         <div className="flex items-start gap-4 px-5 mb-2">
           {personal.photo && (
-            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ring-2 ring-[#d4a853]/50 shadow-lg">
+            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ring-2 ring-[#d4a853]/50">
               <img src={personal.photo} alt="" className="w-full h-full object-cover" />
             </div>
           )}
