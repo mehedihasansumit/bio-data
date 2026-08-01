@@ -41,7 +41,9 @@ export default function ClassicTemplate({ data, headingLevel }: TemplateProps) {
       <div className="border-[3px] border-double border-emerald-800 p-4 min-h-[277mm] flex flex-col">
         {/* Ornamental header */}
         <div className="text-center mb-3 break-inside-avoid">
-          <div className="text-emerald-600 text-[12px] leading-none mb-1">&#10053; &#10053; &#10053;</div>
+          {/* Ornament, not content. Unhidden, a screen reader opens every
+              biodata with "snowflake snowflake snowflake". */}
+          <div aria-hidden="true" className="text-emerald-600 text-[12px] leading-none mb-1">&#10053; &#10053; &#10053;</div>
           <Title className="text-[18px] font-bold text-emerald-900 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t border-emerald-400" />
           <div className="w-24 mx-auto mt-[2px] border-t border-emerald-400/40" />
@@ -80,7 +82,7 @@ export default function ClassicTemplate({ data, headingLevel }: TemplateProps) {
         ))}
 
         <div className="text-center mt-auto pt-4">
-          <div className="text-emerald-600/40 text-[10px]">&#10053; &#10053; &#10053;</div>
+          <div aria-hidden="true" className="text-emerald-600/40 text-[10px]">&#10053; &#10053; &#10053;</div>
         </div>
       </div>
     </div>

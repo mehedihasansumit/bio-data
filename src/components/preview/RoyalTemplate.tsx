@@ -47,10 +47,19 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
 
   return (
     <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
-      <div className="border-2 p-1 min-h-[277mm]" style={{ borderColor: OXBLOOD }}>
-        <div className="border p-4 min-h-full flex flex-col" style={{ borderColor: `${CRIMSON}4d` }}>
+      {/* `flex-1` on the inner frame, not `min-h-full`. A percentage min-height
+          resolves against the parent's *height*, which is auto here — the
+          parent only has a min-height — so it computed to 0 and the crimson
+          frame stopped at the end of the content, floating inside a full-page
+          oxblood border with the footer ornament stranded under the last row.
+          Growing the inner frame in a flex column is what the other three
+          templates get for free by putting the min-height on the frame itself. */}
+      <div className="border-2 p-1 min-h-[277mm] flex flex-col" style={{ borderColor: OXBLOOD }}>
+        <div className="border p-4 flex-1 flex flex-col" style={{ borderColor: `${CRIMSON}4d` }}>
           <div className="text-center mb-3 break-inside-avoid">
-            <div className="text-[14px] leading-none mb-1" style={{ color: CRIMSON }}>&#10048; &#10048; &#10048;</div>
+            {/* Ornament, not content. Unhidden, a screen reader opens every
+                biodata with "florette florette florette". */}
+            <div aria-hidden="true" className="text-[14px] leading-none mb-1" style={{ color: CRIMSON }}>&#10048; &#10048; &#10048;</div>
             <Title className="text-[16px] font-bold tracking-[.2em] uppercase" style={{ color: OXBLOOD }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
             <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: `${CRIMSON}66` }} />
             <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${CRIMSON}33` }} />
@@ -80,7 +89,7 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
           {sections.map((section) => (
             <div key={section.id} className="mt-3 break-inside-avoid">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px]" style={{ color: CRIMSON }}>&#10022;</span>
+                <span aria-hidden="true" className="text-[10px]" style={{ color: CRIMSON }}>&#10022;</span>
                 <Section className="text-[10px] font-bold uppercase tracking-[.12em]" style={{ color: OXBLOOD }}>
                   {section.title}
                 </Section>
@@ -96,7 +105,7 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
           ))}
 
           <div className="text-center mt-auto pt-4">
-            <div className="text-[10px]" style={{ color: `${CRIMSON}66` }}>&#10022; &#10022; &#10022;</div>
+            <div aria-hidden="true" className="text-[10px]" style={{ color: `${CRIMSON}66` }}>&#10022; &#10022; &#10022;</div>
           </div>
         </div>
       </div>

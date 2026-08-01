@@ -40,7 +40,9 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
     <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
       <div className="border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] flex flex-col">
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
-          <div className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
+          {/* Ornament, not content. Unhidden, a screen reader opens every
+              biodata with "six petalled black and white florette" ×3. */}
+          <div aria-hidden="true" className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
           <Title className="text-[18px] font-bold text-violet-700 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t border-violet-300" />
           <div className="w-24 mx-auto mt-[2px] border-t border-violet-200" />
@@ -79,7 +81,7 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
           ))}
 
           <div className="text-center mt-auto pt-4">
-            <div className="text-violet-300 text-[10px]">&#10043; &#10043; &#10043;</div>
+            <div aria-hidden="true" className="text-violet-300 text-[10px]">&#10043; &#10043; &#10043;</div>
           </div>
         </div>
       </div>

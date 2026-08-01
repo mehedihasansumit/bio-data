@@ -49,7 +49,9 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
         <div className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px]" style={{ borderColor: GOLD }} />
 
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
-          <div className="text-[12px] leading-none mb-1" style={{ color: GOLD }}>&#10047; &#10047; &#10047;</div>
+          {/* Ornament, not content. Unhidden, a screen reader opens every
+              biodata with "black florette black florette black florette". */}
+          <div aria-hidden="true" className="text-[12px] leading-none mb-1" style={{ color: GOLD }}>&#10047; &#10047; &#10047;</div>
           <Title className="text-[18px] font-bold tracking-[.18em] uppercase" style={{ color: NAVY }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: GOLD }} />
           <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${GOLD}66` }} />
@@ -92,7 +94,7 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
           ))}
 
           <div className="text-center mt-auto pt-4">
-            <div className="text-[10px]" style={{ color: `${GOLD}80` }}>&#10047; &#10047; &#10047;</div>
+            <div aria-hidden="true" className="text-[10px]" style={{ color: `${GOLD}80` }}>&#10047; &#10047; &#10047;</div>
           </div>
         </div>
       </div>

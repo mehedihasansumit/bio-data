@@ -44,8 +44,20 @@ export default function PersonalInfoForm({ data, onChange }: Props) {
         {(id) => <input id={id} type="time" value={data.timeOfBirth} onChange={(e) => update("timeOfBirth", e.target.value)} className={fieldInputClass} />}
       </Field>
 
+      {/* Age is derived, so its change has to be announced — but not by putting
+          `aria-live` on the input, which is what this did. A live region watches
+          for text-content mutations; an input's `value` is a property, so
+          nothing was ever spoken. The announcement comes from a visually-hidden
+          region carrying real text instead. */}
       <Field label="Age">
-        {(id) => <input id={id} type="text" value={data.age} readOnly aria-live="polite" className={`${fieldInputClass} bg-gray-50`} placeholder="Calculated from date of birth" />}
+        {(id) => (
+          <>
+            <input id={id} type="text" value={data.age} readOnly className={`${fieldInputClass} bg-gray-50`} placeholder="Calculated from date of birth" />
+            <span aria-live="polite" className="sr-only">
+              {data.age ? `Age: ${data.age}` : ""}
+            </span>
+          </>
+        )}
       </Field>
 
       <Field label="Height">

@@ -34,6 +34,19 @@ const slug = (tab: Tab) => tab.toLowerCase().replace(/[^a-z]+/g, "-");
 
 const STORAGE_KEY = "biyerbiodata:draft:v1";
 
+/**
+ * The photo lives under its own key, apart from the rest of the draft.
+ *
+ * Everything else a biodata holds is text and serializes to tens of kilobytes;
+ * a photo is base64 and runs to several megabytes. Kept in one blob, every
+ * 600ms autosave — so every pause in typing — meant `JSON.stringify` over that
+ * megabyte string and a synchronous write of the result, on a low-end Android
+ * phone, which is the device this product is mostly used on. Split out, the
+ * per-keystroke write is the text alone and the photo is written only when the
+ * photo itself changes.
+ */
+const PHOTO_KEY = "biyerbiodata:draft:photo:v1";
+
 interface SavedDraft {
   data: BiodataFormData;
   template: TemplateName;
@@ -41,15 +54,20 @@ interface SavedDraft {
 }
 
 /**
- * Read the saved draft. Safe to call during render because this component is
- * only ever mounted on the client (see builder/page.tsx, `ssr: false`), which
- * is also what keeps the restored draft from causing a hydration mismatch.
+ * Read the saved draft and put the photo back on it. Safe to call during
+ * render because this component is only ever mounted on the client (see
+ * builder/page.tsx, `ssr: false`), which is also what keeps the restored draft
+ * from causing a hydration mismatch.
  */
 function readDraft(): Partial<SavedDraft> | null {
   if (typeof window === "undefined") return null;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Partial<SavedDraft>) : null;
+    if (!raw) return null;
+    const draft = JSON.parse(raw) as Partial<SavedDraft>;
+    const photo = window.localStorage.getItem(PHOTO_KEY);
+    if (photo && draft.data?.personal) draft.data.personal.photo = photo;
+    return draft;
   } catch {
     // A corrupt or unreadable draft must never block the builder.
     return null;
@@ -78,21 +96,51 @@ export default function BuilderClient() {
   const [confirmingClear, setConfirmingClear] = useState(false);
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  /** The photo currently in storage, so autosave can skip rewriting it. */
+  const savedPhotoRef = useRef<string | null>(draft?.data?.personal?.photo ?? null);
   const isEmpty = isBiodataEmpty(data);
 
   // Autosave, debounced so typing doesn't hit storage on every keystroke.
   useEffect(() => {
     const timer = window.setTimeout(() => {
+      const { photo } = data.personal;
+      let ok = true;
+
+      // The text half: small, and written on every change.
       try {
-        const next: SavedDraft = { data, template, activeTab };
+        const next: SavedDraft = {
+          data: { ...data, personal: { ...data.personal, photo: "" } },
+          template,
+          activeTab,
+        };
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-        setSaveState(isBiodataEmpty(data) ? "idle" : "saved");
       } catch {
-        // Quota exceeded — a large photo will do it. The form keeps working
-        // in memory, but the user has to be told that closing the tab now
-        // loses everything since the last successful write.
-        setSaveState("failed");
+        ok = false;
       }
+
+      // The photo half: large, and written only when it actually changed.
+      if (ok && photo !== savedPhotoRef.current) {
+        try {
+          if (photo) window.localStorage.setItem(PHOTO_KEY, photo);
+          else window.localStorage.removeItem(PHOTO_KEY);
+          savedPhotoRef.current = photo;
+        } catch {
+          // Quota exceeded — a large photo is what does it. Drop the stale
+          // photo rather than leave a draft that would restore with the wrong
+          // one, and keep the text, which did fit. `savedPhotoRef` stays out
+          // of sync on purpose so the next change retries: quota can free up,
+          // and removing the photo has to be able to recover from this.
+          try {
+            window.localStorage.removeItem(PHOTO_KEY);
+          } catch {
+            // Nothing left to try; the report below is what matters.
+          }
+          savedPhotoRef.current = null;
+          ok = false;
+        }
+      }
+
+      setSaveState(!ok ? "failed" : isBiodataEmpty(data) ? "idle" : "saved");
     }, 600);
     return () => window.clearTimeout(timer);
   }, [data, template, activeTab]);
@@ -116,8 +164,10 @@ export default function BuilderClient() {
     setShowPreview(false);
     setSaveState("idle");
     setConfirmingClear(false);
+    savedPhotoRef.current = null;
     try {
       window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(PHOTO_KEY);
     } catch {
       // The in-memory reset already happened; nothing to recover.
     }

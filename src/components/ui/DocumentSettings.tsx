@@ -7,6 +7,7 @@ import {
   DocumentLanguage,
   DOCUMENT_LANGUAGES,
 } from "@/types/biodata";
+import { useRovingRadio } from "@/components/ui/useRovingRadio";
 
 interface Props {
   meta: BiodataMeta;
@@ -43,11 +44,13 @@ function Segmented<T extends string>({
 }: {
   label: string;
   hint: string;
-  options: T[];
+  options: readonly T[];
   labels: Record<T, { bn: string; en: string }>;
   selected: T;
   onSelect: (value: T) => void;
 }) {
+  const { radioProps } = useRovingRadio(options, selected, onSelect);
+
   return (
     <div>
       {/* Not uppercase and not tracked: this heading carries Bengali, where the
@@ -56,15 +59,12 @@ function Segmented<T extends string>({
       <h3 className="text-xs font-semibold text-gray-700">{label}</h3>
       <p className="text-[11px] text-gray-500 mb-1.5">{hint}</p>
       <div role="radiogroup" aria-label={hint} className="flex gap-2 overflow-x-auto pb-1">
-        {options.map((option) => {
+        {options.map((option, i) => {
           const isSelected = selected === option;
           return (
             <button
               key={option}
-              type="button"
-              role="radio"
-              aria-checked={isSelected}
-              onClick={() => onSelect(option)}
+              {...radioProps(option, i)}
               className={`min-h-11 px-3 py-1.5 rounded-lg border text-left transition-colors shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 ${
                 isSelected
                   ? "border-emerald-700 bg-emerald-700 text-white"
