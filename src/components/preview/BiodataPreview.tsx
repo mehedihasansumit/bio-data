@@ -23,7 +23,15 @@ export interface TemplateProps {
   headingLevel: DocHeadingLevel;
 }
 
-const TEMPLATES: Record<TemplateName, (props: TemplateProps) => React.ReactElement> = {
+/**
+ * Every template the preview can render, keyed by the id the chooser hands it.
+ *
+ * Exported so `templateRegistry.test.ts` can assert this map and the chooser's
+ * `templates` list agree. The `?? ClassicTemplate` fallback below is what makes
+ * a mismatch silent — a chip that renders someone else's document rather than
+ * an error — so the agreement is worth a test.
+ */
+export const TEMPLATES: Record<TemplateName, (props: TemplateProps) => React.ReactElement> = {
   classic: ClassicTemplate,
   elegant: ElegantTemplate,
   modern: ModernTemplate,
