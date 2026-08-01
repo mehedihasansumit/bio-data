@@ -19,9 +19,12 @@ export const webApplicationSchema = {
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any",
   browserRequirements: "Requires JavaScript",
-  inLanguage: "en",
+  /* The site's own pages are Bengali; the tool itself produces a document in
+     either language, which is what `availableLanguage` records. */
+  inLanguage: "bn",
+  availableLanguage: ["bn", "en"],
   description:
-    "A free browser-based tool for composing a marriage biodata and downloading it as a print-ready A4 PDF.",
+    "বিনামূল্যে বিয়ের বায়োডাটা তৈরি ও PDF ডাউনলোড করার অনলাইন টুল। A free browser-based tool for composing a marriage biodata and downloading it as a print-ready A4 PDF.",
   featureList: [
     "Live preview while typing",
     "Four document templates",
@@ -40,6 +43,50 @@ export const webApplicationSchema = {
     url: "https://www.linkedin.com/in/mehedi-hasan-103621210",
   },
 } as const;
+
+/**
+ * FAQ markup for a guide page.
+ *
+ * Worth being clear about what this does and does not buy: since Google's 2023
+ * change, FAQPage no longer produces a visible rich result for anyone outside
+ * government and health. There will be no accordion in the SERP. It is included
+ * because it states, unambiguously, which text on the page is a question and
+ * which is its answer — which is what an LLM crawler reads.
+ */
+export function faqSchema(slug: string, faq: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${SITE_URL}/${slug}#faq`,
+    inLanguage: "bn",
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+}
+
+export function breadcrumbSchema(slug: string, name: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: SITE_NAME,
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name,
+        item: `${SITE_URL}/${slug}`,
+      },
+    ],
+  };
+}
 
 /** Renders a schema object into the exact string a `<script>` tag expects. */
 export function jsonLd(schema: object): string {

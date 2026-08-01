@@ -9,18 +9,19 @@ import BuilderLoader from "@/components/builder/BuilderLoader";
  * lives one level down, in `BuilderLoader`.
  */
 export const metadata: Metadata = {
-  title: "Biodata Builder",
+  title: "বায়োডাটা বিল্ডার — তথ্য পূরণ করে PDF ডাউনলোড করুন",
   description:
-    "Fill in your details and watch your marriage biodata build itself. Choose from four templates, preview live, and download a print-ready A4 PDF.",
+    "তথ্য পূরণ করুন, সঙ্গে সঙ্গে প্রিভিউ দেখুন। চারটি ডিজাইন, বাংলা ও ইংরেজি দুই ভাষা, ছাপার উপযোগী এক পাতার A4 PDF — সম্পূর্ণ বিনামূল্যে।",
   alternates: {
     canonical: "/builder",
   },
   openGraph: {
-    title: "Biodata Builder | BiyerBiodata",
+    title: "বায়োডাটা বিল্ডার | BiyerBiodata",
     description:
-      "Fill in your details and watch your marriage biodata build itself. Four templates, live preview, print-ready PDF.",
+      "তথ্য পূরণ করুন, প্রিভিউ দেখুন, এক পাতার PDF ডাউনলোড করুন। চারটি ডিজাইন, দুই ভাষা, বিনামূল্যে।",
     url: "/builder",
     type: "website",
+    locale: "bn_BD",
   },
 };
 

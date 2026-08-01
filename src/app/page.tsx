@@ -1,96 +1,157 @@
-import Image from "next/image";
 import Link from "next/link";
-import { jsonLd, webApplicationSchema } from "@/lib/structuredData";
+import PageShell from "@/components/landing/PageShell";
+import { LANDING_PAGES } from "@/lib/landingPages";
+import { faqSchema, jsonLd, webApplicationSchema } from "@/lib/structuredData";
+
+/**
+ * ⚠️ BENGALI COPY — DRAFTED, AWAITING NATIVE-SPEAKER REVIEW.
+ * Written by an assistant; register and idiom are the likely problems.
+ */
+const FEATURES = [
+  {
+    title: "সব ঘর আগে থেকেই সাজানো",
+    body: "কোন তথ্য কোথায় লিখবেন ভাবতে হবে না। পরিবারগুলো যা দেখতে চান, সেই ঘরগুলো ধাপে ধাপে সাজানো আছে।",
+  },
+  {
+    title: "লেখার সঙ্গে সঙ্গেই প্রিভিউ",
+    body: "টাইপ করার সঙ্গে সঙ্গে ডান পাশে বায়োডাটা তৈরি হতে থাকে। ছাপার আগেই দেখে নিতে পারবেন কেমন দেখাচ্ছে।",
+  },
+  {
+    title: "এক পাতার A4 PDF",
+    body: "চারটি ডিজাইনের যেকোনো একটি বেছে নিন। এক ক্লিকে ছাপুন, বা PDF করে হোয়াটসঅ্যাপে পাঠিয়ে দিন।",
+  },
+];
+
+const STEPS = [
+  "ধর্ম ও কার বায়োডাটা তা বেছে নিন — সেই অনুযায়ী প্রয়োজনীয় ঘরগুলোই দেখানো হবে।",
+  "তথ্য পূরণ করুন। যেটি নেই সেটি খালি রাখুন — খালি ঘর বায়োডাটায় ছাপা হয় না।",
+  "ডিজাইন বেছে নিন এবং ভাষা ঠিক করুন — বাংলা না ইংরেজি।",
+  "PDF ডাউনলোড করুন বা সরাসরি ছাপুন।",
+];
+
+const HOME_FAQ = [
+  {
+    q: "এটি কি সত্যিই বিনামূল্যে?",
+    a: "হ্যাঁ। কোনো অ্যাকাউন্ট লাগে না, কোনো ফি নেই, ডাউনলোডে কোনো জলছাপও বসে না।",
+  },
+  {
+    q: "আমার তথ্য কি আপনাদের সার্ভারে যায়?",
+    a: "না। বায়োডাটা আপনার নিজের ব্রাউজারেই সংরক্ষিত থাকে। আপনি না পাঠালে কোনো তথ্য কোথাও যায় না।",
+  },
+  {
+    q: "বায়োডাটা কি বাংলায় বানানো যায়?",
+    a: "যায়। ছাপা বায়োডাটার ভাষা বাংলা বা ইংরেজি — যেকোনোটি বেছে নিতে পারেন, এবং পরেও বদলাতে পারেন।",
+  },
+  {
+    q: "পরে আবার সম্পাদনা করা যাবে?",
+    a: "যাবে। একই ব্রাউজারে ফিরে এলে আপনার লেখা তথ্য সেভ করা থাকবে। চাইলে ফাইল আকারে ব্যাকআপ নিয়ে অন্য ডিভাইসেও খুলতে পারবেন।",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd(webApplicationSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(faqSchema("", HOME_FAQ)) }}
+      />
 
-      {/* Header */}
-      <header className="bg-emerald-800 text-white py-4 px-6">
-        <div className="max-w-5xl mx-auto flex items-center gap-2">
-          <Image src="/icon.svg" alt="BiyerBiodata logo" width={28} height={28} />
-          <h2 className="text-xl font-bold">BiyerBiodata</h2>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <main className="flex-1 flex items-center justify-center bg-gradient-to-br from-emerald-50 to-white px-6">
-        <div className="max-w-2xl text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Create Your Marriage{" "}
-            <span className="text-emerald-700">Biodata</span> in Minutes
+      <section className="bg-gradient-to-br from-emerald-50 to-white px-6 py-16 sm:py-20">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-3xl sm:text-5xl font-bold text-gray-900 leading-snug">
+            বিয়ের <span className="text-emerald-700">বায়োডাটা</span> তৈরি করুন
+            কয়েক মিনিটে
           </h1>
-          <p className="text-lg text-gray-600 mb-8 max-w-lg mx-auto">
-            Fill in your details, see a live preview, and download a
-            beautifully formatted biodata ready to share with prospective
-            families.
+          <p className="mt-6 text-lg text-gray-700 leading-relaxed">
+            তথ্য পূরণ করুন, সঙ্গে সঙ্গে প্রিভিউ দেখুন, আর ছাপার উপযোগী এক পাতার
+            বায়োডাটা ডাউনলোড করুন — পাত্র বা পাত্রীপক্ষের হাতে দেওয়ার জন্য
+            সম্পূর্ণ প্রস্তুত।
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/builder"
-              className="inline-flex items-center justify-center px-8 py-3.5 text-lg font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 transition-colors shadow-lg shadow-emerald-200"
-            >
-              Create Your Biodata
-            </Link>
-          </div>
-
-          {/* Features */}
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 text-left">
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-1">
-                Easy to Fill
-              </h3>
-              <p className="text-sm text-gray-500">
-                Step-by-step form with all the fields families expect to see.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-1">
-                Live Preview
-              </h3>
-              <p className="text-sm text-gray-500">
-                See your biodata update in real-time as you type.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-1">
-                Print & Download
-              </h3>
-              <p className="text-sm text-gray-500">
-                One click to print or save as PDF. Clean A4 format.
-              </p>
-            </div>
-          </div>
+          <Link
+            href="/builder"
+            className="mt-8 inline-flex items-center justify-center min-h-12 px-8 py-3.5 text-lg font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 transition-colors shadow-lg shadow-emerald-200"
+          >
+            বায়োডাটা তৈরি করুন
+          </Link>
+          <p className="mt-4 text-sm text-gray-600">
+            বিনামূল্যে · অ্যাকাউন্ট লাগে না · তথ্য আপনার ডিভাইসেই থাকে
+          </p>
         </div>
-      </main>
+      </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-50 border-t py-6 px-6 text-sm text-gray-500">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p>BiyerBiodata — Create beautiful marriage biodata effortlessly.</p>
-          <div className="flex items-center gap-4">
-            <a
-              href="mailto:mehedihasansumit@gmail.com"
-              className="hover:text-emerald-700 transition-colors"
-            >
-              mehedihasansumit@gmail.com
-            </a>
-            <a
-              href="https://www.linkedin.com/in/mehedi-hasan-103621210"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-emerald-700 transition-colors"
-            >
-              LinkedIn
-            </a>
-          </div>
+      <section className="px-6 py-14">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
+          {FEATURES.map((feature) => (
+            <div key={feature.title}>
+              <h2 className="font-semibold text-gray-900">{feature.title}</h2>
+              <p className="mt-2 text-sm text-gray-600 leading-relaxed">{feature.body}</p>
+            </div>
+          ))}
         </div>
-      </footer>
-    </div>
+      </section>
+
+      <section className="px-6 py-14 bg-gray-50 border-y border-gray-200">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900">কীভাবে কাজ করে</h2>
+          <ol className="mt-5 flex flex-col gap-4">
+            {STEPS.map((step, i) => (
+              <li key={step} className="flex gap-4">
+                <span
+                  aria-hidden="true"
+                  className="shrink-0 w-7 h-7 rounded-full bg-emerald-700 text-white text-sm font-semibold flex items-center justify-center"
+                >
+                  {i + 1}
+                </span>
+                <span className="text-gray-700 leading-relaxed">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="px-6 py-14">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900">
+            কোন ধরনের বায়োডাটা বানাবেন?
+          </h2>
+          <p className="mt-3 text-gray-700 leading-relaxed">
+            প্রতিটির জন্য আলাদা নির্দেশনা ও একটি সম্পূর্ণ নমুনা দেওয়া আছে।
+          </p>
+          <ul className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {LANDING_PAGES.map((page) => (
+              <li key={page.slug}>
+                <Link
+                  href={`/${page.slug}`}
+                  className="block min-h-11 rounded-lg border border-gray-300 bg-white p-4 hover:border-emerald-600 transition-colors"
+                >
+                  <span className="block font-semibold text-gray-900">{page.h1}</span>
+                  <span className="block mt-1 text-sm text-gray-600">
+                    ফরম্যাট, নিয়ম ও নমুনা
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="px-6 pb-16">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900">সাধারণ প্রশ্ন</h2>
+          <dl className="mt-5 flex flex-col gap-5">
+            {HOME_FAQ.map((item) => (
+              <div key={item.q}>
+                <dt className="font-semibold text-gray-900">{item.q}</dt>
+                <dd className="mt-1 text-gray-700 leading-relaxed">{item.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+    </PageShell>
   );
 }

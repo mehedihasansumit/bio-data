@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
+import { LANDING_PAGES } from "@/lib/landingPages";
 
 /**
  * `lastModified` is deliberately omitted. The honest value is "when this page's
@@ -19,5 +20,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    ...LANDING_PAGES.map((page) => ({
+      url: `${SITE_URL}/${page.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 }

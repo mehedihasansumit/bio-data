@@ -17,45 +17,42 @@ const geistSans = Geist({
  *
  * Only the `bengali` subset is requested: Latin never reaches this face because
  * Geist sits ahead of it in the stack, so Hind Siliguri's Latin glyphs would be
- * pure weight. `preload` is off because the site's own copy is still English —
- * the browser fetches this lazily, on the first Bengali glyph. Once Bengali
- * content lands, preload should be turned back on, because the face will then
- * be rendering the largest contentful paint.
+ * pure weight. Preloaded (the default) now that the site's own copy is Bengali
+ * — this face renders the largest contentful paint on every page, so deferring
+ * it to first-glyph discovery would cost exactly the metric it feeds.
  */
 const hindSiliguri = Hind_Siliguri({
   variable: "--font-hind-siliguri",
   subsets: ["bengali"],
   weight: ["400", "500", "600", "700"],
-  preload: false,
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default:
-      "BiyerBiodata — বিয়ের বায়োডাটা | Marriage Biodata Maker BD & India",
+    default: "বিয়ের বায়োডাটা তৈরি করুন — বিনামূল্যে | BiyerBiodata",
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Create a complete marriage biodata online, free. Fill in your details, choose a template, and download a print-ready A4 PDF to share with prospective families.",
+    "বিয়ের বায়োডাটা অনলাইনে তৈরি করুন, সম্পূর্ণ বিনামূল্যে। তথ্য পূরণ করুন, ডিজাইন বেছে নিন, এক পাতার A4 PDF ডাউনলোড করুন। বাংলা ও ইংরেজি — দুই ভাষাতেই।",
   applicationName: SITE_NAME,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "BiyerBiodata — Marriage Biodata Maker | Bangladesh & India",
+    title: "বিয়ের বায়োডাটা তৈরি করুন — বিনামূল্যে | BiyerBiodata",
     description:
-      "Create a beautiful marriage biodata in minutes. Free online biodata maker for Bangladeshi & Indian families. Download as PDF.",
+      "তথ্য পূরণ করুন, সঙ্গে সঙ্গে প্রিভিউ দেখুন, ছাপার উপযোগী এক পাতার বায়োডাটা ডাউনলোড করুন। বাংলা ও ইংরেজি দুই ভাষাতেই।",
     url: "/",
     siteName: SITE_NAME,
-    locale: "en_US",
+    locale: "bn_BD",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "BiyerBiodata — Marriage Biodata Maker",
+    title: "বিয়ের বায়োডাটা তৈরি করুন — বিনামূল্যে",
     description:
-      "Create a beautiful marriage biodata in minutes. Free, and yours to download as a PDF.",
+      "অনলাইনে বিয়ের বায়োডাটা তৈরি করে PDF ডাউনলোড করুন। বিনামূল্যে, অ্যাকাউন্ট ছাড়াই।",
   },
   robots: {
     index: true,
@@ -82,7 +79,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="bn"
       className={`${geistSans.variable} ${hindSiliguri.variable} antialiased`}
     >
       <body suppressHydrationWarning>
