@@ -314,7 +314,9 @@ The builder's core is a **50/50 split**: form on the left, live document preview
 
 **The A4 Constant Rule.** The document is 190mm × 277mm at every viewport. It is not responsive, it does not stack, and it does not gain or lose fields on small screens. What you see is what prints.
 
-**The One Sheet Rule.** A complete biodata — all seven sections, all fields filled — must fit on a single A4 page. Any new field, any increase in row padding, and any type-size change is measured against that budget first.
+**The Clean Break Rule.** A biodata runs to as many A4 pages as its content needs — the schema now carries itemised siblings, five education levels, and religion-specific fields, and forcing that onto one sheet would mean either 8px type or dropping real information. What is *not* negotiable is where it breaks: a section heading never separates from its rows, and a label/value line never splits across a page. Every section and every row carries `break-inside-avoid`. A page may end early; it may not end mid-thought.
+
+*(This replaces the former One Sheet Rule, which held while the schema was 55 fields. It no longer is.)*
 
 **The Fixed Column Rule.** Label columns are fixed pixel widths, never `auto` or fractional. Ragged label columns are what makes a form-filled document look homemade.
 
@@ -404,6 +406,16 @@ Two form languages, again split by world.
 - **Mobile toggle:** a two-button full-width segmented control on white with a bottom border. The active side takes `action-emerald` text and a 2px `action-emerald` bottom border; the inactive side is `ink-muted` with no border.
 - **Sequential nav:** Previous (secondary) and Next (primary) pinned to opposite ends of a row separated from the form by a top border, 16px above and below.
 
+### Backup & Restore
+
+A collapsed disclosure below the form card, outside the tabpanel so it is reachable from every section. Closed by default — this is a deliberate, occasional action, not part of the filling flow, and it must not compete with Previous/Next.
+
+- **Trigger:** a full-width 44px row reading "Back up or restore", with `aria-expanded` / `aria-controls` and a `+` / `−` affordance. Neutral, not emerald: it is not a step in the task.
+- **Actions:** "Copy biodata" takes the primary emerald fill (it is the intended path — the clipboard feeds a password manager); "Download file" and "Open a file" are `paper-emerald` secondaries. A paste textarea plus "Restore from text" covers the return trip.
+- **Feedback:** one status line beneath, `role="alert"` on failure and `role="status"` on success, in `alert-red-deep` or `chrome-emerald`. Never a native dialog — the single exception is the confirm before overwriting a form that already has content, because import is destructive.
+
+**The Local Data Rule.** No personal data is ever committed to the repository or shipped in the bundle. The app persists to `localStorage` and exchanges data through user-initiated export and import. If a real biodata needs to travel between devices, it travels through the user's own storage, never through the codebase.
+
 ### The Document Row
 
 The signature component and the smallest meaningful unit of the record. Two variants, shared by all four templates:
@@ -421,6 +433,10 @@ Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each 
 
 **The Content Parity Rule.** Every template renders every field the data model can hold. A template may arrange the record differently; it may never drop a field that another template shows. Someone choosing a look must never lose information by choosing it.
 
+**The Single Content Source Rule.** Content Parity is enforced mechanically, not by discipline. `src/lib/documentContent.ts` decides which sections and rows exist, in what order, with what wording, and prunes anything empty. Templates receive that list and render it in their own visual language — they choose typography, rules, ornament, and spacing, and they choose nothing about *what is said*. The earlier hand-copied approach is exactly how `hometown` went missing from Elegant alone. A new field is added in one file or it is not added.
+
+**The One Line Per Person Rule.** A sibling prints as a single line — *"Tanvir Karim — Elder Brother, Married, Banker (spouse: Schoolteacher), Chattogram"* — not a six-field block. It holds the fixed-column grid, keeps the clerical register, and costs one line per person instead of six. Only the first sibling row carries the "Brothers / Sisters" label; the rest align under it.
+
 ### The Document Section
 
 A heading plus its rows, 12px above the previous section, flush at the top of the page. Each template renders the heading differently — Classic fills a solid band, Elegant brackets it in gold rules, Modern underlines it in violet, Royal marks it with a glyph and a fading rule — but all four use the same 10px uppercase wide-tracked label type and all four wrap the identical row set.
@@ -434,7 +450,8 @@ A heading plus its rows, 12px above the previous section, flush at the top of th
 - **Do** use fixed pixel widths for document label columns so rows align down the page.
 - **Do** color the label and leave the value neutral in every document row.
 - **Do** self-suppress empty rows and empty sections rather than rendering blank fields or placeholder dashes.
-- **Do** hold new document work to 190mm × 277mm and to one page when fully filled. See The One Sheet Rule.
+- **Do** hold new document work to a 190mm column, and give every section and row `break-inside-avoid` so pagination never splits a heading from its rows. See The Clean Break Rule.
+- **Do** add new document fields to `documentContent.ts`, never to a template. See The Single Content Source Rule.
 - **Do** design a new template as its own voice — new ink, new border language, new glyph, and a genuinely different composition if it earns one. See The Four Voices Rule.
 - **Do** render every field in every template, whatever the layout. See The Content Parity Rule.
 - **Do** keep the 2px `focus-emerald` focus ring on every field, and keep the border-to-transparent swap so focus never shifts layout.

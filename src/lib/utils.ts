@@ -1,11 +1,22 @@
-import { BiodataFormData } from "@/types/biodata";
+import { BiodataFormData, Sibling } from "@/types/biodata";
+
+/** True when a sibling row carries nothing worth printing. */
+export function isSiblingEmpty(s: Sibling): boolean {
+  return [s.name, s.maritalStatus, s.occupation, s.spouseOccupation, s.location].every(
+    (v) => !v || v.trim() === "",
+  );
+}
 
 /** True when the user has not entered anything worth previewing or printing. */
 export function isBiodataEmpty(data: BiodataFormData): boolean {
   return Object.values(data).every((section) =>
-    Object.values(section as Record<string, string>).every(
-      (value) => typeof value !== "string" || value.trim() === "",
-    ),
+    Object.values(section as Record<string, unknown>).every((value) => {
+      if (typeof value === "string") return value.trim() === "";
+      // `family.siblings` is the one array in the model; relation and order
+      // always carry defaults, so emptiness is decided by the other fields.
+      if (Array.isArray(value)) return value.every((s) => isSiblingEmpty(s as Sibling));
+      return true;
+    }),
   );
 }
 

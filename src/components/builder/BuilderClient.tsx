@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BiodataFormData, initialBiodata, sampleBiodata } from "@/types/biodata";
 import { TemplateName } from "@/types/templates";
 import PersonalInfoForm from "@/components/form/PersonalInfoForm";
+import ReligiousInfoForm from "@/components/form/ReligiousInfoForm";
 import EducationCareerForm from "@/components/form/EducationCareerForm";
 import FamilyInfoForm from "@/components/form/FamilyInfoForm";
 import AddressForm from "@/components/form/AddressForm";
@@ -12,6 +13,7 @@ import ContactForm from "@/components/form/ContactForm";
 import AdditionalInfoForm from "@/components/form/AdditionalInfoForm";
 import BiodataPreview from "@/components/preview/BiodataPreview";
 import TemplateSelector from "@/components/ui/TemplateSelector";
+import DataTransfer from "@/components/ui/DataTransfer";
 import { isBiodataEmpty } from "@/lib/utils";
 
 const tabs = [
@@ -108,6 +110,11 @@ export default function BuilderClient() {
     }
   };
 
+  const handleImport = (imported: BiodataFormData) => {
+    setData(imported);
+    setActiveTab("Personal");
+  };
+
   const handleLoadSample = () => {
     setData(sampleBiodata);
     setActiveTab("Personal");
@@ -134,10 +141,18 @@ export default function BuilderClient() {
     switch (activeTab) {
       case "Personal":
         return (
-          <PersonalInfoForm
-            data={data.personal}
-            onChange={(personal) => setData({ ...data, personal })}
-          />
+          <>
+            <PersonalInfoForm
+              data={data.personal}
+              onChange={(personal) => setData({ ...data, personal })}
+            />
+            {/* Renders nothing until a religion is chosen. */}
+            <ReligiousInfoForm
+              religion={data.personal.religion}
+              data={data.religious}
+              onChange={(religious) => setData({ ...data, religious })}
+            />
+          </>
         );
       case "Education":
         return (
@@ -322,6 +337,8 @@ export default function BuilderClient() {
                 </button>
               </div>
             </div>
+
+            <DataTransfer data={data} onImport={handleImport} />
           </div>
 
           {/* Preview panel */}

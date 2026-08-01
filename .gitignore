@@ -55,3 +55,7 @@ Thumbs.db
 .claude/settings.local.json
 .claude/skills/
 .impeccable/
+
+# generated biodata exports (may contain real personal data)
+*.pdf
+biodata-*.json

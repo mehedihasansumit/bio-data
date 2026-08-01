@@ -42,6 +42,19 @@ body {
     box-shadow: none !important;
   }
 
+  /* A biodata may run to several pages. Keep a section's heading with its
+     rows, and never split a single label/value line across a page break. */
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Nothing may clip a document that now flows past one page. */
+  #biodata-preview,
+  #biodata-preview * {
+    overflow: visible !important;
+  }
+
   /* Remove sticky positioning for print */
   .sticky {
     position: static !important;

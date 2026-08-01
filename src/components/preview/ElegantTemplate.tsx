@@ -1,77 +1,64 @@
 "use client";
 
 import { BiodataFormData } from "@/types/biodata";
-import { documentSections } from "@/lib/documentGuards";
+import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 
 interface Props {
   data: BiodataFormData;
 }
 
-function Row({ label, value }: { label: string; value: string }) {
-  if (!value) return null;
-  return (
-    <div className="flex py-[2px] text-[11px] leading-snug">
-      <span className="w-[115px] shrink-0 font-semibold text-[#1e3a5f]">{label}</span>
-      <span className="text-gray-700">{value}</span>
-    </div>
-  );
-}
+const NAVY = "#1e3a5f";
+const GOLD = "#d4a853";
 
-function TwoCol({ l1, v1, l2, v2 }: { l1: string; v1: string; l2: string; v2: string }) {
-  if (!v1 && !v2) return null;
+function Rows({ rows }: { rows: DocRow[] }) {
   return (
-    <div className="flex py-[2px] text-[11px] leading-snug">
-      <span className="w-[115px] shrink-0 font-semibold text-[#1e3a5f]">{l1}</span>
-      <span className="w-[125px] shrink-0 text-gray-700">{v1}</span>
-      {v2 && (
-        <>
-          <span className="w-[100px] shrink-0 font-semibold text-[#1e3a5f]">{l2}</span>
-          <span className="text-gray-700">{v2}</span>
-        </>
+    <>
+      {rows.map((row, i) =>
+        row.kind === "single" ? (
+          <div key={i} className="flex py-[2px] text-[11px] leading-snug break-inside-avoid">
+            <span className="w-[115px] shrink-0 font-semibold" style={{ color: NAVY }}>{row.label}</span>
+            <span className="text-gray-700">{row.value}</span>
+          </div>
+        ) : (
+          <div key={i} className="flex py-[2px] text-[11px] leading-snug break-inside-avoid">
+            <span className="w-[115px] shrink-0 font-semibold" style={{ color: NAVY }}>{row.l1}</span>
+            <span className="w-[125px] shrink-0 text-gray-700">{row.v1}</span>
+            {row.v2 && (
+              <>
+                <span className="w-[100px] shrink-0 font-semibold" style={{ color: NAVY }}>{row.l2}</span>
+                <span className="text-gray-700">{row.v2}</span>
+              </>
+            )}
+          </div>
+        ),
       )}
-    </div>
-  );
-}
-
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mt-3 first:mt-0">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="h-[2px] w-3 bg-[#d4a853]" />
-        <h3 className="text-[10px] font-bold uppercase tracking-[.12em] text-[#1e3a5f]">{title}</h3>
-        <div className="h-[2px] flex-1 bg-[#d4a853]/40" />
-      </div>
-      <div className="pl-1">{children}</div>
-    </div>
+    </>
   );
 }
 
 export default function ElegantTemplate({ data }: Props) {
-  const { personal, education, family, address, contact, lifestyle, partner } = data;
-  const { hasEdu, hasCareer, hasFamily, hasAddress, hasLifestyle, hasPartner, hasContact } =
-    documentSections(data);
+  const { personal } = data;
+  const sections = documentContent(data);
 
   return (
     <div className="bg-white p-5 max-w-[190mm] mx-auto print:p-0">
-      <div className="border border-[#1e3a5f] p-0 relative min-h-[277mm] flex flex-col">
+      <div className="border p-0 relative min-h-[277mm] flex flex-col" style={{ borderColor: NAVY }}>
         {/* Gold corner accents */}
-        <div className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px] border-[#d4a853]" />
-        <div className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px] border-[#d4a853]" />
-        <div className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px] border-[#d4a853]" />
-        <div className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px] border-[#d4a853]" />
+        <div className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px]" style={{ borderColor: GOLD }} />
+        <div className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px]" style={{ borderColor: GOLD }} />
+        <div className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px]" style={{ borderColor: GOLD }} />
+        <div className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px]" style={{ borderColor: GOLD }} />
 
-        {/* Header */}
-        <div className="text-center pt-5 pb-3 px-5">
-          <div className="text-[#d4a853] text-[12px] leading-none mb-1">&#10047; &#10047; &#10047;</div>
-          <h1 className="text-[18px] font-bold text-[#1e3a5f] tracking-[.18em] uppercase">Marriage Biodata</h1>
-          <div className="w-36 mx-auto mt-1 border-t border-[#d4a853]" />
-          <div className="w-24 mx-auto mt-[2px] border-t border-[#d4a853]/40" />
+        <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
+          <div className="text-[12px] leading-none mb-1" style={{ color: GOLD }}>&#10047; &#10047; &#10047;</div>
+          <h1 className="text-[18px] font-bold tracking-[.18em] uppercase" style={{ color: NAVY }}>Marriage Biodata</h1>
+          <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: GOLD }} />
+          <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${GOLD}66` }} />
         </div>
 
-        {/* Name + Photo row */}
-        <div className="flex items-start gap-4 px-5 mb-2">
+        <div className="flex items-start gap-4 px-5 mb-2 break-inside-avoid">
           {personal.photo && (
-            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ring-2 ring-[#d4a853]/50">
+            <div className="w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ring-2" style={{ boxShadow: `0 0 0 2px ${GOLD}80` }}>
               <img
                 src={personal.photo}
                 alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
@@ -80,96 +67,36 @@ export default function ElegantTemplate({ data }: Props) {
             </div>
           )}
           <div className="flex-1 pt-1">
-            {personal.fullName && <h2 className="text-[15px] font-bold text-[#1e3a5f]">{personal.fullName}</h2>}
-            <div className="flex flex-wrap gap-x-4 gap-y-0 mt-1 text-[10px] text-[#1e3a5f]">
-              {personal.age && <span>{personal.age} Years</span>}
-              {personal.height && <span>{personal.height.split(" (")[0]}</span>}
-              {personal.religion && <span>{personal.religion}</span>}
-              {personal.maritalStatus && <span>{personal.maritalStatus}</span>}
-              {personal.hometown && <span>{personal.hometown}</span>}
+            {personal.fullName && <h2 className="text-[15px] font-bold" style={{ color: NAVY }}>{personal.fullName}</h2>}
+            <div className="flex flex-wrap gap-x-4 gap-y-0 mt-1 text-[10px]" style={{ color: NAVY }}>
+              {headlineFacts(data).map((f) => (
+                <span key={f}>{f}</span>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Content */}
         <div className="px-5 py-3 flex-1">
-          <Section title="Personal Information">
-            <Row label="Full Name" value={personal.fullName} />
-            <Row label="Birth Place" value={personal.birthPlace} />
-            <Row label="Date of Birth" value={personal.dateOfBirth ? `${fmtDate(personal.dateOfBirth)}${personal.age ? ` (${personal.age} yrs)` : ""}` : ""} />
-            <TwoCol l1="Height" v1={personal.height} l2="Weight" v2={personal.weight} />
-            <TwoCol l1="Complexion" v1={personal.complexion} l2="Blood Group" v2={personal.bloodGroup} />
-            <TwoCol l1="Religion" v1={personal.religion} l2="Mother Tongue" v2={personal.motherTongue} />
-            <TwoCol l1="Marital Status" v1={personal.maritalStatus} l2="Nationality" v2={personal.nationality} />
-          </Section>
+          {sections.map((section) => (
+            <div key={section.id} className="mt-3 first:mt-0 break-inside-avoid">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="h-[2px] w-3" style={{ backgroundColor: GOLD }} />
+                <h3 className="text-[10px] font-bold uppercase tracking-[.12em]" style={{ color: NAVY }}>
+                  {section.title}
+                </h3>
+                <div className="h-[2px] flex-1" style={{ backgroundColor: `${GOLD}66` }} />
+              </div>
+              <div className="pl-1">
+                <Rows rows={section.rows} />
+              </div>
+            </div>
+          ))}
 
-          {hasEdu && (
-            <Section title="Education">
-              {education.graduation && <Row label="Graduation" value={`${education.graduation}${education.graduationInstitution ? `, ${education.graduationInstitution}` : ""}`} />}
-              {education.diploma && <Row label="Diploma" value={`${education.diploma}${education.diplomaInstitution ? `, ${education.diplomaInstitution}` : ""}`} />}
-              {education.schoolName && <Row label="School" value={education.schoolName} />}
-            </Section>
-          )}
-
-          {hasCareer && (
-            <Section title="Career & Profession">
-              <TwoCol l1="Designation" v1={education.designation} l2="Company" v2={education.company} />
-              <TwoCol l1="Work Location" v1={education.workLocation} l2="Income" v2={education.annualIncome} />
-              <TwoCol l1="Experience" v1={education.experience} l2="Domain" v2={education.domain} />
-            </Section>
-          )}
-
-          {hasFamily && (
-            <Section title="Family Details">
-              <Row label="Father" value={`${family.fatherName}${family.fatherOccupation ? ` – ${family.fatherOccupation}` : ""}`} />
-              <Row label="Mother" value={`${family.motherName}${family.motherOccupation ? ` – ${family.motherOccupation}` : ""}`} />
-              <Row label="Siblings" value={family.siblings} />
-              <TwoCol l1="Family Type" v1={family.familyType} l2="Values" v2={family.familyValues} />
-              <Row label="Native Place" value={family.nativePlace} />
-              <Row label="Property" value={family.property} />
-            </Section>
-          )}
-
-          {hasLifestyle && (
-            <Section title="Lifestyle & Interests">
-              <TwoCol l1="Hobbies" v1={lifestyle.hobbies} l2="Languages" v2={lifestyle.languages} />
-              <TwoCol l1="Sports" v1={lifestyle.sports} l2="Personality" v2={lifestyle.personality} />
-            </Section>
-          )}
-
-          {hasPartner && (
-            <Section title="Partner Preference">
-              <TwoCol l1="Age" v1={partner.ageRange} l2="Height" v2={partner.heightRange} />
-              <TwoCol l1="Education" v1={partner.education} l2="Working" v2={partner.working} />
-              <TwoCol l1="Religion" v1={partner.religion} l2="Location" v2={partner.location} />
-            </Section>
-          )}
-
-          {hasAddress && (
-            <Section title="Address">
-              <Row label="Present Address" value={address.presentAddress} />
-              <Row label="Permanent Address" value={address.permanentAddress} />
-            </Section>
-          )}
-
-          {hasContact && (
-            <Section title="Contact Details">
-              <Row label="Contact Person" value={contact.contactPerson} />
-              <TwoCol l1="Phone" v1={contact.phone} l2="Email" v2={contact.email} />
-            </Section>
-          )}
-
-          {/* Footer ornament */}
           <div className="text-center mt-auto pt-4">
-            <div className="text-[#d4a853]/50 text-[10px]">&#10047; &#10047; &#10047;</div>
+            <div className="text-[10px]" style={{ color: `${GOLD}80` }}>&#10047; &#10047; &#10047;</div>
           </div>
         </div>
       </div>
     </div>
   );
-}
-
-function fmtDate(d: string) {
-  const dt = new Date(d);
-  return isNaN(dt.getTime()) ? d : dt.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 }
