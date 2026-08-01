@@ -38,8 +38,13 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
 
   return (
     <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
-      <div className="sheet-frame border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] flex flex-col">
-        <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
+      {/* Vertical inset on the frame, not on the blocks inside it: only the
+          frame's own padding is cloned onto each fragment, so this is what
+          keeps content off the border at a page break. Taken off the header
+          and the section list below in equal measure, so page one is
+          unchanged. */}
+      <div className="sheet-frame border-2 border-violet-200 rounded-lg overflow-hidden pt-5 pb-3 min-h-[277mm] flex flex-col">
+        <div className="text-center pb-3 px-5 break-inside-avoid">
           {/* Ornament, not content. Unhidden, a screen reader opens every
               biodata with "six petalled black and white florette" ×3. */}
           <div aria-hidden="true" className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
@@ -70,7 +75,7 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
           </div>
         </div>
 
-        <div className="px-5 py-3 flex-1">
+        <div className="px-5 pt-3 flex-1">
           {sections.map((section) => (
             <div key={section.id} className="mt-3 first:mt-0 break-inside-avoid">
               <Section className="text-[10px] font-bold uppercase tracking-[.15em] text-violet-600 mb-1 pb-1 border-b border-violet-100">

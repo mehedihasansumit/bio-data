@@ -66,10 +66,17 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
   return (
     <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
       <div
-        className="sheet-frame border p-0 min-h-[277mm] flex flex-col"
+        /* The vertical inset belongs to the frame, not to the blocks inside it.
+           `box-decoration-break: clone` repeats the frame's own padding on
+           every fragment, so this is what holds content off the border where a
+           page breaks; padding on an inner wrapper just continues through the
+           break and leaves rows touching the new page's top border. Taken off
+           the header and the section list below in equal measure, so page one
+           is unchanged. */
+        className="sheet-frame border pt-5 pb-3 min-h-[277mm] flex flex-col"
         style={{ borderColor: NAVY, ...CORNER_BRACKETS }}
       >
-        <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
+        <div className="text-center pb-3 px-5 break-inside-avoid">
           {/* Ornament, not content. Unhidden, a screen reader opens every
               biodata with "black florette black florette black florette". */}
           <div aria-hidden="true" className="text-[12px] leading-none mb-1" style={{ color: GOLD }}>&#10047; &#10047; &#10047;</div>
@@ -98,7 +105,7 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
           </div>
         </div>
 
-        <div className="px-5 py-3 flex-1">
+        <div className="px-5 pt-3 flex-1">
           {sections.map((section) => (
             <div key={section.id} className="mt-3 first:mt-0 break-inside-avoid">
               <div className="flex items-center gap-2 mb-1">
