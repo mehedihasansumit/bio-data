@@ -10,6 +10,14 @@ import { fieldInputClass } from "@/components/ui/Field";
 interface Props {
   data: BiodataFormData;
   onImport: (data: BiodataFormData) => void;
+  /**
+   * The disclosure is controlled rather than self-managed because something
+   * outside it now needs to open it: after printing, the builder offers a way
+   * straight here, and "take me there" that lands on a closed panel has not
+   * taken anyone anywhere.
+   */
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 type Status = { kind: "ok" | "error"; message: string } | null;
@@ -17,10 +25,10 @@ type Status = { kind: "ok" | "error"; message: string } | null;
 /** An import held back until the user agrees to overwrite the current form. */
 type PendingImport = { data: BiodataFormData; warning?: string };
 
-export default function DataTransfer({ data, onImport }: Props) {
+export default function DataTransfer({ data, onImport, open, onOpenChange }: Props) {
   const panelId = useId();
   const textareaId = `${panelId}-paste`;
-  const [open, setOpen] = useState(false);
+  const noticeId = `${panelId}-notice`;
   const [text, setText] = useState("");
   const [status, setStatus] = useState<Status>(null);
   const [pending, setPending] = useState<PendingImport | null>(null);
@@ -28,6 +36,12 @@ export default function DataTransfer({ data, onImport }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const today = new Date().toISOString().slice(0, 10);
+  /**
+   * Whether there is work worth protecting yet. Gates the notice below the
+   * trigger: an empty form has nothing to lose, and a warning about losing
+   * nothing is how people learn to stop reading warnings.
+   */
+  const hasWork = !isBiodataEmpty(data);
 
   const handleCopy = async () => {
     const payload = serializeBiodata(data);
@@ -94,22 +108,48 @@ export default function DataTransfer({ data, onImport }: Props) {
         type="button"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen(!open)}
+        aria-describedby={hasWork ? noticeId : undefined}
+        // Named so the builder can find and focus this trigger after jumping
+        // here, without reaching in by tag position.
+        data-backup-trigger=""
+        onClick={() => onOpenChange(!open)}
         className="w-full min-h-11 px-4 flex items-center justify-between text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
       >
         Back up or restore
         <span aria-hidden="true" className="text-gray-600">{open ? "−" : "+"}</span>
       </button>
 
+      {/* Outside the trigger, not inside it. Folded into the button this would
+          become part of its accessible name, so the control would announce as
+          a paragraph; as a separate `<p>` referenced by `aria-describedby` it
+          is announced after the name, which is what a description is for.
+
+          It sits above the panel rather than in it because a disclosure whose
+          reason to exist is hidden behind the disclosure explains nothing to
+          the only person who needs the explanation. Closed, but not silent. */}
+      {hasWork && (
+        <p id={noticeId} className="px-4 pb-3 text-xs text-gray-600">
+          Saved on this device only. Clear your browser or change phones and it&apos;s
+          gone — copy it or download a file to keep it.
+        </p>
+      )}
+
       {/* Always in the DOM, hidden with the `hidden` attribute rather than
           unmounted, so the `aria-controls` above always resolves to a real
           element. A disclosure that names a panel which does not exist while
           closed is describing a control that controls nothing. `hidden` is
           `display: none`, so nothing inside is focusable or announced. */}
-      <div id={panelId} hidden={!open} className="px-4 pb-4 pt-1 border-t border-gray-200">
+      <div id={panelId} hidden={!open} className="px-4 pb-4 pt-4 border-t border-gray-200">
+          {/* The other half of what backup is for, and the half the notice
+              above deliberately does not carry. That line names a risk —
+              this device is the only copy. This one names a capability: the
+              same two files are how a biodata travels. Naming both buttons is
+              the point; the round trip is the part nobody guesses, because
+              "Open a file" sits on the device you have not opened yet. */}
           <p className="text-xs text-gray-600">
-            Your biodata is saved on this device only. Export a copy to move it to another
-            phone or computer, or to keep it somewhere safe.
+            Moving to a new phone or computer? Download a file here, then use{" "}
+            <strong className="font-semibold">Open a file</strong> there to carry on
+            where you left off.
           </p>
 
           <div className="mt-3 flex flex-wrap gap-2">

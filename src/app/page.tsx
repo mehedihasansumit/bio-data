@@ -44,9 +44,19 @@ const HOME_FAQ = [
     q: "বায়োডাটা কি বাংলায় বানানো যায়?",
     a: "যায়। ছাপা বায়োডাটার ভাষা বাংলা বা ইংরেজি — যেকোনোটি বেছে নিতে পারেন, এবং পরেও বদলাতে পারেন।",
   },
+  /**
+   * The one FAQ that has to admit a cost, not just promise a benefit.
+   *
+   * Everywhere else this page frames device-local storage as reassurance —
+   * "তথ্য আপনার ডিভাইসেই থাকে" is a privacy claim. It is also a durability
+   * risk, and this answer is the only place on the site that says so before
+   * someone has work to lose. The English label is quoted verbatim because
+   * the builder's chrome is English: a Bengali paraphrase would send someone
+   * looking for a button that does not exist.
+   */
   {
     q: "পরে আবার সম্পাদনা করা যাবে?",
-    a: "যাবে। একই ব্রাউজারে ফিরে এলে আপনার লেখা তথ্য সেভ করা থাকবে। চাইলে ফাইল আকারে ব্যাকআপ নিয়ে অন্য ডিভাইসেও খুলতে পারবেন।",
+    a: "যাবে। একই ব্রাউজারে ফিরে এলে আপনার লেখা তথ্য সেভ করা থাকবে। তবে তথ্য শুধু আপনার এই ডিভাইসেই থাকে — ব্রাউজারের ডেটা মুছে ফেললে বা ফোন বদলালে হারিয়ে যাবে। বিল্ডারে 'Back up or restore' অংশ থেকে একটি কপি নিয়ে রাখুন; সেই কপি দিয়ে অন্য ডিভাইসেও খোলা যাবে।",
   },
 ];
 

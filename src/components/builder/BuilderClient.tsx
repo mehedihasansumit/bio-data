@@ -94,68 +94,163 @@ export default function BuilderClient() {
    */
   const [saveState, setSaveState] = useState<"idle" | "saved" | "failed">("idle");
   const [confirmingClear, setConfirmingClear] = useState(false);
+  const [backupOpen, setBackupOpen] = useState(false);
+  /**
+   * Whether this session has reached the print dialog.
+   *
+   * Printing is the one action every person performs, from a header button
+   * that needs no scrolling — and it is the last thing they do before closing
+   * the tab. The Back up or restore disclosure sits 70px under Next, which
+   * reaches anyone walking the form with Previous/Next but misses the person
+   * who navigates by the tab strip and never scrolls to the bottom. This is
+   * the second touchpoint that catches them, at the moment the stake is
+   * highest: a saved PDF feels like a saved biodata, and it is not one.
+   */
+  const [hasPrinted, setHasPrinted] = useState(false);
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const backupRef = useRef<HTMLDivElement>(null);
   /** The photo currently in storage, so autosave can skip rewriting it. */
   const savedPhotoRef = useRef<string | null>(draft?.data?.personal?.photo ?? null);
   const isEmpty = isBiodataEmpty(data);
 
+  /**
+   * Write the draft to storage now. Returns whether all of it got there.
+   *
+   * Extracted from the autosave timer because the page going away has to be
+   * able to write too, and it cannot wait 600ms to do it.
+   */
+  const persistDraft = useCallback(() => {
+    const { photo } = data.personal;
+    let ok = true;
+
+    // The text half: small, and written on every change.
+    try {
+      const next: SavedDraft = {
+        data: { ...data, personal: { ...data.personal, photo: "" } },
+        template,
+        activeTab,
+      };
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      ok = false;
+    }
+
+    // The photo half: large, and written only when it actually changed.
+    if (ok && photo !== savedPhotoRef.current) {
+      try {
+        if (photo) window.localStorage.setItem(PHOTO_KEY, photo);
+        else window.localStorage.removeItem(PHOTO_KEY);
+        savedPhotoRef.current = photo;
+      } catch {
+        // Quota exceeded — a large photo is what does it. Drop the stale
+        // photo rather than leave a draft that would restore with the wrong
+        // one, and keep the text, which did fit. `savedPhotoRef` stays out
+        // of sync on purpose so the next change retries: quota can free up,
+        // and removing the photo has to be able to recover from this.
+        try {
+          window.localStorage.removeItem(PHOTO_KEY);
+        } catch {
+          // Nothing left to try; the report below is what matters.
+        }
+        savedPhotoRef.current = null;
+        ok = false;
+      }
+    }
+
+    return ok;
+  }, [data, template, activeTab]);
+
   // Autosave, debounced so typing doesn't hit storage on every keystroke.
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const { photo } = data.personal;
-      let ok = true;
-
-      // The text half: small, and written on every change.
-      try {
-        const next: SavedDraft = {
-          data: { ...data, personal: { ...data.personal, photo: "" } },
-          template,
-          activeTab,
-        };
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        ok = false;
-      }
-
-      // The photo half: large, and written only when it actually changed.
-      if (ok && photo !== savedPhotoRef.current) {
-        try {
-          if (photo) window.localStorage.setItem(PHOTO_KEY, photo);
-          else window.localStorage.removeItem(PHOTO_KEY);
-          savedPhotoRef.current = photo;
-        } catch {
-          // Quota exceeded — a large photo is what does it. Drop the stale
-          // photo rather than leave a draft that would restore with the wrong
-          // one, and keep the text, which did fit. `savedPhotoRef` stays out
-          // of sync on purpose so the next change retries: quota can free up,
-          // and removing the photo has to be able to recover from this.
-          try {
-            window.localStorage.removeItem(PHOTO_KEY);
-          } catch {
-            // Nothing left to try; the report below is what matters.
-          }
-          savedPhotoRef.current = null;
-          ok = false;
-        }
-      }
-
+      const ok = persistDraft();
       setSaveState(!ok ? "failed" : isBiodataEmpty(data) ? "idle" : "saved");
     }, 600);
     return () => window.clearTimeout(timer);
-  }, [data, template, activeTab]);
+  }, [persistDraft, data]);
 
-  // Warn before losing work to a reload or an outbound link.
+  /**
+   * Flush the pending debounce before the page can be taken away.
+   *
+   * Without this, reloading within 600ms of the last keystroke drops those
+   * keystrokes — silently, now that the unload warning below no longer fires
+   * for ordinary reloads. `visibilitychange` → hidden is the event that
+   * actually fires on mobile, where a backgrounded tab can be discarded and
+   * `beforeunload` never runs at all; `pagehide` covers desktop close and
+   * navigation. `localStorage` is synchronous, so the write finishes before
+   * the page is torn down.
+   */
   useEffect(() => {
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (!isBiodataEmpty(data)) e.preventDefault();
+    const onHide = () => {
+      if (document.visibilityState === "hidden") persistDraft();
     };
+    const onPageHide = () => persistDraft();
+    document.addEventListener("visibilitychange", onHide);
+    window.addEventListener("pagehide", onPageHide);
+    return () => {
+      document.removeEventListener("visibilitychange", onHide);
+      window.removeEventListener("pagehide", onPageHide);
+    };
+  }, [persistDraft]);
+
+  /**
+   * Warn on leaving — but only when leaving actually costs something.
+   *
+   * The browser's wording ("Changes you made may not be saved") cannot be
+   * changed; every engine ignores custom strings and `preventDefault()` is
+   * the entire API. So the only thing that can be made right about this
+   * dialog is *when* it appears. It used to appear whenever the form had any
+   * content, which was false: the draft is autosaved and `readDraft` restores
+   * it, so a reload loses nothing and the browser said otherwise every time.
+   *
+   * It now appears only after a write has actually failed — quota, which a
+   * large photo reliably causes. That is the one state where what is on this
+   * device is not what is on screen, and closing the tab really does destroy
+   * work. Same principle as the Earned Interruption Rule: an interruption
+   * that guards nothing teaches people to dismiss the one that guards
+   * something.
+   */
+  useEffect(() => {
+    if (saveState !== "failed") return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => e.preventDefault();
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [data]);
+  }, [saveState]);
 
   const handlePrint = () => {
     window.print();
+    setHasPrinted(true);
+  };
+
+  /**
+   * Take the person to the backup panel rather than describe where it is.
+   *
+   * On a phone the preview and the form are two tabs, so the panel is not
+   * merely below the print hint — it is on a surface that is not currently
+   * rendered. An instruction ("it's under the form") asks someone to switch
+   * tabs and scroll two screens to a control they have never noticed; this
+   * does those three steps for them and leaves focus on the trigger, so
+   * keyboard and screen-reader users arrive where sighted users are looking.
+   */
+  const revealBackup = () => {
+    setShowPreview(false);
+    setBackupOpen(true);
+    // After the panel has actually been laid out — scrolling to a collapsed
+    // element centres the wrong box.
+    requestAnimationFrame(() => {
+      const container = backupRef.current;
+      if (!container) return;
+      container
+        .querySelector<HTMLButtonElement>("[data-backup-trigger]")
+        ?.focus({ preventScroll: true });
+      container.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "center",
+      });
+    });
   };
 
   const clearEverything = () => {
@@ -164,6 +259,9 @@ export default function BuilderClient() {
     setShowPreview(false);
     setSaveState("idle");
     setConfirmingClear(false);
+    // The next biodata has not been printed, and nothing is open on it.
+    setHasPrinted(false);
+    setBackupOpen(false);
     savedPhotoRef.current = null;
     try {
       window.localStorage.removeItem(STORAGE_KEY);
@@ -409,8 +507,16 @@ export default function BuilderClient() {
                 >
                   Previous
                 </button>
+                {/* "Saved", not "Saved to this device". This is a live region
+                    that re-announces every time typing pauses, so it reports
+                    the event and nothing more. The caveat — that this device is
+                    the *only* copy — is a standing fact, not an event, and
+                    lives under the Back up or restore trigger where it can be
+                    read once instead of announced forever. The old wording also
+                    oversold: it read as "your work is safe", which is the one
+                    reason someone would never go looking for a backup. */}
                 <p aria-live="polite" className="text-xs text-gray-600">
-                  {saveState === "saved" ? "Saved to this device" : ""}
+                  {saveState === "saved" ? "Saved" : ""}
                 </p>
                 <button
                   type="button"
@@ -440,7 +546,14 @@ export default function BuilderClient() {
               )}
             </div>
 
-            <DataTransfer data={data} onImport={handleImport} />
+            <div ref={backupRef}>
+              <DataTransfer
+                data={data}
+                onImport={handleImport}
+                open={backupOpen}
+                onOpenChange={setBackupOpen}
+              />
+            </div>
           </div>
 
           {/* Preview panel */}
@@ -493,10 +606,34 @@ export default function BuilderClient() {
                   <div className="sheet-fit overflow-x-auto shadow-lg rounded-lg print:overflow-visible print:shadow-none print:rounded-none bg-white">
                     <BiodataPreview data={data} template={template} />
                   </div>
-                  <p className="mt-2 text-xs text-gray-600 print:hidden">
-                    Printing? Choose <strong className="font-semibold">Save as PDF</strong> as
-                    the destination to download instead.
-                  </p>
+                  {/* One slot, two jobs, in the order they come up. Before
+                      printing the question is "how do I get a file out of
+                      this"; after printing it is "I have a file, am I done?"
+                      — and the honest answer is no. A PDF is a picture of the
+                      biodata; the editable copy is still only in this
+                      browser, and this is the last screen before the tab
+                      closes. Replacing rather than stacking, because the
+                      Save-as-PDF hint has been read by the time it matters. */}
+                  {hasPrinted ? (
+                    <div className="mt-2 print:hidden">
+                      <p className="text-xs text-gray-600">
+                        That saves a PDF — a picture of the biodata. The copy you can
+                        still edit is only in this browser.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={revealBackup}
+                        className="mt-2 min-h-11 px-4 text-sm font-medium text-emerald-800 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
+                      >
+                        Back up this biodata
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-xs text-gray-600 print:hidden">
+                      Printing? Choose <strong className="font-semibold">Save as PDF</strong>{" "}
+                      as the destination to download instead.
+                    </p>
+                  )}
                 </>
               )}
             </div>
