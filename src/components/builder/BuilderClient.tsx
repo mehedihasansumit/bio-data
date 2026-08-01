@@ -13,6 +13,7 @@ import ContactForm from "@/components/form/ContactForm";
 import AdditionalInfoForm from "@/components/form/AdditionalInfoForm";
 import BiodataPreview from "@/components/preview/BiodataPreview";
 import TemplateSelector from "@/components/ui/TemplateSelector";
+import DocumentSettings from "@/components/ui/DocumentSettings";
 import DataTransfer from "@/components/ui/DataTransfer";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { isBiodataEmpty } from "@/lib/utils";
@@ -352,11 +353,19 @@ export default function BuilderClient() {
           {/* Preview panel */}
           <div className={`lg:w-1/2 print:!block print:!w-full ${!showPreview ? "hidden lg:block" : ""}`}>
             <div className="sticky top-4 print:static">
-              <div className="mb-3 print:hidden">
-                <h2 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
-                  Choose Template
-                </h2>
-                <TemplateSelector selected={template} onChange={setTemplate} />
+              {/* Everything that describes the document rather than the person
+                  lives together: which template, whose biodata, what language. */}
+              <div className="mb-3 print:hidden flex flex-col gap-3">
+                <DocumentSettings
+                  meta={data.meta}
+                  onChange={(meta) => setData({ ...data, meta })}
+                />
+                <div>
+                  <h2 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+                    Choose Template
+                  </h2>
+                  <TemplateSelector selected={template} onChange={setTemplate} />
+                </div>
               </div>
 
               {isEmpty ? (

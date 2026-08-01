@@ -2,6 +2,7 @@
 
 import { BiodataFormData } from "@/types/biodata";
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
+import { documentTitle } from "@/lib/documentStrings";
 
 interface Props {
   data: BiodataFormData;
@@ -52,7 +53,7 @@ export default function RoyalTemplate({ data }: Props) {
         <div className="border p-4 min-h-full flex flex-col" style={{ borderColor: `${CRIMSON}4d` }}>
           <div className="text-center mb-3 break-inside-avoid">
             <div className="text-[14px] leading-none mb-1" style={{ color: CRIMSON }}>&#10048; &#10048; &#10048;</div>
-            <h1 className="text-[16px] font-bold tracking-[.2em] uppercase" style={{ color: OXBLOOD }}>Marriage Biodata</h1>
+            <h1 className="text-[16px] font-bold tracking-[.2em] uppercase" style={{ color: OXBLOOD }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</h1>
             <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: `${CRIMSON}66` }} />
             <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${CRIMSON}33` }} />
           </div>

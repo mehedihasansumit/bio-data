@@ -1,3 +1,34 @@
+/**
+ * Whether the Candidate is a পাত্রী (bride) or a পাত্র (groom).
+ *
+ * "unspecified" is a real answer, not a missing one: it prints the neutral
+ * "Marriage Biodata" heading, which is what someone who does not want the
+ * distinction should get without having to opt out of anything.
+ */
+export type CandidateKind = "bride" | "groom" | "unspecified";
+
+/**
+ * The language a finished Biodata is printed in — never the language of the
+ * builder around it. See docs/adr/0001. Deliberately not bilingual: a formal
+ * document that labels all ~60 of its rows twice reads as an untranslated
+ * template rather than a considered artifact.
+ */
+export type DocumentLanguage = "en" | "bn";
+
+export const CANDIDATE_KINDS: CandidateKind[] = ["unspecified", "bride", "groom"];
+export const DOCUMENT_LANGUAGES: DocumentLanguage[] = ["bn", "en"];
+
+/**
+ * Settings that describe the document rather than the person in it. Kept in its
+ * own section so the import coercion in `biodataFile.ts` walks it like any
+ * other section, and so a future "paper size" or "photo shape" has an obvious
+ * home that is not `personal`.
+ */
+export interface BiodataMeta {
+  candidateKind: CandidateKind;
+  documentLanguage: DocumentLanguage;
+}
+
 export interface PersonalInfo {
   fullName: string;
   photo: string;
@@ -143,6 +174,7 @@ export interface PartnerPreference {
 }
 
 export interface BiodataFormData {
+  meta: BiodataMeta;
   personal: PersonalInfo;
   religious: ReligiousInfo;
   education: EducationCareer;
@@ -172,6 +204,14 @@ export const emptySibling: Sibling = {
 };
 
 export const initialBiodata: BiodataFormData = {
+  /* Bengali by default because the product is Bengali-first for Bangladesh.
+     Files exported before this field existed migrate to "en" instead — see
+     migrateV2 in biodataFile.ts — so an existing draft keeps the document its
+     author last saw, and only new biodatas take the new default. */
+  meta: {
+    candidateKind: "unspecified",
+    documentLanguage: "bn",
+  },
   personal: {
     fullName: "",
     photo: "",
@@ -293,6 +333,10 @@ export const initialBiodata: BiodataFormData = {
  * verbatim into a printable document that users share with other families.
  */
 export const sampleBiodata: BiodataFormData = {
+  meta: {
+    candidateKind: "groom",
+    documentLanguage: "bn",
+  },
   personal: {
     fullName: "Rafiul Karim (example)",
     photo: "",

@@ -286,7 +286,9 @@ Only the `bengali` subset is requested, since Latin never reaches this face. Hin
 
 > **Open gap — preload.** The face is currently loaded with `preload: false`, correct only while the site's own copy is English and Bengali appears solely in what a user types. When Bengali content lands it will be rendering the largest contentful paint, and preload must be turned back on in `src/app/layout.tsx`.
 
-> **Unverified — Bengali at 11px.** The 11px Record Rule was tuned on Latin. Bengali needs more vertical room for মাত্রা and stacked যুক্তাক্ষর, and no Bengali document has been rendered at 11px yet. Hind Siliguri was picked partly to survive this, but the rule holds provisionally and must be checked against a real Bengali biodata before Document Language ships.
+**Bengali at 11px — verified.** The 11px Record Rule was tuned on Latin, and Bengali needs more vertical room for মাত্রা and stacked যুক্তাক্ষর, so the rule was held only provisionally when Hind Siliguri landed. It has since been checked the only way that settles it: a full sample biodata rendered in Bengali and inspected at 4× (`ব্যক্তিগত`, `স্বাস্থ্য`, `রক্তের গ্রুপ`, `স্নাতকোত্তর`). Conjuncts form correctly, the মাত্রা stays continuous, and the labels hold their own beside 11px Latin values. **The rule stands at 11px for both scripts.** Re-check it before adopting any face other than Hind Siliguri — the margin here is the reason that face was chosen over Noto Sans Bengali.
+
+**Numerals are always Latin.** In a Bengali document the month name translates but the digits do not: `11 মার্চ, 1997`, never `১১ মার্চ, ১৯৯৭`. Every other number on the page — age, height, income, phone — was typed by the user in Latin and is printed verbatim, so a Bengali-numeral date is the only one of its kind on the sheet and collides with the Latin age three characters later inside the same cell. Enforced by the `-u-nu-latn` extension on the locale in `documentStrings.ts`.
 
 ### Hierarchy
 
@@ -301,7 +303,9 @@ Only the `bengali` subset is requested, since Latin never reaches this face. Hin
 
 **The 11px Record Rule.** Document body text is 11px. Not 10, not 12. It is the size that fits a complete biodata on one A4 sheet without the row rhythm collapsing, and every template is tuned around it. Changing it re-paginates everything.
 
-**The Uppercase-Is-Structural Rule.** Uppercase plus wide tracking marks a section boundary and nothing else. Never uppercase a value, a name, a button, or a form label.
+**The Uppercase-Is-Structural Rule.** Uppercase plus wide tracking marks a section boundary and nothing else. Never uppercase a value, a name, a button, or a form label. **Latin only** — see the next rule.
+
+**The Bengali-Is-Never-Tracked Rule.** Bengali carries no letter-spacing anywhere, at any size. Bengali has no case, so `uppercase` is inert on it, but tracking is destructive: it severs the মাত্রা — the horizontal headline stroke that joins the letters of a word — and pulls যুক্তাক্ষর apart into their components. A tracked Bengali heading does not read as emphasis, it reads as broken text. In Bengali a section boundary is carried by ink and rule work alone. Enforced centrally rather than per template: `BiodataPreview` stamps the Document Language onto `#biodata-preview[lang]`, and an unlayered rule in `globals.css` resets `letter-spacing` beneath it. Unlayered beats Tailwind's `@layer utilities`, so this wins over `tracking-*` on the element without `!important`, and a new template cannot reintroduce the problem by accident.
 
 **The Single Family Rule.** One font family per script across the whole product, chrome and documents alike: Geist for Latin, Hind Siliguri for Bengali. A second face is admissible only to cover glyphs the first one lacks — never for expression. A template differentiates itself with ink, border, and ornament, never by introducing a serif, a script, or a display face.
 
@@ -389,6 +393,15 @@ Two form languages, again split by world.
 - **Template chip:** a horizontally scrolling row of bordered white tiles, each showing a two-swatch color pair (12px squares, 2px apart, 2px radius) beside the template name at 12px/600 and its description at 10px in `ink-faint`.
 - **State:** selected takes an `ink-strong`-adjacent dark border plus a 1px ring and `surface-workspace` fill; unselected sits on white with a `stroke-subtle` border that darkens on hover. This is the one control in the app that uses neutral rather than emerald for its selected state — correct, because it is choosing a document ink and must not bias toward Classic.
 - **Meta pill (Modern template only):** `modern-bg` fill, `modern-primary` text, 9px, fully rounded, 8px × 1px padding.
+
+### Document Settings
+
+Two segmented radio groups above the template chips, holding everything that describes the *document* rather than the person in it: Candidate Kind (পাত্রী / পাত্র / not specified) and Document Language (বাংলা / ইংরেজি). Together with the template chips they form one cluster — the three questions about the artifact, asked in one place.
+
+- **Shape:** the two-line chip, 8px radius, matching the template chip's metrics — Bengali at 12px/600 on the first line, English at 10px on the second.
+- **Bengali leads, English supports.** These are the two controls a Bengali user most needs to recognise instantly, and the product is Bengali-first. The English line is a gloss, not a translation of record.
+- **State:** selected fills `action-emerald` with white text and an `emerald-100` sub-label; unselected sits on white with a `stroke-subtle` border that darkens on hover. Emerald here, *not* the neutral used by the template chips — the neutral treatment exists so template selection does not bias toward Classic's green ink, and that reasoning does not apply to a question about language or about whose biodata this is.
+- **Headings:** sentence case, not tracked, because they carry Bengali. Weight and colour mark them instead.
 
 ### Cards / Containers
 

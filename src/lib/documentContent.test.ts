@@ -6,12 +6,27 @@ import {
   sampleBiodata,
 } from "@/types/biodata";
 import { documentContent, headlineFacts } from "@/lib/documentContent";
+import { documentTitle } from "@/lib/documentStrings";
 import { formatSibling } from "@/lib/documentGuards";
 
-const withPersonal = (patch: Partial<BiodataFormData["personal"]>): BiodataFormData => ({
-  ...initialBiodata,
-  personal: { ...initialBiodata.personal, ...patch },
+/**
+ * Pin the Document Language for tests that assert structure.
+ *
+ * The default is Bengali, but pruning, collapsing and religion-gating have
+ * nothing to do with language — asserting English labels there would make every
+ * pruning test fail the day a translation is reworded. Language itself is
+ * covered by its own block at the bottom of this file.
+ */
+const inEnglish = (data: BiodataFormData): BiodataFormData => ({
+  ...data,
+  meta: { ...data.meta, documentLanguage: "en" },
 });
+
+const withPersonal = (patch: Partial<BiodataFormData["personal"]>): BiodataFormData =>
+  inEnglish({
+    ...initialBiodata,
+    personal: { ...initialBiodata.personal, ...patch },
+  });
 
 const ids = (data: BiodataFormData) => documentContent(data).map((s) => s.id);
 
@@ -73,11 +88,12 @@ describe("religion-conditional section", () => {
   const withReligion = (
     religion: string,
     religious: Partial<BiodataFormData["religious"]>,
-  ): BiodataFormData => ({
-    ...initialBiodata,
-    personal: { ...initialBiodata.personal, religion },
-    religious: { ...initialBiodata.religious, ...religious },
-  });
+  ): BiodataFormData =>
+    inEnglish({
+      ...initialBiodata,
+      personal: { ...initialBiodata.personal, religion },
+      religious: { ...initialBiodata.religious, ...religious },
+    });
 
   it("shows Hindu fields and titles the section for horoscope", () => {
     const sections = documentContent(withReligion("Hinduism", { gotra: "Kashyap" }));
@@ -107,10 +123,11 @@ describe("religion-conditional section", () => {
 });
 
 describe("siblings in the document", () => {
-  const withSiblings = (siblings: BiodataFormData["family"]["siblings"]): BiodataFormData => ({
-    ...initialBiodata,
-    family: { ...initialBiodata.family, siblings },
-  });
+  const withSiblings = (siblings: BiodataFormData["family"]["siblings"]): BiodataFormData =>
+    inEnglish({
+      ...initialBiodata,
+      family: { ...initialBiodata.family, siblings },
+    });
 
   it("prints one line per sibling and labels only the first", () => {
     const data = withSiblings([
@@ -185,11 +202,90 @@ describe("the full sample", () => {
   });
 
   it("formats an education line with institution, year and result", () => {
-    const education = documentContent(sampleBiodata).find((s) => s.id === "education");
+    const education = documentContent(inEnglish(sampleBiodata)).find((s) => s.id === "education");
     expect(education?.rows[0]).toEqual({
       kind: "single",
       label: "Master's",
       value: "M.Sc – Computer Science, Example University of Bangladesh (2022) — CGPA 3.71 / 4.00",
     });
+  });
+});
+
+describe("Document Language", () => {
+  const inBengali = (data: BiodataFormData): BiodataFormData => ({
+    ...data,
+    meta: { ...data.meta, documentLanguage: "bn" },
+  });
+
+  const personal = (data: BiodataFormData) =>
+    documentContent(data).find((s) => s.id === "personal");
+
+  it("translates section titles", () => {
+    expect(personal(withPersonal({ fullName: "A" }))?.title).toBe("Personal Information");
+    expect(personal(inBengali(withPersonal({ fullName: "A" })))?.title).toBe("ব্যক্তিগত তথ্য");
+  });
+
+  it("translates labels", () => {
+    const rows = personal(inBengali(withPersonal({ fullName: "রফিউল করিম" })))?.rows;
+    expect(rows?.[0]).toEqual({ kind: "single", label: "পূর্ণ নাম", value: "রফিউল করিম" });
+  });
+
+  it("never translates a value the user typed", () => {
+    // The governing rule: the app translates its own words, not the user's data.
+    // Transliterating these would corrupt a height, a salary and a phone number.
+    const data = inBengali(
+      withPersonal({ height: "5 ft 8 in", weight: "66 kg", bloodGroup: "O+" }),
+    );
+    const flat = JSON.stringify(personal(data));
+    expect(flat).toContain("5 ft 8 in");
+    expect(flat).toContain("66 kg");
+    expect(flat).toContain("O+");
+  });
+
+  it("writes Bengali month names with Latin numerals", () => {
+    // Every other number on the page is the user's and therefore Latin. A
+    // Bengali-numeral date would be the only one, colliding with the Latin age
+    // three characters later in the same cell: "১১ মার্চ, ১৯৯৭ (29 বছর)".
+    const data = inBengali(withPersonal({ dateOfBirth: "1997-03-11", age: "29" }));
+    // With no time of birth the pair collapses to a single, so match on either.
+    const row = (personal(data)?.rows ?? []).find(
+      (r) => (r.kind === "single" ? r.label : r.l1) === "জন্ম তারিখ",
+    );
+    expect(row).toBeDefined();
+    const value = row?.kind === "single" ? row.value : (row?.v1 ?? "");
+    expect(value).toContain("মার্চ");
+    expect(value).toContain("11");
+    expect(value).toContain("1997");
+    expect(value).toContain("29 বছর");
+    expect(value).not.toMatch(/[০-৯]/);
+  });
+
+  it("keeps section ids stable across languages, because they are ids not words", () => {
+    expect(ids(inBengali(sampleBiodata))).toEqual(ids(inEnglish(sampleBiodata)));
+  });
+
+  it("titles the Hindu section for horoscope in Bengali too", () => {
+    const data = inBengali({
+      ...initialBiodata,
+      personal: { ...initialBiodata.personal, religion: "Hinduism" },
+      religious: { ...initialBiodata.religious, gotra: "Kashyap" },
+    });
+    expect(documentContent(data).find((s) => s.id === "religious")?.title).toBe(
+      "সম্প্রদায় ও রাশিফল",
+    );
+  });
+});
+
+describe("documentTitle", () => {
+  it("names the document after the Candidate Kind", () => {
+    expect(documentTitle("bride", "bn")).toBe("পাত্রীর বায়োডাটা");
+    expect(documentTitle("groom", "bn")).toBe("পাত্রের বায়োডাটা");
+    expect(documentTitle("bride", "en")).toBe("Bride's Biodata");
+    expect(documentTitle("groom", "en")).toBe("Groom's Biodata");
+  });
+
+  it("stays neutral when the Candidate Kind is unspecified", () => {
+    expect(documentTitle("unspecified", "bn")).toBe("বিয়ের বায়োডাটা");
+    expect(documentTitle("unspecified", "en")).toBe("Marriage Biodata");
   });
 });

@@ -2,6 +2,7 @@
 
 import { BiodataFormData } from "@/types/biodata";
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
+import { documentTitle } from "@/lib/documentStrings";
 
 interface Props {
   data: BiodataFormData;
@@ -42,7 +43,7 @@ export default function ModernTemplate({ data }: Props) {
       <div className="border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] flex flex-col">
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
           <div className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
-          <h1 className="text-[18px] font-bold text-violet-700 tracking-[.15em] uppercase">Marriage Biodata</h1>
+          <h1 className="text-[18px] font-bold text-violet-700 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</h1>
           <div className="w-36 mx-auto mt-1 border-t border-violet-300" />
           <div className="w-24 mx-auto mt-[2px] border-t border-violet-200" />
         </div>

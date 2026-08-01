@@ -12,17 +12,28 @@ interface Props {
   template: TemplateName;
 }
 
+const TEMPLATES: Record<
+  TemplateName,
+  (props: { data: BiodataFormData }) => React.ReactElement
+> = {
+  classic: ClassicTemplate,
+  elegant: ElegantTemplate,
+  modern: ModernTemplate,
+  royal: RoyalTemplate,
+};
+
 export default function BiodataPreview({ data, template }: Props) {
-  switch (template) {
-    case "classic":
-      return <div id="biodata-preview"><ClassicTemplate data={data} /></div>;
-    case "elegant":
-      return <div id="biodata-preview"><ElegantTemplate data={data} /></div>;
-    case "modern":
-      return <div id="biodata-preview"><ModernTemplate data={data} /></div>;
-    case "royal":
-      return <div id="biodata-preview"><RoyalTemplate data={data} /></div>;
-    default:
-      return <div id="biodata-preview"><ClassicTemplate data={data} /></div>;
-  }
+  const Template = TEMPLATES[template] ?? ClassicTemplate;
+
+  /* `lang` here is the *document's* language, not the interface's — the page
+     around this element is in a different language from the biodata inside it.
+     It earns its keep three times over: the browser applies Bengali line
+     breaking, assistive tech reads the document in the right voice, and
+     globals.css keys the no-letter-spacing rule off it, so no template can
+     reintroduce tracking on Bengali headings. */
+  return (
+    <div id="biodata-preview" lang={data.meta.documentLanguage}>
+      <Template data={data} />
+    </div>
+  );
 }

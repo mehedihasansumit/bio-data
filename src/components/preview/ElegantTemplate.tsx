@@ -2,6 +2,7 @@
 
 import { BiodataFormData } from "@/types/biodata";
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
+import { documentTitle } from "@/lib/documentStrings";
 
 interface Props {
   data: BiodataFormData;
@@ -51,7 +52,7 @@ export default function ElegantTemplate({ data }: Props) {
 
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
           <div className="text-[12px] leading-none mb-1" style={{ color: GOLD }}>&#10047; &#10047; &#10047;</div>
-          <h1 className="text-[18px] font-bold tracking-[.18em] uppercase" style={{ color: NAVY }}>Marriage Biodata</h1>
+          <h1 className="text-[18px] font-bold tracking-[.18em] uppercase" style={{ color: NAVY }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</h1>
           <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: GOLD }} />
           <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${GOLD}66` }} />
         </div>

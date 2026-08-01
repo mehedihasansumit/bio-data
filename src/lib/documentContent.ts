@@ -1,4 +1,4 @@
-import { BiodataFormData } from "@/types/biodata";
+import { BiodataFormData, DocumentLanguage } from "@/types/biodata";
 import {
   formatEducationLine,
   formatParent,
@@ -7,6 +7,7 @@ import {
   printableSiblings,
 } from "@/lib/documentGuards";
 import { religionKind } from "@/lib/religion";
+import { dateLocale, docString, DocStringKey } from "@/lib/documentStrings";
 
 /**
  * What every document says, independent of how any template says it.
@@ -16,13 +17,17 @@ import { religionKind } from "@/lib/religion";
  * hand-copying ~60 rows into four files is how it gets broken. Each template
  * renders this list in its own visual language; none of them decides its
  * contents.
+ *
+ * This is also the single seam for Document Language: every label and section
+ * title in a finished biodata is resolved here, so a template never sees a
+ * language and never needs to know one exists.
  */
 export type DocRow =
   | { kind: "single"; label: string; value: string }
   | { kind: "pair"; l1: string; v1: string; l2: string; v2: string };
 
 export interface DocSection {
-  /** Stable key for React lists. */
+  /** Stable key for React lists. Never translated — this is an id, not a word. */
   id: string;
   title: string;
   rows: DocRow[];
@@ -64,144 +69,154 @@ function prune(sections: DocSection[]): DocSection[] {
 
 export function documentContent(data: BiodataFormData): DocSection[] {
   const { personal, religious, education, family, address, contact, lifestyle, partner } = data;
+  const lang = data.meta.documentLanguage;
+  const t = (key: DocStringKey) => docString(key, lang);
   const kind = religionKind(personal.religion);
   const siblings = printableSiblings(data);
 
   const religiousRows: DocRow[] =
     kind === "hindu"
       ? [
-          pair("Caste", religious.caste, "Sub-caste", religious.subCaste),
-          pair("Gotra", religious.gotra, "Manglik", religious.manglik),
-          pair("Rashi", religious.rashi, "Nakshatra", religious.nakshatra),
+          pair(t("religious.caste"), religious.caste, t("religious.subCaste"), religious.subCaste),
+          pair(t("religious.gotra"), religious.gotra, t("religious.manglik"), religious.manglik),
+          pair(t("religious.rashi"), religious.rashi, t("religious.nakshatra"), religious.nakshatra),
         ]
       : kind === "muslim"
         ? [
-            pair("Maslak / Sect", religious.maslak, "Prayer", religious.prayerRegularity),
-            single("Observance", religious.observance),
+            pair(t("religious.maslak"), religious.maslak, t("religious.prayer"), religious.prayerRegularity),
+            single(t("religious.observance"), religious.observance),
           ]
         : [];
 
   const siblingRows: DocRow[] = siblings.map((sib, i) =>
-    single(i === 0 ? "Brothers / Sisters" : "", formatSibling(sib)),
+    single(i === 0 ? t("family.siblingList") : "", formatSibling(sib)),
   );
 
   return prune([
     {
       id: "personal",
-      title: "Personal Information",
+      title: t("section.personal"),
       rows: [
-        single("Full Name", personal.fullName),
-        single("Birth Place", personal.birthPlace),
+        single(t("personal.fullName"), personal.fullName),
+        single(t("personal.birthPlace"), personal.birthPlace),
         pair(
-          "Date of Birth",
+          t("personal.dateOfBirth"),
           personal.dateOfBirth
-            ? `${formatDate(personal.dateOfBirth)}${personal.age ? ` (${personal.age} yrs)` : ""}`
+            ? `${formatDate(personal.dateOfBirth, lang)}${
+                personal.age ? ` (${personal.age} ${t("personal.years")})` : ""
+              }`
             : "",
-          "Time",
+          t("personal.timeOfBirth"),
           personal.timeOfBirth,
         ),
-        pair("Height", personal.height, "Weight", personal.weight),
-        pair("Body Type", personal.bodyType, "Complexion", personal.complexion),
-        pair("Blood Group", personal.bloodGroup, "Religion", personal.religion),
-        pair("Mother Tongue", personal.motherTongue, "Marital Status", personal.maritalStatus),
-        pair("Nationality", personal.nationality, "Hometown", personal.hometown),
-        single("Health", personal.healthNotes),
+        pair(t("personal.height"), personal.height, t("personal.weight"), personal.weight),
+        pair(t("personal.bodyType"), personal.bodyType, t("personal.complexion"), personal.complexion),
+        pair(t("personal.bloodGroup"), personal.bloodGroup, t("personal.religion"), personal.religion),
+        pair(t("personal.motherTongue"), personal.motherTongue, t("personal.maritalStatus"), personal.maritalStatus),
+        pair(t("personal.nationality"), personal.nationality, t("personal.hometown"), personal.hometown),
+        single(t("personal.health"), personal.healthNotes),
       ],
     },
     {
       id: "religious",
-      title: kind === "hindu" ? "Community & Horoscope" : "Religious Details",
+      title: kind === "hindu" ? t("section.horoscope") : t("section.religious"),
       rows: religiousRows,
     },
     {
       id: "education",
-      title: "Education",
+      title: t("section.education"),
       rows: [
         single(
-          "Master's",
+          t("education.masters"),
           formatEducationLine(education.masters, education.mastersInstitution, education.mastersYear, education.mastersResult),
         ),
         single(
-          "Graduation",
+          t("education.graduation"),
           formatEducationLine(education.graduation, education.graduationInstitution, education.graduationYear, education.graduationResult),
         ),
         single(
-          "Diploma",
+          t("education.diploma"),
           formatEducationLine(education.diploma, education.diplomaInstitution, education.diplomaYear, education.diplomaResult),
         ),
-        single("HSC", formatEducationLine(education.hsc, education.hscInstitution, education.hscYear, education.hscResult)),
-        single("SSC / School", formatEducationLine(education.school, education.schoolName, education.schoolYear, education.schoolResult)),
+        single(
+          t("education.hsc"),
+          formatEducationLine(education.hsc, education.hscInstitution, education.hscYear, education.hscResult),
+        ),
+        single(
+          t("education.school"),
+          formatEducationLine(education.school, education.schoolName, education.schoolYear, education.schoolResult),
+        ),
       ],
     },
     {
       id: "career",
-      title: "Career & Profession",
+      title: t("section.career"),
       rows: [
-        pair("Designation", education.designation, "Company", education.company),
-        pair("Employment", education.employmentType, "Work Location", education.workLocation),
-        pair("Monthly Income", education.monthlyIncome, "Annual Income", education.annualIncome),
-        pair("Experience", education.experience, "Domain", education.domain),
+        pair(t("career.designation"), education.designation, t("career.company"), education.company),
+        pair(t("career.employment"), education.employmentType, t("career.workLocation"), education.workLocation),
+        pair(t("career.monthlyIncome"), education.monthlyIncome, t("career.annualIncome"), education.annualIncome),
+        pair(t("career.experience"), education.experience, t("career.domain"), education.domain),
       ],
     },
     {
       id: "family",
-      title: "Family Details",
+      title: t("section.family"),
       rows: [
-        single("Father", formatParent(family.fatherName, family.fatherStatus, family.fatherOccupation)),
-        single("Mother", formatParent(family.motherName, family.motherStatus, family.motherOccupation)),
-        single("Siblings", formatSiblingCounts(data)),
+        single(t("family.father"), formatParent(family.fatherName, family.fatherStatus, family.fatherOccupation)),
+        single(t("family.mother"), formatParent(family.motherName, family.motherStatus, family.motherOccupation)),
+        single(t("family.siblingCount"), formatSiblingCounts(data)),
         ...siblingRows,
-        single(siblings.length ? "" : "Brothers / Sisters", family.siblingsNote),
-        pair("Family Type", family.familyType, "Values", family.familyValues),
-        pair("Economic Status", family.economicStatus, "Notable Relative", family.notableRelative),
-        single("Native Place", family.nativePlace),
-        single("Property", family.property),
+        single(siblings.length ? "" : t("family.siblingList"), family.siblingsNote),
+        pair(t("family.type"), family.familyType, t("family.values"), family.familyValues),
+        pair(t("family.economicStatus"), family.economicStatus, t("family.notableRelative"), family.notableRelative),
+        single(t("family.nativePlace"), family.nativePlace),
+        single(t("family.property"), family.property),
       ],
     },
     {
       id: "address",
-      title: "Address",
+      title: t("section.address"),
       rows: [
-        single("Present Address", address.presentAddress),
-        single("Permanent Address", address.permanentAddress),
+        single(t("address.present"), address.presentAddress),
+        single(t("address.permanent"), address.permanentAddress),
       ],
     },
     {
       id: "lifestyle",
-      title: "Lifestyle & Interests",
+      title: t("section.lifestyle"),
       rows: [
-        pair("Hobbies", lifestyle.hobbies, "Languages", lifestyle.languages),
-        pair("Sports", lifestyle.sports, "Personality", lifestyle.personality),
-        pair("Diet", lifestyle.diet, "Smoking", lifestyle.smoking),
-        single("Drinking", lifestyle.drinking),
+        pair(t("lifestyle.hobbies"), lifestyle.hobbies, t("lifestyle.languages"), lifestyle.languages),
+        pair(t("lifestyle.sports"), lifestyle.sports, t("lifestyle.personality"), lifestyle.personality),
+        pair(t("lifestyle.diet"), lifestyle.diet, t("lifestyle.smoking"), lifestyle.smoking),
+        single(t("lifestyle.drinking"), lifestyle.drinking),
       ],
     },
     {
       id: "partner",
-      title: "Partner Preference",
+      title: t("section.partner"),
       rows: [
-        pair("Age", partner.ageRange, "Height", partner.heightRange),
-        pair("Complexion", partner.complexion, "Education", partner.education),
-        pair("Profession", partner.profession, "Working", partner.working),
-        pair("Religion", partner.religion, "Marital Status", partner.maritalStatus),
-        pair("Family Type", partner.familyType, "Diet", partner.diet),
-        pair("Location", partner.location, "Abroad", partner.abroadAcceptable),
+        pair(t("partner.age"), partner.ageRange, t("partner.height"), partner.heightRange),
+        pair(t("partner.complexion"), partner.complexion, t("partner.education"), partner.education),
+        pair(t("partner.profession"), partner.profession, t("partner.working"), partner.working),
+        pair(t("partner.religion"), partner.religion, t("partner.maritalStatus"), partner.maritalStatus),
+        pair(t("partner.familyType"), partner.familyType, t("partner.diet"), partner.diet),
+        pair(t("partner.location"), partner.location, t("partner.abroad"), partner.abroadAcceptable),
       ],
     },
     {
       id: "contact",
-      title: "Contact Details",
+      title: t("section.contact"),
       rows: [
         single(
-          "Contact Person",
+          t("contact.person"),
           contact.contactPerson
             ? contact.contactRelation
               ? `${contact.contactPerson} (${contact.contactRelation})`
               : contact.contactPerson
             : "",
         ),
-        pair("Phone", contact.phone, "Alternate", contact.alternatePhone),
-        pair("WhatsApp", contact.whatsapp, "Email", contact.email),
+        pair(t("contact.phone"), contact.phone, t("contact.alternate"), contact.alternatePhone),
+        pair(t("contact.whatsapp"), contact.whatsapp, t("contact.email"), contact.email),
       ],
     },
   ]);
@@ -210,8 +225,9 @@ export function documentContent(data: BiodataFormData): DocSection[] {
 /** Facts shown beside the name at the head of every template. */
 export function headlineFacts(data: BiodataFormData): string[] {
   const { personal } = data;
+  const lang = data.meta.documentLanguage;
   return [
-    personal.age && `${personal.age} Years`,
+    personal.age && `${personal.age} ${docString("personal.yearsLong", lang)}`,
     personal.height && personal.height.split(" (")[0],
     personal.religion,
     personal.maritalStatus,
@@ -219,9 +235,9 @@ export function headlineFacts(data: BiodataFormData): string[] {
   ].filter((v): v is string => Boolean(v));
 }
 
-export function formatDate(d: string): string {
+export function formatDate(d: string, lang: DocumentLanguage = "en"): string {
   const dt = new Date(d);
   return isNaN(dt.getTime())
     ? d
-    : dt.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+    : dt.toLocaleDateString(dateLocale(lang), { day: "numeric", month: "long", year: "numeric" });
 }

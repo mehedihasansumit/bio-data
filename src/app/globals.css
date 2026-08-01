@@ -21,6 +21,24 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Bengali documents never carry letter-spacing.
+
+   The Uppercase-Is-Structural Rule — uppercase plus wide tracking marks a
+   section boundary — is a Latin rule. Bengali has no case, so `uppercase` is
+   inert, but tracking is actively destructive: it severs the মাত্রা, the
+   horizontal headline stroke that joins the letters of a word, and pulls
+   যুক্তাক্ষর apart into their components. A tracked Bengali heading does not read
+   as emphasis, it reads as broken text.
+
+   Keyed off the `lang` that BiodataPreview puts on the document root, so the
+   invariant holds for all four templates and for any template added later. This
+   rule is deliberately unlayered: Tailwind v4 emits its utilities inside
+   `@layer utilities`, and unlayered styles outrank every layer, so this beats
+   `tracking-[.15em]` on the element itself without needing `!important`. */
+#biodata-preview[lang="bn"] * {
+  letter-spacing: normal;
+}
+
 /* Confirmation dialogs.
 
    A native <dialog> lives in the top layer, so a plain transition would be cut

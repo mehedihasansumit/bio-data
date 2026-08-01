@@ -232,6 +232,88 @@ describe("v1 → v2 migration", () => {
   });
 });
 
+describe("v2 → v3 migration", () => {
+  const v2 = (data: unknown) =>
+    JSON.stringify({ format: FILE_FORMAT, version: 2, exportedAt: AT, data });
+
+  it("gives a pre-meta file an English document, not the new Bengali default", () => {
+    // Every biodata written before Document Language existed was printed in
+    // English. An import is not the moment to silently re-language someone's
+    // document, so the new default applies to new biodatas only.
+    const result = parseBiodata(v2({ personal: { fullName: "Rafiul Karim" } }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.meta.documentLanguage).toBe("en");
+    expect(initialBiodata.meta.documentLanguage).toBe("bn");
+  });
+
+  it("leaves the Candidate Kind unspecified rather than guessing", () => {
+    const result = parseBiodata(v2({ personal: { fullName: "Rafiul Karim" } }));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.meta.candidateKind).toBe("unspecified");
+  });
+
+  it("migrates silently — nothing the author sees has changed", () => {
+    const result = parseBiodata(v2({ personal: { fullName: "A" } }));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.warning).toBeUndefined();
+  });
+
+  it("carries a v1 file all the way to v3", () => {
+    const result = parseBiodata(
+      JSON.stringify({
+        format: FILE_FORMAT,
+        version: 1,
+        exportedAt: AT,
+        data: { family: { siblings: "One brother" } },
+      }),
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.family.siblingsNote).toBe("One brother");
+    expect(result.data.meta.documentLanguage).toBe("en");
+  });
+});
+
+describe("meta is a closed set, unlike every other field", () => {
+  const v3 = (meta: unknown) =>
+    JSON.stringify({
+      format: FILE_FORMAT,
+      version: 3,
+      exportedAt: AT,
+      data: { meta },
+    });
+
+  it("round trips valid values", () => {
+    const result = parseBiodata(v3({ candidateKind: "bride", documentLanguage: "en" }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.meta).toEqual({ candidateKind: "bride", documentLanguage: "en" });
+  });
+
+  it("falls back rather than trusting an unknown language", () => {
+    // "fr" would reach docString, resolve to undefined, and print a document
+    // of blank labels. Anywhere else an unrecognised string is harmless.
+    const result = parseBiodata(v3({ documentLanguage: "fr" }));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.meta.documentLanguage).toBe("bn");
+  });
+
+  it("falls back rather than trusting an unknown candidate kind", () => {
+    const result = parseBiodata(v3({ candidateKind: "spouse" }));
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.meta.candidateKind).toBe("unspecified");
+  });
+
+  it("survives meta being junk", () => {
+    for (const junk of [null, "bn", 42, ["bn"]]) {
+      const result = parseBiodata(v3(junk));
+      expect(result.ok).toBe(true);
+      if (result.ok) expect(result.data.meta).toEqual(initialBiodata.meta);
+    }
+  });
+});
+
 describe("isBiodataEmpty with siblings", () => {
   it("treats a draft whose only content is a sibling as non-empty", () => {
     const data = {

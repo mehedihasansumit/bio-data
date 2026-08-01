@@ -1,12 +1,17 @@
 import {
   BiodataFormData,
+  BiodataMeta,
+  CandidateKind,
+  CANDIDATE_KINDS,
+  DocumentLanguage,
+  DOCUMENT_LANGUAGES,
   emptySibling,
   initialBiodata,
   Sibling,
 } from "@/types/biodata";
 
 export const FILE_FORMAT = "biyerbiodata";
-export const FILE_VERSION = 2;
+export const FILE_VERSION = 3;
 
 export interface BiodataEnvelope {
   format: typeof FILE_FORMAT;
@@ -70,6 +75,31 @@ function coerceSiblings(value: unknown): Sibling[] {
 }
 
 /**
+ * `meta` is the one section whose fields are closed sets rather than free text.
+ *
+ * Everywhere else an unrecognised string is harmless — it just prints. Here it
+ * would be a `documentLanguage` of "fr" reaching `docString`, which resolves to
+ * undefined and renders a document of blank labels. Anything not on the list
+ * falls back to the default rather than being trusted.
+ */
+function coerceMeta(incoming: unknown): BiodataMeta {
+  const meta: BiodataMeta = { ...initialBiodata.meta };
+  if (!isRecord(incoming)) return meta;
+
+  const kind = asString(incoming.candidateKind);
+  if (kind && (CANDIDATE_KINDS as string[]).includes(kind)) {
+    meta.candidateKind = kind as CandidateKind;
+  }
+
+  const lang = asString(incoming.documentLanguage);
+  if (lang && (DOCUMENT_LANGUAGES as string[]).includes(lang)) {
+    meta.documentLanguage = lang as DocumentLanguage;
+  }
+
+  return meta;
+}
+
+/**
  * Merge an untrusted payload over the canonical shape.
  *
  * Only keys that exist in `initialBiodata` survive, and only string-ish values
@@ -82,6 +112,11 @@ function coerce(payload: unknown): BiodataFormData {
   if (!isRecord(payload)) return result;
 
   for (const sectionKey of Object.keys(result) as (keyof BiodataFormData)[]) {
+    if (sectionKey === "meta") {
+      result.meta = coerceMeta(payload.meta);
+      continue;
+    }
+
     const incoming = payload[sectionKey];
     if (!isRecord(incoming)) continue;
 
@@ -122,6 +157,27 @@ function migrateV1(payload: unknown): unknown {
   };
 }
 
+/**
+ * v2 → v3: `meta` did not exist, so neither did Document Language.
+ *
+ * Migrated files get "en", not the new "bn" default. Every biodata written
+ * before this field existed was printed in English, and an import is not the
+ * moment to silently re-language someone's document — the new default is for
+ * new biodatas only.
+ */
+function migrateV2(payload: unknown): unknown {
+  if (!isRecord(payload)) return payload;
+
+  return {
+    ...payload,
+    meta: {
+      candidateKind: "unspecified",
+      documentLanguage: "en",
+      ...(isRecord(payload.meta) ? payload.meta : {}),
+    },
+  };
+}
+
 export function parseBiodata(text: string): ParseResult {
   if (!text.trim()) {
     return { ok: false, error: "Nothing to import — paste your biodata file first." };
@@ -145,6 +201,7 @@ export function parseBiodata(text: string): ParseResult {
 
   let payload = parsed.data;
   if (version <= 1) payload = migrateV1(payload);
+  if (version <= 2) payload = migrateV2(payload);
 
   const data = coerce(payload);
 
