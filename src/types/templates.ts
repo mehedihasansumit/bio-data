@@ -1,4 +1,9 @@
-export type TemplateName = "classic" | "elegant" | "modern" | "royal";
+export type TemplateName =
+  | "classic"
+  | "elegant"
+  | "modern"
+  | "royal"
+  | "panel";
 
 /**
  * The shape of sheet a template produces, as a name the chooser can draw.
@@ -70,5 +75,12 @@ export const templates: TemplateOption[] = [
     description: "Burgundy, doubled frame, star marks",
     layout: "stacked",
     colors: { primary: "#7f1d1d", accent: "#b91c1c" },
+  },
+  {
+    id: "panel",
+    name: "Panel",
+    description: "Teal side panel, sections beside",
+    layout: "panel",
+    colors: { primary: "#0f766e", accent: "#5eead4" },
   },
 ];
