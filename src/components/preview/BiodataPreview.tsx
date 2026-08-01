@@ -8,6 +8,7 @@ import ElegantTemplate from "./ElegantTemplate";
 import ModernTemplate from "./ModernTemplate";
 import RoyalTemplate from "./RoyalTemplate";
 import PanelTemplate from "./PanelTemplate";
+import CompactTemplate from "./CompactTemplate";
 
 interface Props {
   data: BiodataFormData;
@@ -38,6 +39,7 @@ export const TEMPLATES: Record<TemplateName, (props: TemplateProps) => React.Rea
   modern: ModernTemplate,
   royal: RoyalTemplate,
   panel: PanelTemplate,
+  compact: CompactTemplate,
 };
 
 export default function BiodataPreview({ data, template, headingLevel = 2 }: Props) {

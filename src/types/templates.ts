@@ -3,7 +3,8 @@ export type TemplateName =
   | "elegant"
   | "modern"
   | "royal"
-  | "panel";
+  | "panel"
+  | "compact";
 
 /**
  * The shape of sheet a template produces, as a name the chooser can draw.
@@ -82,5 +83,12 @@ export const templates: TemplateOption[] = [
     description: "Teal side panel, sections beside",
     layout: "panel",
     colors: { primary: "#0f766e", accent: "#5eead4" },
+  },
+  {
+    id: "compact",
+    name: "Compact",
+    description: "Ochre, two columns, one page",
+    layout: "two-column",
+    colors: { primary: "#92400e", accent: "#d97706" },
   },
 ];
