@@ -284,7 +284,7 @@ Geist is self-hosted through `next/font/google` in `src/app/layout.tsx`, exposed
 
 Only the `bengali` subset is requested, since Latin never reaches this face. Hind Siliguri was chosen over Noto Sans Bengali for its larger effective x-height, which is what the 11px Record Rule below depends on; it is fractionally warmer than "deliberately anonymous" asks for, and that was the price of legibility at document size.
 
-> **Open gap — preload.** The face is currently loaded with `preload: false`, correct only while the site's own copy is English and Bengali appears solely in what a user types. When Bengali content lands it will be rendering the largest contentful paint, and preload must be turned back on in `src/app/layout.tsx`.
+**Preload — closed.** The face now carries Next's default `preload: true`. That gap was correct only while the site's own copy was English and Bengali appeared solely in what a user typed; the site is now Bengali-first, so Hind Siliguri draws the largest contentful paint on every page and deferring it to first-glyph discovery would delay exactly the metric it feeds.
 
 **Bengali at 11px — verified.** The 11px Record Rule was tuned on Latin, and Bengali needs more vertical room for মাত্রা and stacked যুক্তাক্ষর, so the rule was held only provisionally when Hind Siliguri landed. It has since been checked the only way that settles it: a full sample biodata rendered in Bengali and inspected at 4× (`ব্যক্তিগত`, `স্বাস্থ্য`, `রক্তের গ্রুপ`, `স্নাতকোত্তর`). Conjuncts form correctly, the মাত্রা stays continuous, and the labels hold their own beside 11px Latin values. **The rule stands at 11px for both scripts.** Re-check it before adopting any face other than Hind Siliguri — the margin here is the reason that face was chosen over Noto Sans Bengali.
 
@@ -293,7 +293,7 @@ Only the `bengali` subset is requested, since Latin never reaches this face. Hin
 ### Hierarchy
 
 - **Display** (700, 36px → 48px at ≥640px, leading 1.25): the landing hero headline, and nothing else. One per site.
-- **Headline** (700, 18px, uppercase, tracking 0.15em): the words "MARRIAGE BIODATA" at the top of every template. Royal tightens to 16px and opens tracking to 0.2em; Elegant holds 18px at 0.18em.
+- **Headline** (700, 18px, uppercase, tracking 0.15em): the document's self-declaration at the top of every template. Not a fixed string — `documentTitle()` resolves it from Candidate Kind and Document Language, so it reads "পাত্রীর বায়োডাটা", "পাত্রের বায়োডাটা", or "Marriage Biodata" rather than the generic heading every other tool prints. Royal tightens to 16px and opens tracking to 0.2em; Elegant holds 18px at 0.18em. Tracking applies to the Latin forms only — see The Bengali-Is-Never-Tracked Rule.
 - **Title** (700, 20px): the app wordmark in both headers. At 18px/600 it also serves the form's section headings ("Personal Information") and at 15px/700 the candidate's name inside every document.
 - **Body** (400, 14px, leading 1.5): all interface copy, inputs, and buttons. Landing supporting copy steps up to 18px and is capped at `max-w-lg` (32rem) for line length.
 - **Label** (700, 10px, uppercase, tracking 0.12–0.15em): document section headings in all four templates, and the "Choose Template" eyebrow at 14px/600. Form field labels are the exception — 14px/500, sentence case, neutral.
@@ -301,13 +301,19 @@ Only the `bengali` subset is requested, since Latin never reaches this face. Hin
 
 ### Named Rules
 
-**The 11px Record Rule.** Document body text is 11px. Not 10, not 12. It is the size that fits a complete biodata on one A4 sheet without the row rhythm collapsing, and every template is tuned around it. Changing it re-paginates everything.
+**The 11px Record Rule.** Document body text is 11px. Not 10, not 12. It is the smallest size that holds the row rhythm and stays comfortably readable on a printed sheet a stranger will study closely, and every template is tuned around it — in both scripts, per the Bengali verification above. Changing it re-paginates everything. (It once also served a one-page budget; that constraint is gone, see The Clean Break Rule. The size survives on legibility alone.)
 
 **The Uppercase-Is-Structural Rule.** Uppercase plus wide tracking marks a section boundary and nothing else. Never uppercase a value, a name, a button, or a form label. **Latin only** — see the next rule.
 
 **The Bengali-Is-Never-Tracked Rule.** Bengali carries no letter-spacing anywhere, at any size. Bengali has no case, so `uppercase` is inert on it, but tracking is destructive: it severs the মাত্রা — the horizontal headline stroke that joins the letters of a word — and pulls যুক্তাক্ষর apart into their components. A tracked Bengali heading does not read as emphasis, it reads as broken text. In Bengali a section boundary is carried by ink and rule work alone. Enforced centrally rather than per template: `BiodataPreview` stamps the Document Language onto `#biodata-preview[lang]`, and an unlayered rule in `globals.css` resets `letter-spacing` beneath it. Unlayered beats Tailwind's `@layer utilities`, so this wins over `tracking-*` on the element without `!important`, and a new template cannot reintroduce the problem by accident.
 
 **The Single Family Rule.** One font family per script across the whole product, chrome and documents alike: Geist for Latin, Hind Siliguri for Bengali. A second face is admissible only to cover glyphs the first one lacks — never for expression. A template differentiates itself with ink, border, and ornament, never by introducing a serif, a script, or a display face.
+
+**The Our Words, Their Data Rule.** The app translates its own words and never the user's. A label is ours, so it changes with Document Language. A value the user typed — a name, "5 ft 8 in", "৳1,00,000+", a company, a phone number — is theirs, and prints exactly as entered, in whatever script they entered it. A Bengali document with an English-typed employer is correct; "translating" it would be the app editing someone's biodata. This is why the words rule and the numerals rule differ: words only ever come from one side, numerals come from both and sit adjacent.
+
+**The Two Languages Are Two Concepts Rule.** Interface Language and Document Language are independent and must never be collapsed into one site-wide locale (ADR `docs/adr/0001`). The builder may be bilingual; the finished document must not be — a formal record that labels all ~60 of its rows twice reads as an untranslated template rather than a considered artifact. Document Language is stored on the biodata itself, so an exported and re-imported record keeps the language it was authored in, and one person can produce both an English and a Bengali version of themselves. Because it lives in the data and not the URL, the marketing routes need no `[locale]` segment, no hreflang, and no duplicated content set.
+
+**The One Seam Rule.** Every translated string in a document resolves in `documentContent.ts` via `documentStrings.ts`. A template never receives a language and never learns one exists — it renders whatever words it is handed. String keys are semantic (`personal.fullName`), not English-derived, so rewording an English label is a copy change and not a schema change.
 
 ## Layout
 
@@ -452,6 +458,26 @@ The one modal in the product, and the only place the app interrupts. It exists b
 **The Earned Interruption Rule.** A modal is permitted only when the alternative is silent, unrecoverable data loss. Never for confirmation of something reversible, never for a message, never for a form, never for onboarding. When there is nothing to lose — clearing an already-empty form, restoring into an empty form — the action just happens. A confirmation that guards nothing trains people to dismiss the one that guards something.
 
 **The Rare Red Rule, extended.** Red now has a third home: the confirm button of a `danger` dialog, in `alert-red-deep`. It remains the only filled red in the product, and it is still barred from validation, required marks, and emphasis. Red means *this destroys something*, in all three places it appears.
+
+### Loading State
+
+The builder is client-only (it restores a local draft during its first render, which a prerendered page would contradict at hydration), so `BuilderLoader.tsx` shows a skeleton first. The skeleton is the real emerald header bar at its true height with the mark in place, plus one line of Bengali status text carrying `role="status"` — not a spinner and not a grey block. The header does not move when the app arrives, so the load reads as the page filling in rather than swapping.
+
+**The One Mark Rule.** Every surface wears the same header identity: the `icon.svg` mark beside the wordmark **BiyerBiodata**, white on `chrome-emerald`. The builder previously called itself "Biodata Builder" and dropped the mark entirely, so entering the tool silently renamed the product. A surface may change what sits to the *right* of the mark — the guides offer a CTA, the builder offers document actions — but never the mark itself.
+
+Because the skeleton and the live header both render that mark, the two must stay byte-identical. A skeleton that differs from the component it precedes defeats its own purpose: the user watches the title bar rewrite itself.
+
+### Guide Pages
+
+Four prerendered Bengali guides at the site root — `patrir-biodata`, `patror-biodata`, `muslim-biodata`, `hindu-biodata` — each explaining a biodata format and offering a worked sample. Content lives in `lib/landingPages.ts`; `landing/PageShell.tsx` supplies the chrome.
+
+This is the product's **third mode**. The landing page persuades and the builder operates; these read. That changes what wins: comprehension outranks conversion, so the measure is capped at `max-w-3xl` (768px) rather than the 1024px the marketing header uses, body copy runs at 16–18px with relaxed leading instead of the interface's 14px, and headings step up to 30–36px. A single emerald CTA sits after the introduction and is not repeated between every section.
+
+- **Shell:** the emerald header bar from the landing page, with the wordmark left and one white inverse CTA right; a `surface-workspace` footer carrying the guide links and attribution.
+- **Wayfinding:** a text breadcrumb above the `h1` in `ink-muted`, since these pages are entered from search rather than from the site.
+- **Prose:** `ink-body` at `leading-relaxed`, section headings at 20px/700 in `ink-strong`. No cards, no callout boxes, no icons — the clerical register holds here too.
+
+**The Read Mode Rule.** A guide is not a landing page with an article in it. One CTA, one column, generous measure, and no persuasion furniture — no badge rows, no repeated conversion blocks, no testimonial strips. Someone arrived with a question; answer it, then offer the tool once.
 
 ### The Document Row
 

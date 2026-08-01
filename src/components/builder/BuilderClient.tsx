@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { BiodataFormData, initialBiodata, sampleBiodata } from "@/types/biodata";
 import { TemplateName } from "@/types/templates";
@@ -208,11 +209,15 @@ export default function BuilderClient() {
       {/* Header */}
       <header className="bg-emerald-800 text-white px-6 py-3 print:hidden">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          {/* Must stay identical to the skeleton in BuilderLoader, and to the
+              PageShell header, so the mark never changes between surfaces or
+              shifts when the app hydrates. */}
           <Link
             href="/"
-            className="text-xl font-bold shrink-0 py-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="flex items-center gap-2 shrink-0 py-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
-            Biodata Builder
+            <Image src="/icon.svg" alt="" width={28} height={28} aria-hidden="true" />
+            <span className="text-xl font-bold">BiyerBiodata</span>
           </Link>
           <div className="flex items-center gap-1 sm:gap-2">
             <button
