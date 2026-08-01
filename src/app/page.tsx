@@ -14,7 +14,9 @@ const FEATURES = [
   },
   {
     title: "লেখার সঙ্গে সঙ্গেই প্রিভিউ",
-    body: "টাইপ করার সঙ্গে সঙ্গে ডান পাশে বায়োডাটা তৈরি হতে থাকে। ছাপার আগেই দেখে নিতে পারবেন কেমন দেখাচ্ছে।",
+    // Not "ডান পাশে" (on the right): on a phone the preview is behind a tab,
+    // not beside the form. Copy should not describe one breakpoint's layout.
+    body: "টাইপ করার সঙ্গে সঙ্গেই বায়োডাটা তৈরি হতে থাকে। ছাপার আগেই দেখে নিতে পারবেন কেমন দেখাচ্ছে।",
   },
   {
     title: "ছাপার উপযোগী A4 PDF",

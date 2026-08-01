@@ -25,7 +25,8 @@ export default function SiblingsEditor({ siblings, onChange }: Props) {
 
   return (
     <div className="sm:col-span-2">
-      <h4 className="text-sm font-medium text-gray-700 mb-2">Brothers &amp; Sisters</h4>
+      {/* h3 under FormSection's h2. */}
+      <h3 className="text-sm font-medium text-gray-700 mb-2">Brothers &amp; Sisters</h3>
 
       {siblings.length === 0 && (
         <p className="text-sm text-gray-600 mb-3">

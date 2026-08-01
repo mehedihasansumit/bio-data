@@ -5,6 +5,7 @@ import { BiodataFormData } from "@/types/biodata";
 import { exportFilename, parseBiodata, serializeBiodata } from "@/lib/biodataFile";
 import { isBiodataEmpty } from "@/lib/utils";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { fieldInputClass } from "@/components/ui/Field";
 
 interface Props {
   data: BiodataFormData;
@@ -100,8 +101,12 @@ export default function DataTransfer({ data, onImport }: Props) {
         <span aria-hidden="true" className="text-gray-600">{open ? "−" : "+"}</span>
       </button>
 
-      {open && (
-        <div id={panelId} className="px-4 pb-4 pt-1 border-t border-gray-200">
+      {/* Always in the DOM, hidden with the `hidden` attribute rather than
+          unmounted, so the `aria-controls` above always resolves to a real
+          element. A disclosure that names a panel which does not exist while
+          closed is describing a control that controls nothing. `hidden` is
+          `display: none`, so nothing inside is focusable or announced. */}
+      <div id={panelId} hidden={!open} className="px-4 pb-4 pt-1 border-t border-gray-200">
           <p className="text-xs text-gray-600">
             Your biodata is saved on this device only. Export a copy to move it to another
             phone or computer, or to keep it somewhere safe.
@@ -150,7 +155,9 @@ export default function DataTransfer({ data, onImport }: Props) {
             rows={4}
             spellCheck={false}
             placeholder='{ "format": "biyerbiodata", ... }'
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-xs"
+            // The shared field appearance, not a hand-rolled near-copy at a
+            // smaller size. The system has exactly one field look.
+            className={fieldInputClass}
           />
           <button
             type="button"
@@ -168,8 +175,7 @@ export default function DataTransfer({ data, onImport }: Props) {
               {status.message}
             </p>
           )}
-        </div>
-      )}
+      </div>
 
       <ConfirmDialog
         open={pending !== null}

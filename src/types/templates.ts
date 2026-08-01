@@ -4,10 +4,16 @@ export interface TemplateOption {
   id: TemplateName;
   name: string;
   description: string;
+  /**
+   * The two swatches the chooser shows for this template. Not the template's
+   * palette — each template component owns its own inks. A third `bg` value
+   * used to sit here, described as reserved for tinted paper stocks; nothing
+   * ever read it, and four unused hex values that look authoritative are worse
+   * than none. Add it back with the feature that needs it.
+   */
   colors: {
     primary: string;
     accent: string;
-    bg: string;
   };
 }
 
@@ -23,24 +29,24 @@ export const templates: TemplateOption[] = [
     id: "classic",
     name: "Classic",
     description: "Green, double border, filled headings",
-    colors: { primary: "#065f46", accent: "#10b981", bg: "#ecfdf5" },
+    colors: { primary: "#065f46", accent: "#10b981" },
   },
   {
     id: "elegant",
     name: "Elegant",
     description: "Navy with gold corner brackets",
-    colors: { primary: "#1e3a5f", accent: "#d4a853", bg: "#f0f4f8" },
+    colors: { primary: "#1e3a5f", accent: "#d4a853" },
   },
   {
     id: "modern",
     name: "Modern",
     description: "Violet, rounded frame, pill facts",
-    colors: { primary: "#6d28d9", accent: "#a78bfa", bg: "#f5f3ff" },
+    colors: { primary: "#6d28d9", accent: "#a78bfa" },
   },
   {
     id: "royal",
     name: "Royal",
     description: "Burgundy, doubled frame, star marks",
-    colors: { primary: "#7f1d1d", accent: "#b91c1c", bg: "#fef2f2" },
+    colors: { primary: "#7f1d1d", accent: "#b91c1c" },
   },
 ];

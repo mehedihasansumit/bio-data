@@ -294,21 +294,21 @@ export default function BuilderClient() {
             <button
               type="button"
               onClick={handleLoadSample}
-              className="min-h-11 px-3 text-sm text-emerald-100 rounded-lg hover:bg-emerald-700 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="min-h-11 px-3 text-sm whitespace-nowrap text-emerald-100 rounded-lg hover:bg-emerald-700 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Load Sample
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="min-h-11 px-3 text-sm text-emerald-100 rounded-lg hover:bg-emerald-700 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="min-h-11 px-3 text-sm whitespace-nowrap text-emerald-100 rounded-lg hover:bg-emerald-700 hover:text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Clear All
             </button>
             <button
               type="button"
               onClick={handlePrint}
-              className="min-h-11 bg-white text-emerald-800 px-5 rounded-lg font-semibold hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="min-h-11 bg-white text-emerald-800 px-5 rounded-lg font-semibold whitespace-nowrap hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Print / Download PDF
             </button>
@@ -367,7 +367,10 @@ export default function BuilderClient() {
                     role="tab"
                     type="button"
                     aria-selected={selected}
-                    aria-controls={`panel-${slug(tab)}`}
+                    // Only the selected tab points at a panel: this is a
+                    // single-panel tablist, so the other five ids do not exist
+                    // in the document and `aria-controls` would dangle.
+                    aria-controls={selected ? `panel-${slug(tab)}` : undefined}
                     tabIndex={selected ? 0 : -1}
                     onKeyDown={(e) => handleTabKeyDown(e, i)}
                     onClick={() => setActiveTab(tab)}
@@ -444,19 +447,30 @@ export default function BuilderClient() {
           <div className={`lg:w-1/2 print:!block print:!w-full ${!showPreview ? "hidden lg:block" : ""}`}>
             <div className="sticky top-4 print:static">
               {/* Everything that describes the document rather than the person
-                  lives together: which template, whose biodata, what language. */}
-              <div className="mb-3 print:hidden flex flex-col gap-3">
+                  lives together: which template, whose biodata, what language.
+
+                  One <section> with one h2 over three h3s, because that is what
+                  this already is — the three questions about the artifact,
+                  asked in one place. Previously DocumentSettings' two h3s came
+                  before "Choose Template"'s h2 in DOM order, so the outline
+                  went h1 → h3 → h3 → h2. The h2 is visually hidden: the cluster
+                  reads as one group on screen without needing a label, but the
+                  outline still has to say where it begins. */}
+              <section aria-labelledby="document-settings" className="mb-3 print:hidden flex flex-col gap-3">
+                <h2 id="document-settings" className="sr-only">
+                  Document settings
+                </h2>
                 <DocumentSettings
                   meta={data.meta}
                   onChange={(meta) => setData({ ...data, meta })}
                 />
                 <div>
-                  <h2 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+                  <h3 className="text-sm font-semibold text-gray-600 mb-2 uppercase tracking-wide">
                     Choose Template
-                  </h2>
+                  </h3>
                   <TemplateSelector selected={template} onChange={setTemplate} />
                 </div>
-              </div>
+              </section>
 
               {isEmpty ? (
                 <div className="rounded-lg border border-dashed border-gray-300 bg-white p-10 text-center print:hidden">

@@ -248,7 +248,7 @@ The four **document inks** are not brand colors — they are user-selected paper
 - **Modern — Clean Violet** (`modern-primary`): the only template with rounded corners and pill-shaped meta chips. `modern-heading` is the actual section-heading value and sits one step lighter than the declared primary.
 - **Royal — Deep Oxblood with Signal Crimson** (`royal-primary` / `royal-accent`): oxblood for text and the outer frame, crimson for the inner hairline, section markers, and the fading gradient rule.
 
-The declared `bg` value in each template triple is currently unused by the rendered components — the document always sits on `surface-paper`. Treat it as reserved for the template chooser and future tinted stocks, not as a live background.
+Each template declares a `primary` / `accent` pair, and that pair is only what the chooser puts in its two swatches — a template's real inks live in its own component. There was a third `bg` value, described here as reserved for future tinted stocks; nothing ever read it, and four unused hex values that look authoritative are worse than none, so it is gone. The document always sits on `surface-paper`. Add `bg` back alongside the feature that needs it.
 
 ### Neutral
 

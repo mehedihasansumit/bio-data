@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored tooling, not this project's source. `npm run lint` was
+    // returning 156 warnings, 150 of them from bundled skill scripts, which
+    // buries the six that are actually about this app.
+    ".claude/**",
   ]),
 ]);
 
