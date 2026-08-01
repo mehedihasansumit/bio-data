@@ -153,8 +153,17 @@ html:has(dialog[open]) {
     padding: 0 !important;
   }
 
-  /* Hide everything except the preview */
-  header,
+  /* Hide everything except the preview.
+
+     `header` here means the app's chrome bar — the emerald strip in the builder
+     and on the guide pages. It must not mean a `<header>` *inside* the
+     document: a template's masthead is content, and a bare element selector
+     deleted it from the printed sheet while leaving it perfect on screen, which
+     is the exact screen/paper split the A4 Constant Rule exists to prevent.
+     Compact's ochre band, photo and title all vanished on paper this way.
+     Scoped rather than dropped, because the two real chrome headers still have
+     to go. */
+  header:not(#biodata-preview header),
   .print\:hidden,
   [class*="print:hidden"] {
     display: none !important;
