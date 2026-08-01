@@ -331,6 +331,7 @@ Print styles enforce this: `#biodata-preview` has `box-shadow: none !important`,
 - **Panel** (Tailwind `shadow-sm` — `0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)`): the tab strip, the form card, and the selected template chip. The default lift for anything that is a surface.
 - **Stage** (Tailwind `shadow-lg` — `0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)`): the preview container only. This is the shadow that says "a sheet is lying on this desk." Stripped in print.
 - **Accent glow** (`shadow-lg` tinted with `rule-emerald`): the landing CTA alone. The only colored shadow in the system.
+- **Modal** (Tailwind `shadow-xl`): the confirmation dialog only. One step above Stage because it sits above everything, over its own scrim.
 - **Focus ring** (`0 0 0 2px` `focus-emerald`, with the border made transparent): every input, select, and textarea. Non-negotiable and never removed.
 - **Photo ring** (1–2px inset ring at 20–50% opacity, tinted per template): frames the candidate's photo inside the document.
 
@@ -396,7 +397,7 @@ Two form languages, again split by world.
 - **Label:** 14px/500 `ink-body`, sentence case, 4px above the field. Required fields are marked with a trailing `*` in the label, unstyled.
 - **Focus:** the border goes transparent and a 2px `focus-emerald` ring takes its place, so the field's outer dimensions never shift. Outline is suppressed in favor of the ring.
 - **Read-only:** `surface-workspace` fill, everything else unchanged (the auto-calculated Age field, which also carries `aria-live` so its recalculation is announced).
-- **Error:** inline only, never a native dialog. The message sits directly beneath the control in `alert-red-deep` at 14px, carries `role="alert"`, and is wired to the input via `aria-describedby`. It names the actual problem and the recovery — the photo-size error reports the file's real size and suggests cropping — rather than restating the rule.
+- **Error:** inline only, never a dialog of any kind — the modal is reserved for destructive confirmation, not for messages. The message sits directly beneath the control in `alert-red-deep` at 14px, carries `role="alert"`, and is wired to the input via `aria-describedby`. It names the actual problem and the recovery — the photo-size error reports the file's real size and suggests cropping — rather than restating the rule.
 - **Minimum height:** every control is at least 44px (`min-h-11`), including selects and textareas.
 
 ### Navigation
@@ -412,9 +413,25 @@ A collapsed disclosure below the form card, outside the tabpanel so it is reacha
 
 - **Trigger:** a full-width 44px row reading "Back up or restore", with `aria-expanded` / `aria-controls` and a `+` / `−` affordance. Neutral, not emerald: it is not a step in the task.
 - **Actions:** "Copy biodata" takes the primary emerald fill (it is the intended path — the clipboard feeds a password manager); "Download file" and "Open a file" are `paper-emerald` secondaries. A paste textarea plus "Restore from text" covers the return trip.
-- **Feedback:** one status line beneath, `role="alert"` on failure and `role="status"` on success, in `alert-red-deep` or `chrome-emerald`. Never a native dialog — the single exception is the confirm before overwriting a form that already has content, because import is destructive.
+- **Feedback:** one status line beneath, `role="alert"` on failure and `role="status"` on success, in `alert-red-deep` or `chrome-emerald`. Never a native dialog: restoring over a form that already has content raises the app's own Confirmation Dialog, and restoring into an empty form raises nothing at all.
 
 **The Local Data Rule.** No personal data is ever committed to the repository or shipped in the bundle. The app persists to `localStorage` and exchanges data through user-initiated export and import. If a real biodata needs to travel between devices, it travels through the user's own storage, never through the codebase.
+
+### Confirmation Dialog
+
+The one modal in the product, and the only place the app interrupts. It exists because two actions discard work that cannot be recovered — "Clear All" and restoring over a filled form — and it appears for nothing else. `src/components/ui/ConfirmDialog.tsx`, built on the native `<dialog>` element so the focus trap, Escape, background inertness, and focus restoration come from the platform rather than from hand-written listeners.
+
+- **Panel:** `surface-paper`, 8px radius, 24px padding, capped at 28rem, 16px viewport gutters below that. Scrim is `ink-strong` at 45%.
+- **Type:** title 18px/700 `ink-strong`; body 14px/400 `ink-muted` at leading-relaxed. No icon, no illustration, no colored header band — the words carry it, as everywhere else in this system.
+- **Actions:** cancel first in the DOM so the platform focuses the safe choice on open. Cancel is a neutral tinted surface (`gray-100`); confirm is a solid fill — `alert-red-deep` for `danger`, `action-emerald` for `primary`. Stacked on mobile with the confirm on top (`flex-col-reverse`), right-aligned in a row from 640px.
+- **Copy:** the title asks the question, the body names what is destroyed *and* what survives, and both buttons name their outcome. Never "Are you sure?" / "OK" / "Cancel".
+- **Dismissal:** Escape, the cancel button, or a click on the scrim. All three route through `onCancel`, so `open` stays the only source of truth.
+- **Motion:** 180ms exponential ease-out, 8px rise and a 0.98 → 1 scale, with the scrim fading alongside. Requires `@starting-style` plus `transition-behavior: allow-discrete` on `display`/`overlay`, since a top-layer element gets no transition otherwise. Reduced to 1ms under `prefers-reduced-motion`.
+- **Print:** carries `print:hidden`, and `html:has(dialog[open])` locks page scroll, which `showModal()` does not do on its own.
+
+**The Earned Interruption Rule.** A modal is permitted only when the alternative is silent, unrecoverable data loss. Never for confirmation of something reversible, never for a message, never for a form, never for onboarding. When there is nothing to lose — clearing an already-empty form, restoring into an empty form — the action just happens. A confirmation that guards nothing trains people to dismiss the one that guards something.
+
+**The Rare Red Rule, extended.** Red now has a third home: the confirm button of a `danger` dialog, in `alert-red-deep`. It remains the only filled red in the product, and it is still barred from validation, required marks, and emphasis. Red means *this destroys something*, in all three places it appears.
 
 ### The Document Row
 

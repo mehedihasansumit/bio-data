@@ -14,6 +14,7 @@ import AdditionalInfoForm from "@/components/form/AdditionalInfoForm";
 import BiodataPreview from "@/components/preview/BiodataPreview";
 import TemplateSelector from "@/components/ui/TemplateSelector";
 import DataTransfer from "@/components/ui/DataTransfer";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { isBiodataEmpty } from "@/lib/utils";
 
 const tabs = [
@@ -65,6 +66,7 @@ export default function BuilderClient() {
   );
   const [showPreview, setShowPreview] = useState(false);
   const [savedAt, setSavedAt] = useState(false);
+  const [confirmingClear, setConfirmingClear] = useState(false);
 
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const isEmpty = isBiodataEmpty(data);
@@ -96,18 +98,24 @@ export default function BuilderClient() {
     window.print();
   };
 
-  const handleReset = () => {
-    if (confirm("Clear every field and start a blank biodata? This cannot be undone.")) {
-      setData(initialBiodata);
-      setActiveTab("Personal");
-      setShowPreview(false);
-      setSavedAt(false);
-      try {
-        window.localStorage.removeItem(STORAGE_KEY);
-      } catch {
-        // The in-memory reset already happened; nothing to recover.
-      }
+  const clearEverything = () => {
+    setData(initialBiodata);
+    setActiveTab("Personal");
+    setShowPreview(false);
+    setSavedAt(false);
+    setConfirmingClear(false);
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // The in-memory reset already happened; nothing to recover.
     }
+  };
+
+  const handleReset = () => {
+    // Confirmation protects work. With an empty form there is none to protect,
+    // so don't make the user answer a question about nothing.
+    if (isEmpty) clearEverything();
+    else setConfirmingClear(true);
   };
 
   const handleImport = (imported: BiodataFormData) => {
@@ -382,6 +390,17 @@ export default function BuilderClient() {
           </div>
         </div>
       </main>
+
+      <ConfirmDialog
+        open={confirmingClear}
+        title="Clear this biodata?"
+        description="Every field you've filled in, and the copy saved on this device, will be erased. There's no undo — back it up first if you might want it again."
+        confirmLabel="Clear everything"
+        cancelLabel="Keep editing"
+        tone="danger"
+        onConfirm={clearEverything}
+        onCancel={() => setConfirmingClear(false)}
+      />
     </div>
   );
 }

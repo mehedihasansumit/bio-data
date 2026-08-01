@@ -4,6 +4,7 @@ import { useId, useRef, useState } from "react";
 import { BiodataFormData } from "@/types/biodata";
 import { exportFilename, parseBiodata, serializeBiodata } from "@/lib/biodataFile";
 import { isBiodataEmpty } from "@/lib/utils";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
 
 interface Props {
   data: BiodataFormData;
@@ -12,12 +13,16 @@ interface Props {
 
 type Status = { kind: "ok" | "error"; message: string } | null;
 
+/** An import held back until the user agrees to overwrite the current form. */
+type PendingImport = { data: BiodataFormData; warning?: string };
+
 export default function DataTransfer({ data, onImport }: Props) {
   const panelId = useId();
   const textareaId = `${panelId}-paste`;
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
   const [status, setStatus] = useState<Status>(null);
+  const [pending, setPending] = useState<PendingImport | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -51,22 +56,24 @@ export default function DataTransfer({ data, onImport }: Props) {
     setStatus({ kind: "ok", message: `Saved as ${exportFilename(data, today)}` });
   };
 
+  const commitImport = ({ data: imported, warning }: PendingImport) => {
+    onImport(imported);
+    setText("");
+    setPending(null);
+    setStatus({ kind: "ok", message: warning ?? "Biodata loaded." });
+  };
+
   const applyImport = (raw: string) => {
     const result = parseBiodata(raw);
     if (!result.ok) {
       setStatus({ kind: "error", message: result.error });
       return;
     }
-    // Importing replaces everything, so guard real work behind a confirm.
-    if (!isBiodataEmpty(data) && !confirm("Replace everything currently in the form with this biodata?")) {
-      return;
-    }
-    onImport(result.data);
-    setText("");
-    setStatus({
-      kind: "ok",
-      message: result.warning ?? "Biodata loaded.",
-    });
+    const next: PendingImport = { data: result.data, warning: result.warning };
+    // Importing replaces everything, so hold it behind a confirmation whenever
+    // there is real work in the form to lose.
+    if (isBiodataEmpty(data)) commitImport(next);
+    else setPending(next);
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,6 +170,17 @@ export default function DataTransfer({ data, onImport }: Props) {
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        open={pending !== null}
+        title="Replace what's in the form?"
+        description="Restoring this biodata overwrites every field you've filled in so far. The saved copy you're restoring from isn't changed."
+        confirmLabel="Replace and restore"
+        cancelLabel="Keep what I have"
+        tone="primary"
+        onConfirm={() => pending && commitImport(pending)}
+        onCancel={() => setPending(null)}
+      />
     </div>
   );
 }

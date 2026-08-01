@@ -17,6 +17,64 @@ body {
   font-family: var(--font-sans);
 }
 
+/* Confirmation dialogs.
+
+   A native <dialog> lives in the top layer, so a plain transition would be cut
+   off the moment `display` flips. `allow-discrete` on `display`/`overlay` plus
+   `@starting-style` is what makes the panel animate both in and out; browsers
+   without that support simply show and hide it instantly, which is fine. */
+.confirm-dialog {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  transition:
+    opacity 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    display 180ms allow-discrete,
+    overlay 180ms allow-discrete;
+}
+
+.confirm-dialog[open] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@starting-style {
+  .confirm-dialog[open] {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+.confirm-dialog::backdrop {
+  background-color: rgb(17 24 39 / 0);
+  transition:
+    background-color 180ms ease-out,
+    display 180ms allow-discrete,
+    overlay 180ms allow-discrete;
+}
+
+.confirm-dialog[open]::backdrop {
+  background-color: rgb(17 24 39 / 0.45);
+}
+
+@starting-style {
+  .confirm-dialog[open]::backdrop {
+    background-color: rgb(17 24 39 / 0);
+  }
+}
+
+/* showModal() makes the page inert but not unscrollable. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm-dialog,
+  .confirm-dialog::backdrop {
+    transition-duration: 1ms;
+  }
+}
+
 /* Print styles */
 @media print {
   body {
