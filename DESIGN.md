@@ -42,6 +42,18 @@ colors:
   royal-primary: "#7f1d1d"
   royal-accent: "#b91c1c"
   royal-bg: "#fef2f2"
+  # Document inks — Panel
+  panel-primary: "#0f766e"
+  panel-accent: "#5eead4"
+  # Document inks — Compact
+  compact-primary: "#92400e"
+  compact-accent: "#d97706"
+  # Document inks — Banner
+  banner-primary: "#312e81"
+  banner-accent: "#818cf8"
+  # Document inks — Plain
+  plain-primary: "#111827"
+  plain-accent: "#9ca3af"
 typography:
   display:
     fontFamily: "Geist, Geist Fallback, sans-serif"
@@ -217,7 +229,7 @@ This product has two visual worlds, and confusing them is the fastest way to bre
 
 The register-office reading is deliberate. A marriage biodata is a document of consequence — it gets read closely by people deciding something serious, and its credibility comes from looking like a record rather than a poster. So the system leans clerical: fixed label columns, uppercase section headings at 10px with wide tracking, hairline rules, values stated flatly in 11px with no emphasis, no visualization of anything. Deep Ceremonial Emerald carries the civic register — it is the green of Bangladeshi official life, formal and a little solemn, and it earns its authority by never being decorative.
 
-The desk is intentionally plain so the record can be looked at. White panels float on a gray workspace, buttons are unornamented rounded rectangles, and the entire interface is built from about six primitives repeated without variation. The one place the system permits character is inside the document frame, where four templates each speak in their own ink — emerald, navy and gold, violet, burgundy — with their own border language and their own ornamental glyph. Templates are treated as **distinct voices, not skins**: they happen to share layout primitives today, but a template is free to reinvent its composition entirely. What it may not reinvent is the record's obligations — the A4 frame, the field vocabulary, the one-page budget, and the clerical register.
+The desk is intentionally plain so the record can be looked at. White panels float on a gray workspace, buttons are unornamented rounded rectangles, and the entire interface is built from about six primitives repeated without variation. The one place the system permits character is inside the document frame, where eight templates each speak in their own ink — emerald, navy and gold, violet, burgundy, teal, ochre, indigo, and plain black — with their own border language and their own ornamental glyph, or in one case none of either. Templates are treated as **distinct voices, not skins**, and since the second four they have earned that: one floats a coloured sidebar, one flows the record through two columns, one runs a full-bleed banner and drops the frame, one strips the ornament entirely. What a template may not reinvent is the record's obligations — the A4 frame, the field vocabulary, and the clerical register.
 
 **Key Characteristics:**
 
@@ -231,7 +243,7 @@ The desk is intentionally plain so the record can be looked at. White panels flo
 
 ## Colors
 
-Two palettes that must not be mixed: an emerald chrome palette for the application, and four self-contained document inks selected by the user at print time.
+Two palettes that must not be mixed: an emerald chrome palette for the application, and eight self-contained document inks selected by the user at print time.
 
 ### Primary
 
@@ -241,14 +253,22 @@ Two palettes that must not be mixed: an emerald chrome palette for the applicati
 
 ### Secondary
 
-The four **document inks** are not brand colors — they are user-selected paper stocks, declared as a `primary` / `accent` / `bg` triple per template in `src/types/templates.ts` and rendered as literal hex inside each template component.
+The eight **document inks** are not brand colors — they are user-selected paper stocks, declared as a `primary` / `accent` pair per template in `src/types/templates.ts` and rendered as literal hex inside each template component.
 
 - **Classic — Register Green** (`classic-primary`): the only template that reuses the chrome emerald. Solid section bands, double border, snowflake ornaments.
 - **Elegant — Deep Naval Navy with Antique Gold** (`elegant-primary` / `elegant-accent`): navy carries every label and heading; gold is structural only — corner brackets, rule segments, ornaments, photo ring.
 - **Modern — Clean Violet** (`modern-primary`): the only template with rounded corners and pill-shaped meta chips. `modern-heading` is the actual section-heading value and sits one step lighter than the declared primary.
 - **Royal — Deep Oxblood with Signal Crimson** (`royal-primary` / `royal-accent`): oxblood for text and the outer frame, crimson for the inner hairline, section markers, and the fading gradient rule.
+- **Panel — Register Teal** (`panel-primary` / `panel-accent`): a 52mm teal panel floated left carrying the photo, name, headline facts and the contact section; the remaining sections wrap beside it and then run full width beneath it.
+- **Compact — Ledger Ochre** (`compact-primary` / `compact-accent`): a filled header band over two 90mm columns at 10px. The only template that fits a full biodata on one sheet.
+- **Banner — Ministry Indigo** (`banner-primary` / `banner-accent`): a full-bleed indigo header carrying the photo, title, name and facts, with clerical rows below. No frame.
+- **Plain — Unadorned Ink** (`plain-primary` / `plain-accent`): no frame, no ornament, 22mm margins and one hairline under the head. Hierarchy from whitespace alone.
 
 Each template declares a `primary` / `accent` pair, and that pair is only what the chooser puts in its two swatches — a template's real inks live in its own component. There was a third `bg` value, described here as reserved for future tinted stocks; nothing ever read it, and four unused hex values that look authoritative are worse than none, so it is gone. The document always sits on `surface-paper`. Add `bg` back alongside the feature that needs it.
+
+**The accent lives on the filled surface.** Three of the four new templates put a large area of their primary ink on the page, and their accent is chosen to work *on that fill*, not on paper — Panel's `#5eead4` is 3.74:1 on teal and 1.48:1 on white, Banner's `#818cf8` is 3.83:1 on indigo and 2.98:1 on white. So each accent stays inside its band (photo rings, panel hairlines, the header ornament) and everything on white is the primary, at full strength for text and at reduced alpha for rules. Compact inverts it deliberately: `#d97706` is 3.20:1 on white and only 2.21:1 on its own ochre band, so its accent lives on the paper and the band's ornament is white at 70% instead. In no template is an accent ever text.
+
+All four new inks were measured against white, and white against the two filled surfaces: Panel teal 5.47:1, Compact ochre 7.09:1, Banner indigo 11.42:1, Plain ink 17.74:1 — every one of them passing AA in both directions.
 
 ### Neutral
 
@@ -266,6 +286,8 @@ Each template declares a `primary` / `accent` pair, and that pair is only what t
 **The Two Palettes Rule.** Emerald is the application's voice; the document's voice is whichever template is selected. An emerald never appears inside a non-Classic document, and a template ink never appears in the app chrome. The template chooser's swatch pairs are the only place the two worlds are allowed to touch.
 
 **The Neutral Value Rule.** In every document row, the label is colored and the value is neutral (`ink-body`). Color marks the field name, never the person's data. Nothing about a candidate is ever highlighted, tinted, or emphasized over anything else.
+
+*On a reversed surface the tint comes off the label instead.* Panel's contact rows sit on solid teal, where `ink-body` grey is unreadable, so both label and value are white and are separated by weight and size. The rule's substance is untouched — no value is tinted, and nothing about the candidate is emphasized over anything else. This applies to filled panels only; on paper the rule is literal.
 
 **The Rare Red Rule.** Red appears in exactly two places: the "Remove Photo" control and the photo-upload error message, both in `alert-red-deep` (`alert-red` itself fails contrast on white at body size and is not used for text). Red is never used for required-field marks or emphasis; the required marker is a plain `*` in the label, unstyled.
 
@@ -296,12 +318,14 @@ Only the `bengali` subset is requested, since Latin never reaches this face. Hin
 - **Headline** (700, 18px, uppercase, tracking 0.15em): the document's self-declaration at the top of every template. Not a fixed string — `documentTitle()` resolves it from Candidate Kind and Document Language, so it reads "পাত্রীর বায়োডাটা", "পাত্রের বায়োডাটা", or "Marriage Biodata" rather than the generic heading every other tool prints. Royal tightens to 16px and opens tracking to 0.2em; Elegant holds 18px at 0.18em. Tracking applies to the Latin forms only — see The Bengali-Is-Never-Tracked Rule.
 - **Title** (700, 20px): the app wordmark in both headers. At 18px/600 it also serves the form's section headings ("Personal Information") and at 15px/700 the candidate's name inside every document.
 - **Body** (400, 14px, leading 1.5): all interface copy, inputs, and buttons. Landing supporting copy steps up to 18px and is capped at `max-w-lg` (32rem) for line length.
-- **Label** (700, 10px, uppercase, tracking 0.12–0.15em): document section headings in all four templates, and the "Choose Template" eyebrow at 14px/600. Form field labels are the exception — 14px/500, sentence case, neutral.
+- **Label** (700, 10px, uppercase, tracking 0.12–0.15em): document section headings in all eight templates, and the "Choose Template" eyebrow at 14px/600. Form field labels are the exception — 14px/500, sentence case, neutral.
 - **Data** (400, 11px, leading 1.25–1.375): every label/value row inside a document. Labels within the row step up to 600–700 weight and take the template's ink; values stay 400 and neutral.
 
 ### Named Rules
 
 **The 11px Record Rule.** Document body text is 11px. Not 10, not 12. It is the smallest size that holds the row rhythm and stays comfortably readable on a printed sheet a stranger will study closely, and every template is tuned around it — in both scripts, per the Bengali verification above. Changing it re-paginates everything. (It once also served a one-page budget; that constraint is gone, see The Clean Break Rule. The size survives on legibility alone.)
+
+**Compact is the single exemption, at 10px.** Two 90mm columns is the only composition in the set that fits a full biodata on one sheet, and it does not fit at 11px. The exemption was bought, not assumed: at 4× magnification the মাত্রা stays continuous and `ক্ত`, `ক্ষ`, `শ্ব`, `স্থ্য` and `প্র` all form correctly at 10px in Hind Siliguri, tested on `স্নাতকোত্তর`, `রক্তের গ্রুপ`, `ব্যক্তিগত` and `বিশ্ববিদ্যালয়` — the same words that settled 11px originally. This is Compact's own rule and not a general relaxation: every other template stays at 11px, and a ninth template does not inherit it.
 
 **The Uppercase-Is-Structural Rule.** Uppercase plus wide tracking marks a section boundary and nothing else. Never uppercase a value, a name, a button, or a form label. **Latin only** — see the next rule.
 
@@ -333,7 +357,9 @@ The builder's core is a **50/50 split**: form on the left, live document preview
 
 Both halves come off in print (`container-type: normal`, `zoom: 1`). The containment reset is not cosmetic: `container-type: inline-size` carries layout containment, which makes a box monolithic in paged media and would hold a multi-page biodata to one page, silently clipping the rest.
 
-Internal padding is 20px on screen, 12px in print. Row label columns are fixed-width (115–120px for the first label, 100–110px for the second, 125–130px for the first value) so that every row aligns into columns down the page regardless of content length.
+Internal padding is 20px on screen, 12px in print — except Compact, whose frame padding is 3mm because that is what leaves two true 90mm columns inside a 190mm sheet once the 4mm gutter is taken, and Plain, whose 22mm margin *is* its design.
+
+Row label columns are fixed-width so that every row aligns into columns down the page regardless of content length. The first label is 104–130px, the second 100–110px, the first value 125–140px — the exact figures vary with the measure each template gives itself: Compact 104px at 10px in a 90mm column, Elegant and Modern 115px, Classic / Panel / Banner 120px, Plain 130px on its 146mm measure. The widths were measured rather than estimated, and against English rather than Bengali: Document Language is the user's choice, so a column must hold the wider of the two scripts, and English is wider at every size measured — "Permanent Address" is 99px at 10px and 108px at 11px, against 81px and 89px for `পারিবারিক মূল্যবোধ`. Compact's column was 78px in the mockup and overflowed; `ভাই-বোনের বিবরণ` collided with its own value.
 
 ### Named Rules
 
@@ -362,7 +388,7 @@ Print styles enforce this: `#biodata-preview` has `box-shadow: none !important`,
 - **Focus ring** (`0 0 0 2px` `focus-emerald`, with the border made transparent): every input, select, and textarea. Non-negotiable and never removed.
 - **Photo ring** (1–2px inset ring at 20–50% opacity, tinted per template): frames the candidate's photo inside the document.
 
-**Resolved.** Photo frames formerly carried `shadow-md`/`shadow-lg` inside the A4 frame. All four are now ring-only: Classic `ring-1` emerald at 20%, Elegant `ring-2` gold at 50%, Modern `ring-2` violet, Royal `ring-1` oxblood at 30%. No shadow of any kind now exists inside a document frame, so the rule below holds without exception.
+**Resolved.** Photo frames formerly carried `shadow-md`/`shadow-lg` inside the A4 frame. Every one is now ring-only: Classic `ring-1` emerald at 20%, Elegant `ring-2` gold at 50%, Modern `ring-2` violet, Royal `ring-1` oxblood at 30%, Panel 1px accent teal, Compact 1px white at 40%, Banner 2px accent indigo, and Plain no ring at all. A `box-shadow: 0 0 0 Npx` with no blur and no offset is a ring, not a shadow, and is how the templates that need a literal hex draw one. No blurred or offset shadow exists inside a document frame, so the rule below holds without exception.
 
 ### Named Rules
 
@@ -382,14 +408,24 @@ Two form languages, again split by world.
 - **Elegant** — a 1px navy frame with four 3px gold L-brackets pinned to the corners (20px legs). Sections are marked by a short 2px gold dash, the heading, then a 2px gold rule fading to 40% opacity across the remaining width.
 - **Modern** — the outlier: a 2px `modern-accent`-tinted frame with `rounded-lg` (8px) corners and `overflow-hidden`. Sections are underlined with a 1px violet hairline. Meta facts appear as `rounded-full` pills — the only pills in the system.
 - **Royal** — a doubled frame: 2px oxblood outer with 4px of white gutter, then a 1px crimson inner at 30% opacity. Sections lead with a ✦ glyph and close with a 1px rule that gradients from 30% crimson to transparent.
+- **Panel** — a 1px teal frame around a 52mm teal panel floated to the left. Sections are underlined with a teal hairline at 20% and each is a `display: flow-root` block, so a section sits wholly beside the panel or wholly below it rather than straddling the float's bottom edge.
+- **Compact** — a 1px ochre frame at 3mm padding, a filled ochre header band, and section headings underlined in amber inside two 90mm columns.
+- **Banner** — **no frame at all.** A full-bleed indigo band across the whole live area, then sections underlined with indigo at 20%. The 10mm `@page` margin is its only inset.
+- **Plain** — no frame and no section rules. One `#9ca3af` hairline under the head, 22mm margins, and whitespace for everything else.
 
-**Ornament** is a single repeated dingbat, three of them, centered, at the head and foot of the document — `❅` (U+2745) Classic, `❀` (U+273F) Elegant, `✻` (U+273B) Modern, and Royal alone splits its pair: `❁` (U+2740) in the header, `✦` (U+2726) as both section marker and footer. Footer glyphs run at 20–50% opacity. Beneath the header ornament sits a two-rule flourish: a 144px rule, then a 96px rule at reduced opacity, both centered.
+**Ornament** is a single repeated dingbat, three of them, at the head and foot of the document — `❅` (U+2745) Classic, `✿` (U+273F) Elegant, `✻` (U+273B) Modern, `❖` (U+2756) Panel, `✤` (U+2724) Compact, `❈` (U+2748) Banner, and Royal alone splits its pair: `❀` (U+2740) in the header, `✦` (U+2726) as both section marker and footer. **Plain carries none.** Footer glyphs run at 20–60% opacity.
+
+*(Two of those pairs used to name the wrong character: this list said "`❀` (U+273F)" for Elegant and "`❁` (U+2740)" for Royal, when U+273F is `✿` and U+2740 is `❀`. The codepoints always matched the shipped entities and the characters never did, which is a trap for anyone migrating a glyph from this document instead of from the code. Corrected in favour of the code.)*
+
+Centering is the four originals' habit, not a rule: Panel's ornament and title are left-aligned in the column beside its panel, and Banner's sit inside the band. The two-rule flourish beneath the header ornament — a 144px rule, then a 96px rule at reduced opacity, both centered — likewise belongs to the original four. Panel rules the full column width, Banner runs a 96px rule inside the band, and Plain and Compact have no flourish at all.
 
 ### Named Rules
 
 **The One Glyph Rule.** A template gets exactly one ornamental character, repeated three times, used twice (header and footer). No mixing, no clip art, no SVG flourishes, no borders made of repeated symbols.
 
-**The Square Paper Rule.** Document frames are square-cornered. Modern's 8px radius is a deliberate, single exception that defines its identity — a fifth template should not copy it.
+*Plain carries none.* The rule is a ceiling on ornament, not a floor, and "no ornament at all" is the whole of Plain's identity — a biodata for someone who wants the record and nothing around it. Enforced structurally rather than by discipline: `<Ornament>` in `preview/kit.tsx` owns the three-fold repeat and the `aria-hidden`, so a template can decline to render it but cannot quietly print four.
+
+**The Square Paper Rule.** Document frames are square-cornered. Modern's 8px radius is a deliberate, single exception that defines its identity — no other template copies it, and none of the four added since does.
 
 ## Components
 
@@ -406,8 +442,11 @@ Two form languages, again split by world.
 
 ### Chips
 
-- **Template chip:** a horizontally scrolling row of bordered white tiles, each showing a two-swatch color pair (12px squares, 2px apart, 2px radius) beside the template name at 12px/600 and its description at 10px in `ink-faint`.
+- **Template chip:** a two-up grid of bordered white tiles, each carrying a layout wireframe, then a stacked two-swatch color pair (12px squares, 2px apart, 2px radius), then the template name at 12px/600 over its description at 11px. Eight templates make four rows.
+- **Layout wireframe:** a ~20×26px drawing of the template's actual shape, leftmost in the chip. Drawn from `TemplateOption.layout` — one of `stacked`, `panel`, `two-column`, `banner`, `plain` — with plain divs. No per-template artwork and no SVG assets; a new template picks one of the five names and nothing else. Plain's wireframe carries a transparent border rather than none, so all five drawings are the same size while only Plain reads as frameless.
 - **State:** selected takes an `ink-strong`-adjacent dark border plus a 1px ring and `surface-workspace` fill; unselected sits on white with a `stroke-subtle` border that darkens on hover. This is the one control in the app that uses neutral rather than emerald for its selected state — correct, because it is choosing a document ink and must not bias toward Classic.
+
+**The Show What Differs Rule.** The chooser leads with layout because layout is what differs. The eight inks now sit close together in RGB terms — Panel teal is 47 from Classic emerald, Compact ochre 43 from Royal oxblood, Banner indigo 41 from Elegant navy — and none of those distances is visible in a 12px swatch. Colour has stopped being the thing that tells these templates apart, so the swatch pair drops to a secondary cue and the wireframe leads. Eight chips is four rows of two, roughly 250px above the sheet, and it stays a grid: the horizontal scroller it replaced hid a quarter of the templates behind an `overflow-x-auto` with no fade, no arrows and no wrap.
 - **Meta pill (Modern template only):** `modern-bg` fill, `modern-primary` text, 9px, fully rounded, 8px × 1px padding.
 
 ### Document Settings
@@ -501,18 +540,24 @@ One 1200 × 630 card for the whole site, `public/og-card.png`, drawn from `scrip
 
 ### The Document Row
 
-The signature component and the smallest meaningful unit of the record. Two variants, shared by all four templates:
+The signature component and the smallest meaningful unit of the record. Two variants:
 
 - **Row** — one label, one value. Label at 11px/600–700 in the template's ink, fixed 115–120px wide, non-shrinking; value at 11px/400 in `ink-body`, flowing. 2–3px vertical padding.
 - **TwoCol** — two label/value pairs on one line, for short paired facts (Height/Weight, Complexion/Blood Group). First label 115–120px, first value 125–130px, second label 100–110px, second value flowing. The second pair is omitted entirely when its value is empty, and the whole row disappears when both are.
 
 Every row self-suppresses on empty input — `if (!value) return null`. Sections do the same via explicit `has*` guards. An incomplete biodata produces a shorter document, never a document with blanks.
 
-Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each template file**, not imported from a shared module. That is deliberate under the four-voices doctrine below: a template that wants a sidebar, a two-column body, or a different row anatomy changes its own copies and touches nothing else.
+**TwoCol is not universal.** Panel and Compact render a paired row as two consecutive single lines, because neither has room for four cells: Compact's column is 90mm, and Panel's body is two different widths — ~472px beside the float and ~684px below it, so one row type would read as two different rows down a single page. Both halves still print. Which cells a line has is an arrangement decision and belongs to the voice; *whether the field appears* is not, and belongs to `documentContent.ts`.
+
+Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each template file**, not imported from a shared module. That is deliberate under the eight-voices doctrine below: a template that wants a sidebar, a two-column body, or a different row anatomy changes its own copies and touches nothing else.
+
+What *is* shared is `preview/kit.tsx`, holding exactly two components: `<Photo>`, which owns `.photo-frame`, `object-fit: cover` and the alt-text convention, and `<Ornament>`, which owns `aria-hidden` and the three-glyph repeat. These are the record's obligations rather than a voice's decisions, and the case for sharing them is concrete: in one session the photo-clipping fix had to be applied in four separate files, `.sheet-frame` in five, and Classic's section heading had silently drifted to a `<div>` while the other three used `<h3>`. At eight templates every such fix doubles. Sizing, rounding, ring colour and placement still arrive from the template — the kit carries no visual decision, exactly as `preview/headings.ts` carries none.
 
 ### Named Rules
 
-**The Four Voices Rule.** Each template is an independent design, not a recolor. It may reinvent its layout completely — sidebar, split columns, banner header, repositioned photo — and it owns its own row and section primitives. What it inherits and may not change: the 190mm frame with its 277mm floor, the full field vocabulary and its order of meaning, the 11px/10px type floor, the heading levels it is handed, and the flat-paper rule. Four voices, one set of obligations.
+**The Four Voices Rule.** Each template is an independent design, not a recolor. It may reinvent its layout completely — sidebar, split columns, banner header, repositioned photo — and it owns its own row and section primitives. What it inherits and may not change: the 190mm frame with its 277mm floor, the full field vocabulary and its order of meaning, the 11px type floor (Compact excepted, above), the heading levels it is handed, and the flat-paper rule. Eight voices, one set of obligations.
+
+The name is kept for the rule it names, not for the count. There are eight templates now, and the first four proved the point badly — every one of them was a single column with a different ink, an ornament row over a centred title over label/value rows, which is a skin and not a voice. The four that followed took the right the rule had always granted: **Panel** floats a coloured sidebar and lets sections wrap around it, **Compact** flows the whole record through two columns, **Banner** runs a full-bleed header and drops the frame, and **Plain** removes the ornament as well. A ninth voice should differ in shape, not in hue.
 
 *(The "one-page budget" was listed here as an inherited obligation long after The Clean Break Rule retired it. It is gone; the 277mm floor is a minimum, not a ceiling.)*
 
@@ -524,11 +569,11 @@ Note that `Row`, `TwoCol`, and `Section` are **redeclared privately inside each 
 
 ### The Document Section
 
-A heading plus its rows, 12px above the previous section, flush at the top of the page. Each template renders the heading differently — Classic fills a solid band, Elegant brackets it in gold rules, Modern underlines it in violet, Royal marks it with a glyph and a fading rule — but all four use the same 10px uppercase wide-tracked label type and all four wrap the identical row set.
+A heading plus its rows, 12px above the previous section, flush at the top of the page. Each template renders the heading differently — Classic fills a solid band, Elegant brackets it in gold rules, Modern underlines it in violet, Royal marks it with a glyph and a fading rule, Panel and Banner underline it in their own ink at 20%, Compact underlines it in amber inside a 90mm column, and Plain gives it no rule at all and lets space do the work — but all eight use the same 10px uppercase wide-tracked label type and all eight wrap the identical row set.
 
 **The Borrowed Outline Rule.** A biodata has real internal structure and its section headings are headings, but the document cannot know how deep it sits — so it is handed its levels rather than choosing them. `docHeadings(level)` in `preview/headings.ts` resolves title / name / section to `h2`–`h4` when the sheet is a top-level region (the builder) and `h3`–`h5` when it is nested inside a section that already owns an `h2` (a guide's worked example). Templates previously hard-coded an `h1` for the document title, which put a second `h1` on all four prerendered guide pages and folded the sample's internals into the page outline.
 
-This one helper is shared rather than redeclared per template, unlike `Row` and `Section`. The Four Voices Rule gives a template its own *visual* primitives; it does not give it its own document outline, any more than it gives it its own field list. Semantics sit with `documentContent.ts`, not with the ink — which is also why Classic's section band, formerly a bare `div`, is now a heading like the other three.
+This one helper is shared rather than redeclared per template, unlike `Row` and `Section`. The Four Voices Rule gives a template its own *visual* primitives; it does not give it its own document outline, any more than it gives it its own field list. Semantics sit with `documentContent.ts`, not with the ink — which is also why Classic's section band, formerly a bare `div`, is now a heading like every other template's. `preview/kit.tsx` was added on the same reasoning: a photo's alt text and an ornament's `aria-hidden` are semantics, not ink.
 
 ## Do's and Don'ts
 
@@ -541,7 +586,8 @@ This one helper is shared rather than redeclared per template, unlike `Row` and 
 - **Do** self-suppress empty rows and empty sections rather than rendering blank fields or placeholder dashes.
 - **Do** hold new document work to a 190mm column, and give every section and row `break-inside-avoid` so pagination never splits a heading from its rows. See The Clean Break Rule.
 - **Do** add new document fields to `documentContent.ts`, never to a template. See The Single Content Source Rule.
-- **Do** design a new template as its own voice — new ink, new border language, new glyph, and a genuinely different composition if it earns one. See The Four Voices Rule.
+- **Do** design a new template as its own voice — new ink, new border language, new glyph, and above all a genuinely different composition. Shape is what distinguishes a ninth template; the inks are already crowded. See The Four Voices Rule and The Show What Differs Rule.
+- **Do** take a new template's `<Photo>` and `<Ornament>` from `preview/kit.tsx`, and give it one of the five `layout` names so the chooser can draw it.
 - **Do** render every field in every template, whatever the layout. See The Content Parity Rule.
 - **Do** keep the 2px `focus-emerald` focus ring on every field, and keep the border-to-transparent swap so focus never shifts layout.
 - **Do** mark anything that must not print with `print:hidden`, and verify a real print preview before shipping any document change.

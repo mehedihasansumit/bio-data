@@ -27,7 +27,7 @@ export const webApplicationSchema = {
     "বিনামূল্যে বিয়ের বায়োডাটা তৈরি ও PDF ডাউনলোড করার অনলাইন টুল। A free browser-based tool for composing a marriage biodata and downloading it as a print-ready A4 PDF.",
   featureList: [
     "Live preview while typing",
-    "Four document templates",
+    "Eight document templates",
     "Religion-aware fields",
     "Print-ready A4 output",
     "Export and re-import a saved biodata",
