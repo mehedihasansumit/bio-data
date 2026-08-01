@@ -5,7 +5,8 @@ export type TemplateName =
   | "royal"
   | "panel"
   | "compact"
-  | "banner";
+  | "banner"
+  | "plain";
 
 /**
  * The shape of sheet a template produces, as a name the chooser can draw.
@@ -98,5 +99,12 @@ export const templates: TemplateOption[] = [
     description: "Indigo banner, clerical rows",
     layout: "banner",
     colors: { primary: "#312e81", accent: "#818cf8" },
+  },
+  {
+    id: "plain",
+    name: "Plain",
+    description: "No frame, no ornament",
+    layout: "plain",
+    colors: { primary: "#111827", accent: "#9ca3af" },
   },
 ];
