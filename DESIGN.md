@@ -273,13 +273,20 @@ The declared `bg` value in each template triple is currently unused by the rende
 
 **Display Font:** Geist (with Geist Fallback, sans-serif)
 **Body Font:** Geist (with Geist Fallback, sans-serif)
-**Label/Mono Font:** none — the system is single-family throughout.
+**Bengali Font:** Hind Siliguri (400/500/600/700) — the Bengali half of the same stack, never a second voice.
+**Label/Mono Font:** none — the system is single-family per script.
 
 **Character:** Deliberately anonymous. A single grotesque at every size, distinguished only by weight, tracking, and case. Nothing in the type says "designed" — which is the point, because a record that looks styled looks less true. All expression comes from spacing and rule work, none from letterforms.
 
 Geist is self-hosted through `next/font/google` in `src/app/layout.tsx`, exposed as `--font-geist-sans`, mapped to `--font-sans` in the `@theme inline` block, and applied on `body`. Next emits a metric-matched `Geist Fallback` (derived from local Arial) so there is no layout shift while the face loads.
 
-> **Open gap — Bengali coverage.** Geist is loaded with `subsets: ["latin"]` and has no Bengali glyphs. The product is marketed in Bangla and users will paste Bengali into fields, so Bengali text silently falls through to whatever the OS supplies — unstyled, unmetered, and inconsistent between devices. Neither this stack nor the Arial stack it replaced ever covered Bengali; the type system is currently Latin-only by omission, not by decision. A Bengali-capable companion face (Noto Sans Bengali or Hind Siliguri) added to the same `--font-sans` stack is the real fix.
+**Bengali coverage — closed.** Hind Siliguri sits behind Geist in `--font-sans`, loaded from `next/font/google` as `--font-hind-siliguri`. The two never compete for a glyph: Geist carries all Latin, and Bengali codepoints find nothing in Geist — nor in the Arial-derived `Geist Fallback`, which has no Bengali — so they fall through. One stack, two scripts, no conditional logic anywhere in the components.
+
+Only the `bengali` subset is requested, since Latin never reaches this face. Hind Siliguri was chosen over Noto Sans Bengali for its larger effective x-height, which is what the 11px Record Rule below depends on; it is fractionally warmer than "deliberately anonymous" asks for, and that was the price of legibility at document size.
+
+> **Open gap — preload.** The face is currently loaded with `preload: false`, correct only while the site's own copy is English and Bengali appears solely in what a user types. When Bengali content lands it will be rendering the largest contentful paint, and preload must be turned back on in `src/app/layout.tsx`.
+
+> **Unverified — Bengali at 11px.** The 11px Record Rule was tuned on Latin. Bengali needs more vertical room for মাত্রা and stacked যুক্তাক্ষর, and no Bengali document has been rendered at 11px yet. Hind Siliguri was picked partly to survive this, but the rule holds provisionally and must be checked against a real Bengali biodata before Document Language ships.
 
 ### Hierarchy
 
@@ -296,7 +303,7 @@ Geist is self-hosted through `next/font/google` in `src/app/layout.tsx`, exposed
 
 **The Uppercase-Is-Structural Rule.** Uppercase plus wide tracking marks a section boundary and nothing else. Never uppercase a value, a name, a button, or a form label.
 
-**The Single Family Rule.** One font family across the whole product, chrome and documents alike. A template differentiates itself with ink, border, and ornament — never by introducing a serif, a script, or a display face.
+**The Single Family Rule.** One font family per script across the whole product, chrome and documents alike: Geist for Latin, Hind Siliguri for Bengali. A second face is admissible only to cover glyphs the first one lacks — never for expression. A template differentiates itself with ink, border, and ornament, never by introducing a serif, a script, or a display face.
 
 ## Layout
 

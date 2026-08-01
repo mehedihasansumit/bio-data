@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
+import { jsonLd, webApplicationSchema } from "@/lib/structuredData";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLd(webApplicationSchema) }}
+      />
+
       {/* Header */}
       <header className="bg-emerald-800 text-white py-4 px-6">
         <div className="max-w-5xl mx-auto flex items-center gap-2">

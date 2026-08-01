@@ -1,26 +1,29 @@
-"use client";
-
-import dynamic from "next/dynamic";
+import type { Metadata } from "next";
+import BuilderLoader from "@/components/builder/BuilderLoader";
 
 /**
- * Client-only. The builder restores a locally saved draft during its first
- * render, which is only correct if the server never prerenders it — otherwise
- * the static HTML (empty form) and the hydrated tree (restored draft) disagree.
+ * A Server Component, and it has to stay one: `metadata` cannot be exported
+ * from a Client Component, so while this file carried `"use client"` the route
+ * silently inherited the root layout's title and description — shipping `/` and
+ * `/builder` as two URLs with identical metadata. The client-only builder now
+ * lives one level down, in `BuilderLoader`.
  */
-const BuilderClient = dynamic(() => import("@/components/builder/BuilderClient"), {
-  ssr: false,
-  loading: () => (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-emerald-800 px-6 py-3">
-        <div className="max-w-7xl mx-auto h-11 flex items-center">
-          <span className="text-xl font-bold text-white">Biodata Builder</span>
-        </div>
-      </div>
-      <p className="max-w-7xl mx-auto p-6 text-sm text-gray-600">Loading your biodata…</p>
-    </div>
-  ),
-});
+export const metadata: Metadata = {
+  title: "Biodata Builder",
+  description:
+    "Fill in your details and watch your marriage biodata build itself. Choose from four templates, preview live, and download a print-ready A4 PDF.",
+  alternates: {
+    canonical: "/builder",
+  },
+  openGraph: {
+    title: "Biodata Builder | BiyerBiodata",
+    description:
+      "Fill in your details and watch your marriage biodata build itself. Four templates, live preview, print-ready PDF.",
+    url: "/builder",
+    type: "website",
+  },
+};
 
 export default function BuilderPage() {
-  return <BuilderClient />;
+  return <BuilderLoader />;
 }

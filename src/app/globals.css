@@ -3,7 +3,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  /* Geist first, Hind Siliguri behind it. The two never compete: Geist carries
+     every Latin glyph, and Bengali codepoints find nothing in Geist — nor in
+     the Arial-derived "Geist Fallback", which has no Bengali coverage — so they
+     fall through to Hind Siliguri. One stack, two scripts, no switching logic. */
+  --font-sans: var(--font-geist-sans), var(--font-hind-siliguri);
 }
 
 :root {
