@@ -39,6 +39,25 @@ body {
   letter-spacing: normal;
 }
 
+/* A frame that survives a page break.
+
+   A document frame is one bordered box, and a biodata longer than one page
+   splits it across two. The default `box-decoration-break: slice` treats the
+   two halves as one box with a cut through it: no border is drawn along the
+   cut, so page one ends with its frame hanging open and page two begins the
+   same way. On paper that reads as a torn sheet rather than two sheets.
+
+   `clone` gives every fragment the whole decoration — its own border on all
+   four sides, and its own padding, so no row ever touches a frame edge at a
+   break. Applied to the frame elements themselves rather than globally: it is
+   inert on screen, where nothing fragments, and it must not reach the section
+   bands and rows inside, which are supposed to stay whole via
+   `break-inside-avoid` rather than be split and re-decorated. */
+.sheet-frame {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
 /* The sheet is A4 or it is nothing.
 
    The document lays out at a true 190mm and is zoomed down to whatever the
@@ -152,6 +171,22 @@ html:has(dialog[open]) {
 
   .sheet-fit > * {
     zoom: 1;
+  }
+
+  /* The document's fills are content, not decoration.
+
+     Chrome's print dialog ships with "Background graphics" unchecked, and that
+     setting drops background colours. Classic's section headings are white
+     text on a solid emerald band, so unchecked they print as white on white —
+     nine invisible headings. Modern's meta pills and Royal's gradient section
+     rules go the same way. `print-color-adjust: exact` is how a document says
+     these fills carry meaning and must survive the setting; it also keeps
+     Elegant's corner brackets, which are background layers so they can repeat
+     on every page. Nobody should have to find a checkbox to print a legible
+     biodata. */
+  #biodata-preview {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   /* Force preview visible and full width */

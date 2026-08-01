@@ -8,6 +8,30 @@ import type { TemplateProps } from "./BiodataPreview";
 const NAVY = "#1e3a5f";
 const GOLD = "#d4a853";
 
+/**
+ * The four gold L-brackets, as eight background layers instead of four
+ * absolutely-positioned divs.
+ *
+ * An absolutely-positioned corner belongs to the box as a whole, so when the
+ * frame splits across pages the top pair paints on the first page and the
+ * bottom pair on the last — every page ends up half-bracketed. Backgrounds are
+ * part of the box decoration, so `box-decoration-break: clone` repeats all
+ * four on every fragment, which is the whole point of the brackets: they are
+ * what tells you this page is Elegant.
+ *
+ * Two layers per corner — a 20×3 arm and a 3×20 arm — matching the `w-5 h-5`
+ * boxes with 3px borders they replace. Positioned against the padding box,
+ * which is where the absolute insets resolved to, so the geometry is unchanged.
+ */
+const CORNER_BRACKETS: React.CSSProperties = {
+  backgroundImage: Array(8).fill(`linear-gradient(${GOLD}, ${GOLD})`).join(", "),
+  backgroundSize:
+    "20px 3px, 3px 20px, 20px 3px, 3px 20px, 20px 3px, 3px 20px, 20px 3px, 3px 20px",
+  backgroundPosition:
+    "left top, left top, right top, right top, left bottom, left bottom, right bottom, right bottom",
+  backgroundRepeat: "no-repeat",
+};
+
 function Rows({ rows }: { rows: DocRow[] }) {
   return (
     <>
@@ -41,13 +65,10 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
 
   return (
     <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
-      <div className="border p-0 relative min-h-[277mm] flex flex-col" style={{ borderColor: NAVY }}>
-        {/* Gold corner accents */}
-        <div className="absolute top-0 left-0 w-5 h-5 border-t-[3px] border-l-[3px]" style={{ borderColor: GOLD }} />
-        <div className="absolute top-0 right-0 w-5 h-5 border-t-[3px] border-r-[3px]" style={{ borderColor: GOLD }} />
-        <div className="absolute bottom-0 left-0 w-5 h-5 border-b-[3px] border-l-[3px]" style={{ borderColor: GOLD }} />
-        <div className="absolute bottom-0 right-0 w-5 h-5 border-b-[3px] border-r-[3px]" style={{ borderColor: GOLD }} />
-
+      <div
+        className="sheet-frame border p-0 min-h-[277mm] flex flex-col"
+        style={{ borderColor: NAVY, ...CORNER_BRACKETS }}
+      >
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
           {/* Ornament, not content. Unhidden, a screen reader opens every
               biodata with "black florette black florette black florette". */}

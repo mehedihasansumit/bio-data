@@ -38,7 +38,7 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
 
   return (
     <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
-      <div className="border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] flex flex-col">
+      <div className="sheet-frame border-2 border-violet-200 rounded-lg overflow-hidden min-h-[277mm] flex flex-col">
         <div className="text-center pt-5 pb-3 px-5 break-inside-avoid">
           {/* Ornament, not content. Unhidden, a screen reader opens every
               biodata with "six petalled black and white florette" ×3. */}

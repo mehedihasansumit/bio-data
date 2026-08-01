@@ -54,8 +54,8 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
           oxblood border with the footer ornament stranded under the last row.
           Growing the inner frame in a flex column is what the other three
           templates get for free by putting the min-height on the frame itself. */}
-      <div className="border-2 p-1 min-h-[277mm] flex flex-col" style={{ borderColor: OXBLOOD }}>
-        <div className="border p-4 flex-1 flex flex-col" style={{ borderColor: `${CRIMSON}4d` }}>
+      <div className="sheet-frame border-2 p-1 min-h-[277mm] flex flex-col" style={{ borderColor: OXBLOOD }}>
+        <div className="sheet-frame border p-4 flex-1 flex flex-col" style={{ borderColor: `${CRIMSON}4d` }}>
           <div className="text-center mb-3 break-inside-avoid">
             {/* Ornament, not content. Unhidden, a screen reader opens every
                 biodata with "florette florette florette". */}

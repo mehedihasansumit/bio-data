@@ -38,7 +38,7 @@ export default function ClassicTemplate({ data, headingLevel }: TemplateProps) {
 
   return (
     <div className="bg-white p-5 w-[190mm] mx-auto print:p-0">
-      <div className="border-[3px] border-double border-emerald-800 p-4 min-h-[277mm] flex flex-col">
+      <div className="sheet-frame border-[3px] border-double border-emerald-800 p-4 min-h-[277mm] flex flex-col">
         {/* Ornamental header */}
         <div className="text-center mb-3 break-inside-avoid">
           {/* Ornament, not content. Unhidden, a screen reader opens every
