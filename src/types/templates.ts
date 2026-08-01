@@ -4,7 +4,8 @@ export type TemplateName =
   | "modern"
   | "royal"
   | "panel"
-  | "compact";
+  | "compact"
+  | "banner";
 
 /**
  * The shape of sheet a template produces, as a name the chooser can draw.
@@ -90,5 +91,12 @@ export const templates: TemplateOption[] = [
     description: "Ochre, two columns, one page",
     layout: "two-column",
     colors: { primary: "#92400e", accent: "#d97706" },
+  },
+  {
+    id: "banner",
+    name: "Banner",
+    description: "Indigo banner, clerical rows",
+    layout: "banner",
+    colors: { primary: "#312e81", accent: "#818cf8" },
   },
 ];
