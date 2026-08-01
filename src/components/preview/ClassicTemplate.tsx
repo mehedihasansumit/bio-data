@@ -3,6 +3,7 @@
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 import { documentTitle } from "@/lib/documentStrings";
 import { docHeadings } from "./headings";
+import { Ornament, Photo } from "./kit";
 import type { TemplateProps } from "./BiodataPreview";
 
 function Rows({ rows }: { rows: DocRow[] }) {
@@ -41,9 +42,7 @@ export default function ClassicTemplate({ data, headingLevel }: TemplateProps) {
       <div className="sheet-frame border-[3px] border-double border-emerald-800 p-4 min-h-[277mm] flex flex-col">
         {/* Ornamental header */}
         <div className="text-center mb-3 break-inside-avoid">
-          {/* Ornament, not content. Unhidden, a screen reader opens every
-              biodata with "snowflake snowflake snowflake". */}
-          <div aria-hidden="true" className="text-emerald-600 text-[12px] leading-none mb-1">&#10053; &#10053; &#10053;</div>
+          <Ornament glyph={"❅"} className="text-emerald-600 text-[12px] leading-none mb-1" />
           <Title className="text-[18px] font-bold text-emerald-900 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t border-emerald-400" />
           <div className="w-24 mx-auto mt-[2px] border-t border-emerald-400/40" />
@@ -60,13 +59,11 @@ export default function ClassicTemplate({ data, headingLevel }: TemplateProps) {
             </div>
           </div>
           {personal.photo && (
-            <div className="photo-frame w-[80px] h-[100px] rounded-md overflow-hidden shrink-0 ml-3 ring-1 ring-emerald-800/20">
-              <img
-                src={personal.photo}
-                alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <Photo
+              src={personal.photo}
+              name={personal.fullName}
+              className="w-[80px] h-[100px] rounded-md ml-3 ring-1 ring-emerald-800/20"
+            />
           )}
         </div>
 
@@ -82,7 +79,7 @@ export default function ClassicTemplate({ data, headingLevel }: TemplateProps) {
         ))}
 
         <div className="text-center mt-auto pt-4">
-          <div aria-hidden="true" className="text-emerald-600/40 text-[10px]">&#10053; &#10053; &#10053;</div>
+          <Ornament glyph={"❅"} className="text-emerald-600/40 text-[10px]" />
         </div>
       </div>
     </div>

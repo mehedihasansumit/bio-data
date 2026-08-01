@@ -3,6 +3,7 @@
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 import { documentTitle } from "@/lib/documentStrings";
 import { docHeadings } from "./headings";
+import { Ornament, Photo } from "./kit";
 import type { TemplateProps } from "./BiodataPreview";
 
 const NAVY = "#1e3a5f";
@@ -77,9 +78,7 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
         style={{ borderColor: NAVY, ...CORNER_BRACKETS }}
       >
         <div className="text-center pb-3 px-5 break-inside-avoid">
-          {/* Ornament, not content. Unhidden, a screen reader opens every
-              biodata with "black florette black florette black florette". */}
-          <div aria-hidden="true" className="text-[12px] leading-none mb-1" style={{ color: GOLD }}>&#10047; &#10047; &#10047;</div>
+          <Ornament glyph={"✿"} className="text-[12px] leading-none mb-1" style={{ color: GOLD }} />
           <Title className="text-[18px] font-bold tracking-[.18em] uppercase" style={{ color: NAVY }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: GOLD }} />
           <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${GOLD}66` }} />
@@ -87,13 +86,12 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
 
         <div className="flex items-start gap-4 px-5 mb-2 break-inside-avoid">
           {personal.photo && (
-            <div className="photo-frame w-[80px] h-[100px] rounded-md overflow-hidden shrink-0" style={{ boxShadow: `0 0 0 2px ${GOLD}80` }}>
-              <img
-                src={personal.photo}
-                alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <Photo
+              src={personal.photo}
+              name={personal.fullName}
+              className="w-[80px] h-[100px] rounded-md"
+              style={{ boxShadow: `0 0 0 2px ${GOLD}80` }}
+            />
           )}
           <div className="flex-1 pt-1">
             {personal.fullName && <Name className="text-[15px] font-bold" style={{ color: NAVY }}>{personal.fullName}</Name>}
@@ -122,7 +120,7 @@ export default function ElegantTemplate({ data, headingLevel }: TemplateProps) {
           ))}
 
           <div className="text-center mt-auto pt-4">
-            <div aria-hidden="true" className="text-[10px]" style={{ color: `${GOLD}80` }}>&#10047; &#10047; &#10047;</div>
+            <Ornament glyph={"✿"} className="text-[10px]" style={{ color: `${GOLD}80` }} />
           </div>
         </div>
       </div>

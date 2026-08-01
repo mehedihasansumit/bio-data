@@ -3,6 +3,7 @@
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 import { documentTitle } from "@/lib/documentStrings";
 import { docHeadings } from "./headings";
+import { Ornament, Photo } from "./kit";
 import type { TemplateProps } from "./BiodataPreview";
 
 function Rows({ rows }: { rows: DocRow[] }) {
@@ -45,9 +46,7 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
           unchanged. */}
       <div className="sheet-frame border-2 border-violet-200 rounded-lg overflow-hidden pt-5 pb-3 min-h-[277mm] flex flex-col">
         <div className="text-center pb-3 px-5 break-inside-avoid">
-          {/* Ornament, not content. Unhidden, a screen reader opens every
-              biodata with "six petalled black and white florette" ×3. */}
-          <div aria-hidden="true" className="text-violet-400 text-[12px] leading-none mb-1">&#10043; &#10043; &#10043;</div>
+          <Ornament glyph={"✻"} className="text-violet-400 text-[12px] leading-none mb-1" />
           <Title className="text-[18px] font-bold text-violet-700 tracking-[.15em] uppercase">{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
           <div className="w-36 mx-auto mt-1 border-t border-violet-300" />
           <div className="w-24 mx-auto mt-[2px] border-t border-violet-200" />
@@ -55,13 +54,11 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
 
         <div className="flex items-start gap-4 px-5 mb-2 break-inside-avoid">
           {personal.photo && (
-            <div className="photo-frame w-[75px] h-[90px] rounded-lg overflow-hidden shrink-0 ring-2 ring-violet-200">
-              <img
-                src={personal.photo}
-                alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <Photo
+              src={personal.photo}
+              name={personal.fullName}
+              className="w-[75px] h-[90px] rounded-lg ring-2 ring-violet-200"
+            />
           )}
           <div className="flex-1 pt-1">
             {personal.fullName && <Name className="text-[15px] font-bold text-gray-900">{personal.fullName}</Name>}
@@ -86,7 +83,7 @@ export default function ModernTemplate({ data, headingLevel }: TemplateProps) {
           ))}
 
           <div className="text-center mt-auto pt-4">
-            <div aria-hidden="true" className="text-violet-300 text-[10px]">&#10043; &#10043; &#10043;</div>
+            <Ornament glyph={"✻"} className="text-violet-300 text-[10px]" />
           </div>
         </div>
       </div>

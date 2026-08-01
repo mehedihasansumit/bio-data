@@ -3,6 +3,7 @@
 import { documentContent, headlineFacts, DocRow } from "@/lib/documentContent";
 import { documentTitle } from "@/lib/documentStrings";
 import { docHeadings } from "./headings";
+import { Ornament, Photo } from "./kit";
 import type { TemplateProps } from "./BiodataPreview";
 
 const OXBLOOD = "#7f1d1d";
@@ -57,9 +58,7 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
       <div className="sheet-frame border-2 p-1 min-h-[277mm] flex flex-col" style={{ borderColor: OXBLOOD }}>
         <div className="sheet-frame border p-4 flex-1 flex flex-col" style={{ borderColor: `${CRIMSON}4d` }}>
           <div className="text-center mb-3 break-inside-avoid">
-            {/* Ornament, not content. Unhidden, a screen reader opens every
-                biodata with "florette florette florette". */}
-            <div aria-hidden="true" className="text-[14px] leading-none mb-1" style={{ color: CRIMSON }}>&#10048; &#10048; &#10048;</div>
+            <Ornament glyph={"❀"} className="text-[14px] leading-none mb-1" style={{ color: CRIMSON }} />
             <Title className="text-[16px] font-bold tracking-[.2em] uppercase" style={{ color: OXBLOOD }}>{documentTitle(data.meta.candidateKind, data.meta.documentLanguage)}</Title>
             <div className="w-36 mx-auto mt-1 border-t" style={{ borderColor: `${CRIMSON}66` }} />
             <div className="w-24 mx-auto mt-[2px] border-t" style={{ borderColor: `${CRIMSON}33` }} />
@@ -67,13 +66,12 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
 
           <div className="flex items-start gap-4 mb-2 break-inside-avoid">
             {personal.photo && (
-              <div className="photo-frame w-20 h-20 rounded-md overflow-hidden shrink-0" style={{ boxShadow: `0 0 0 1px ${OXBLOOD}4d` }}>
-                <img
-                  src={personal.photo}
-                  alt={personal.fullName ? `Photograph of ${personal.fullName}` : "Photograph"}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <Photo
+                src={personal.photo}
+                name={personal.fullName}
+                className="w-20 h-20 rounded-md"
+                style={{ boxShadow: `0 0 0 1px ${OXBLOOD}4d` }}
+              />
             )}
             <div className="flex-1 pt-1">
               {personal.fullName && <Name className="text-[15px] font-bold text-gray-900">{personal.fullName}</Name>}
@@ -105,7 +103,7 @@ export default function RoyalTemplate({ data, headingLevel }: TemplateProps) {
           ))}
 
           <div className="text-center mt-auto pt-4">
-            <div aria-hidden="true" className="text-[10px]" style={{ color: `${CRIMSON}66` }}>&#10022; &#10022; &#10022;</div>
+            <Ornament glyph={"✦"} className="text-[10px]" style={{ color: `${CRIMSON}66` }} />
           </div>
         </div>
       </div>
