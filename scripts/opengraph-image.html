@@ -1,0 +1,80 @@
+<!doctype html>
+<!--
+  Source for public/og-card.png. Regenerate after editing:
+
+    google-chrome --headless --disable-gpu --hide-scrollbars \
+      --window-size=1200,630 --force-device-scale-factor=1 \
+      --screenshot=public/og-card.png \
+      scripts/opengraph-image.html
+
+  The card is wired up in lib/site.ts (OG_IMAGE); rename the file there and
+  here if you redraw it, so scraper caches break.
+
+  Rendered by a browser rather than by `next/og`, and that is not a
+  preference. Satori — what ImageResponse runs on — has no Indic shaper: it
+  places Bengali codepoints in logical order, so the i-kar in "বিয়ের" renders
+  after its consonant instead of before it, conjuncts never form, and every
+  unattached matra comes out as a dotted circle. Handing it more font does not
+  help; the glyphs were always there, the reordering is what is missing. A
+  browser has HarfBuzz and gets it right, so the card is rendered once, here,
+  and committed as a static image.
+
+  Consequences worth knowing: the copy below is not wired to lib/site.ts or to
+  anything else, so changing the product's pitch means editing this file and
+  re-running the command above. That is the price of correct Bengali on the
+  share card, and it is worth it — the card is branding, and it changes about
+  as often as the logo does.
+-->
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;700&display=block" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 64px 80px;
+    background: #065f46;                 /* chrome-emerald */
+    font-family: "Hind Siliguri", sans-serif;
+    /* No letter-spacing anywhere: it severs the মাত্রা and pulls যুক্তাক্ষর
+       apart. See The Bengali-Is-Never-Tracked Rule. Hierarchy is size and ink,
+       which is also why there is no eyebrow above the headline. */
+    letter-spacing: normal;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* The same mark and wordmark every other surface wears, sized as a
+     letterhead rather than a title. See The One Mark Rule. */
+  .letterhead { display: flex; align-items: center; gap: 14px; }
+  .letterhead img { width: 44px; height: 44px; }
+  .letterhead span { font-size: 30px; font-weight: 700; color: #fff; }
+
+  h1 { font-size: 78px; font-weight: 700; line-height: 1.25; color: #fff; max-width: 900px; }
+  p  { margin-top: 22px; font-size: 32px; line-height: 1.45; color: #a7f3d0; max-width: 860px; }
+
+  footer {
+    display: flex; align-items: center;
+    border-top: 2px solid #047857;       /* action-emerald */
+    padding-top: 26px;
+    font-size: 26px; color: #6ee7b7;     /* edge-emerald */
+  }
+</style>
+</head>
+<body>
+  <div class="letterhead">
+    <img src="../src/app/icon.svg" alt="">
+    <span>BiyerBiodata</span>
+  </div>
+
+  <div>
+    <h1>বিয়ের বায়োডাটা তৈরি করুন</h1>
+    <p>তথ্য পূরণ করুন, সঙ্গে সঙ্গে প্রিভিউ দেখুন, ছাপার উপযোগী A4 বায়োডাটা ডাউনলোড করুন।</p>
+  </div>
+
+  <footer>বিনামূল্যে · চারটি ডিজাইন · বাংলা ও ইংরেজি</footer>
+</body>
+</html>

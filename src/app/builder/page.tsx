@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import BuilderLoader from "@/components/builder/BuilderLoader";
+import { OG_IMAGE } from "@/lib/site";
 
 /**
  * A Server Component, and it has to stay one: `metadata` cannot be exported
@@ -22,6 +23,8 @@ export const metadata: Metadata = {
     url: "/builder",
     type: "website",
     locale: "bn_BD",
+    // Repeated because `openGraph` here replaces the root's outright.
+    images: [OG_IMAGE],
   },
 };
 

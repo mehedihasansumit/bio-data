@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Hind_Siliguri } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { OG_IMAGE, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,12 +47,14 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: "bn_BD",
     type: "website",
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: "বিয়ের বায়োডাটা তৈরি করুন — বিনামূল্যে",
     description:
       "অনলাইনে বিয়ের বায়োডাটা তৈরি করে PDF ডাউনলোড করুন। বিনামূল্যে, অ্যাকাউন্ট ছাড়াই।",
+    images: [OG_IMAGE],
   },
   robots: {
     index: true,

@@ -489,6 +489,16 @@ This is the product's **third mode**. The landing page persuades and the builder
 
 **The Read Mode Rule.** A guide is not a landing page with an article in it. One CTA, one column, generous measure, and no persuasion furniture — no badge rows, no repeated conversion blocks, no testimonial strips. Someone arrived with a question; answer it, then offer the tool once.
 
+### Share Card
+
+One 1200 × 630 card for the whole site, `public/og-card.png`, drawn from `scripts/opengraph-image.html` and wired up through `OG_IMAGE` in `lib/site.ts`. Emerald ground, the letterhead mark and wordmark at the top, a Bengali headline, a supporting line in `rule-emerald`, and a hairline over a facts row in `edge-emerald`.
+
+**It is a rendered image, not a live route, and Satori is why.** `next/og` has no Indic shaper: it lays Bengali codepoints out in logical order, so the i-kar in "বিয়ের" renders after its consonant instead of before it, যুক্তাক্ষর never form, and unattached matras come out as dotted circles. Shipping more font does not help — the glyphs were always present; the reordering is what is missing. A browser has HarfBuzz, so the card is rendered once by headless Chrome and committed. Regenerating is one command, in a comment at the top of the template.
+
+**Its type sizes are deliberately off the ramp** — 30 / 78 / 32 / 26px. The ramp in this document governs surfaces that reflow next to each other at shared breakpoints; a share card is a fixed canvas, usually seen as a thumbnail in a chat list, and it needs sizes that survive being shown at a third of its true dimensions. Read them as this one surface's own scale, not as new global steps.
+
+**The Repeat The Image Rule.** Every route that sets `openGraph` must also set `images: [OG_IMAGE]`. Next merges metadata shallowly, so a segment defining `openGraph` replaces its parent's entire object — which is how `/builder` and all four guides came to ship `twitter:card="summary_large_image"` with no image behind it, losing the card on exactly the pages that get forwarded. The card also lives in `public/` rather than under the `opengraph-image` file convention, because the convention injects a competing entry that outranks the root layout's and carries no alt text.
+
 ### The Document Row
 
 The signature component and the smallest meaningful unit of the record. Two variants, shared by all four templates:

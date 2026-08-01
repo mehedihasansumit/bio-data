@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import PageShell from "@/components/landing/PageShell";
 import BiodataPreview from "@/components/preview/BiodataPreview";
 import { findLandingPage, LANDING_PAGES } from "@/lib/landingPages";
+import { OG_IMAGE } from "@/lib/site";
 import { breadcrumbSchema, faqSchema, jsonLd } from "@/lib/structuredData";
 
 /** Anything not in this list 404s rather than rendering an empty guide. */
@@ -32,6 +33,10 @@ export async function generateMetadata({
       url: `/${page.slug}`,
       type: "article",
       locale: "bn_BD",
+      // Repeated because `openGraph` here replaces the root's outright. These
+      // are the pages people actually forward, so losing the card here was
+      // losing it where it counted.
+      images: [OG_IMAGE],
     },
   };
 }
