@@ -17,17 +17,23 @@ export default function PageShell({ children }: { children: React.ReactNode }) {
           builder's header defines `outline-white` — this header had been left
           on the browser default. */}
       <header className="bg-emerald-800 text-white py-4 px-6">
-        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
+        {/* `flex-wrap` plus `shrink-0` on both children is what keeps this from
+            colliding on a narrow phone. Without it the CTA's Bengali label wrapped
+            to two lines and the flex algorithm shrank the wordmark underneath it —
+            at 320px the white button sat directly on top of "BiyerBiodata". The
+            wordmark (162px) and the CTA (131px) share one row from 360px up; below
+            that the CTA drops to its own row intact rather than overlapping. */}
+        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <Link
             href="/"
-            className="flex items-center gap-2 py-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="flex items-center gap-2 shrink-0 py-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             <Image src="/icon.svg" alt="" width={28} height={28} aria-hidden="true" />
             <span className="text-xl font-bold">BiyerBiodata</span>
           </Link>
           <Link
             href="/builder"
-            className="min-h-11 inline-flex items-center bg-white text-emerald-800 px-5 rounded-lg font-semibold hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            className="min-h-11 inline-flex items-center shrink-0 whitespace-nowrap bg-white text-emerald-800 px-4 sm:px-5 rounded-lg font-semibold hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             বায়োডাটা বানান
           </Link>

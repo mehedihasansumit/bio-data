@@ -388,7 +388,12 @@ export default function BuilderClient() {
             <Image src="/icon.svg" alt="" width={28} height={28} aria-hidden="true" />
             <span className="text-xl font-bold">BiyerBiodata</span>
           </Link>
-          <div className="flex items-center gap-1 sm:gap-2">
+          {/* The outer row already wrapped; this group did not, so its three
+              nowrap buttons (398px together) ran straight off a 375px viewport
+              and "Print / Download PDF" was unreachable on every phone. It wraps
+              now, and `ml-auto` keeps Print pinned to the right edge whether the
+              group shares the wordmark's row or sits on its own. */}
+          <div className="flex flex-wrap items-center justify-end ml-auto gap-1 sm:gap-2">
             <button
               type="button"
               onClick={handleLoadSample}
@@ -406,9 +411,17 @@ export default function BuilderClient() {
             <button
               type="button"
               onClick={handlePrint}
-              className="min-h-11 bg-white text-emerald-800 px-5 rounded-lg font-semibold whitespace-nowrap hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="min-h-11 bg-white text-emerald-800 px-4 sm:px-5 rounded-lg font-semibold whitespace-nowrap hover:bg-emerald-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
-              Print / Download PDF
+              {/* Two labels, one control. The full label is 204px wide — with
+                  Load Sample and Clear All ahead of it that is 398px, which no
+                  phone can give. "Print / PDF" is 105px and still names both
+                  outcomes, which is the part that matters: on a phone this
+                  button is how a biodata gets saved at all. Only the displayed
+                  span is in the accessibility tree, so each width announces one
+                  name. */}
+              <span className="sm:hidden">Print / PDF</span>
+              <span className="hidden sm:inline">Print / Download PDF</span>
             </button>
           </div>
         </div>

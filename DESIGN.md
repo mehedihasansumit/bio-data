@@ -345,7 +345,7 @@ Only the `bengali` subset is requested, since Latin never reaches this face. Hin
 
 The builder's core is a **50/50 split**: form on the left, live document preview on the right, 24px gutter, each side `lg:w-1/2`. The preview column is `sticky top-4` so the document stays in view while the form scrolls. Below 1024px the split collapses to a single column and a full-width two-button segmented control ("Form" / "Preview") swaps between them — only one is mounted visible at a time.
 
-**Breakpoints in use:** `sm` 640px (form grid goes two-up, hero buttons go horizontal, hero type steps up), `lg` 1024px (split view appears, mobile toggle disappears, padding increases), plus a `print` variant that does most of the real work.
+**Breakpoints in use:** `sm` 640px (form grid goes two-up, hero buttons go horizontal, hero type steps up, both headers return to a single row), `lg` 1024px (split view appears, mobile toggle disappears, padding increases), plus a `print` variant that does most of the real work.
 
 **Form density:** fields sit on a `grid-cols-1 sm:grid-cols-2` grid with a 16px gap. Wide fields (address, hometown, photo) opt into full width with `sm:col-span-2`. Section headings span the grid and carry a 2px `rule-emerald` underline with 8px of space beneath.
 
@@ -478,6 +478,10 @@ Two segmented radio groups above the template chips, holding everything that des
 ### Navigation
 
 - **Header:** a full-bleed `chrome-emerald` bar, 24px horizontal and 16px vertical padding, wordmark at 20px/700 white on the left, utilities right-aligned with a 12px gap. Secondary actions use `rule-emerald` text lifting to white on hover.
+
+**The Header Wraps, It Never Shrinks.** The wordmark is 162px and each utility is a `whitespace-nowrap` button; below `sm` there is no width at which all of them fit one line, so the header reflows into rows instead of compressing. Every group carries `flex-wrap`, the wordmark and the landing CTA carry `shrink-0`, and the builder's utility cluster carries `ml-auto` so the filled action stays pinned to the right edge on whichever row it lands. Both failures this replaces came from a group that could neither wrap nor shrink: the landing CTA's Bengali label broke to two lines and the flex algorithm squeezed the wordmark *underneath* it at 320px, and the builder's three utilities measured 398px against a 375px phone and pushed "Print / Download PDF" off-screen entirely. The header's height is the variable; the legibility of its contents is not. One row from 640px, two on a phone, three at 320px.
+
+**The Print Button Names Both Outcomes At Every Width.** "Print / Download PDF" is 204px and cannot share a phone row with Load Sample and Clear All, so below `sm` the label is "Print / PDF" — 105px, and still both words. It is not shortened to "Print": on a phone this control is the only way a biodata gets saved, and the PDF half is the half people are looking for. The two labels are sibling spans with complementary `sm:hidden` / `hidden sm:inline`, so exactly one is rendered and exactly one reaches the accessibility tree. A third tier would be fussy; one swap at one breakpoint is the whole rule.
 - **Section tabs:** six pills in a white, shadowed strip. Active takes an `action-emerald` fill with white text; inactive is `ink-muted` text on transparent, tinting to `paper-emerald` on hover. They wrap rather than scroll.
 - **Mobile toggle:** a two-button full-width segmented control on white with a bottom border. The active side takes `action-emerald` text and a 2px `action-emerald` bottom border; the inactive side is `ink-muted` with no border.
 - **Sequential nav:** Previous (secondary) and Next (primary) pinned to opposite ends of a row separated from the form by a top border, 16px above and below.
